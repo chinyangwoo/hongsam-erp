@@ -81,7 +81,7 @@
             </div>
         </header>
 
-        <div class="dashboard-container">
+        <div class="dashboard-container" style="padding-bottom: 100px; min-height: calc(100vh - 80px);">
             
             <!-- Quick Finance Summary Pills -->
             <div class="finance-summary-grid">
@@ -120,7 +120,6 @@
                         <span class="legend"><span class="dot c-blue"></span> 시설 대관</span>
                         <span class="legend"><span class="dot c-purple"></span> VIP 의전 및 기타</span>
                     </div>
-                    <button class="btn-secondary" style="font-weight: 500; border: 1px solid var(--border-color);"><i class="fa-regular fa-calendar-plus"></i> 영업 일정 등록</button>
                 </div>
                 
                 <div class="calendar-wrapper glassmorphism">
@@ -224,6 +223,40 @@
             <div class="modal-footer">
                 <button class="btn-secondary" id="closeEventBtn">닫기</button>
                 <button class="btn-primary">수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Event Entry Modal -->
+    <div class="modal-overlay" id="newEventModal">
+        <div class="modal-content glassmorphism" style="width: 500px;">
+            <div class="modal-header">
+                <h2>새로운 영업 일정 등록</h2>
+                <button class="btn-close" id="closeNewEventModalHeader"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">선택된 일정 날짜</label>
+                        <input type="text" id="neDate" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--accent-blue); font-weight:700; outline:none; font-family:inherit;" readonly>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">일정 제목 (내용)</label>
+                        <input type="text" id="neTitle" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit; transition:var(--transition);" placeholder="예: 단체 관광객 45명 방문" onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.15)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">분류 태그</label>
+                        <select id="neTag" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit;">
+                            <option value="#10B981" style="background:#0F172A;">여행사 단체</option>
+                            <option value="#3B82F6" style="background:#0F172A;">시설 대관</option>
+                            <option value="#8B5CF6" style="background:#0F172A;">VIP 의전 및 기타</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeNewEventBtn">취소</button>
+                <button class="btn-primary" id="saveNewEventBtn"><i class="fa-solid fa-plus"></i> 일정 추가</button>
             </div>
         </div>
     </div>

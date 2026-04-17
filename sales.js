@@ -110,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
             eventClick: function(info) {
                 openEventModal(info.event);
+            },
+            dateClick: function(info) {
+                window.openNewEventModal(info.dateStr);
             }
         });
 
@@ -148,6 +151,71 @@ document.addEventListener('DOMContentLoaded', () => {
             if(e.target === eventModal) {
                 closeEvModal();
             }
+        });
+    }
+
+    // 4. New Event Modal Logic
+    const newEventModal = document.getElementById('newEventModal');
+    const closeNewEventBtn = document.getElementById('closeNewEventBtn');
+    const closeNewEventModalHeader = document.getElementById('closeNewEventModalHeader');
+    const saveNewEventBtn = document.getElementById('saveNewEventBtn');
+    const neDateInput = document.getElementById('neDate');
+    const neTitleInput = document.getElementById('neTitle');
+    const neTagInput = document.getElementById('neTag');
+
+    let currentSelectedDate = '';
+
+    window.openNewEventModal = function(dateStr) {
+        currentSelectedDate = dateStr;
+        if(neDateInput) neDateInput.value = dateStr;
+        if(neTitleInput) neTitleInput.value = '';
+        if(neTagInput) neTagInput.selectedIndex = 0;
+        if(newEventModal) newEventModal.classList.add('show');
+    };
+
+    function closeNewEvModal() {
+        if(newEventModal) newEventModal.classList.remove('show');
+    }
+
+    if (closeNewEventBtn) closeNewEventBtn.addEventListener('click', closeNewEvModal);
+    if (closeNewEventModalHeader) closeNewEventModalHeader.addEventListener('click', closeNewEvModal);
+
+    if (newEventModal) {
+        newEventModal.addEventListener('click', (e) => {
+            if(e.target === newEventModal) {
+                closeNewEvModal();
+            }
+        });
+    }
+
+    if (saveNewEventBtn) {
+        saveNewEventBtn.addEventListener('click', () => {
+            const title = neTitleInput.value.trim();
+            if(!title) {
+                alert('일정 제목(내용)을 입력해주세요.');
+                return;
+            }
+
+            const bgColor = neTagInput.value;
+            let tagLabel = '기타 일정';
+            if(bgColor === '#10B981') tagLabel = '여행사 단체';
+            else if(bgColor === '#3B82F6') tagLabel = '시설 대관';
+            else if(bgColor === '#8B5CF6') tagLabel = 'VIP 의전 및 기타';
+
+            window.salesCalendar.addEvent({
+                title: title,
+                start: currentSelectedDate,
+                backgroundColor: bgColor,
+                borderColor: bgColor,
+                extendedProps: {
+                    people: '-',
+                    revenue: '-',
+                    prep: '신규 등록된 일정입니다.',
+                    tagLabel: tagLabel
+                }
+            });
+
+            closeNewEvModal();
         });
     }
 
