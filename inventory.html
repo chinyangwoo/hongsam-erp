@@ -252,7 +252,7 @@
                     <div class="maint-panel glassmorphism">
                         <div class="panel-header">
                             <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
-                            <button class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
+                            <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
                         </div>
                         <div class="panel-body ledger-list-container">
                             <div class="ledger-item critical">
@@ -405,6 +405,50 @@
         </div>
     </main>
 
+    <!-- Repair / Maintenance Ledger Add Modal -->
+    <div id="ledgerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:520px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-screwdriver-wrench" style="color:#F59E0B;"></i> 고장/유지보수 신규 등록
+                </h2>
+                <button id="closeLedgerModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상태</label>
+                        <select id="lStatus" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%;">
+                            <option style="background:#0F172A;" value="접수대기">접수대기</option>
+                            <option style="background:#0F172A;" value="수리중">수리중</option>
+                            <option style="background:#0F172A;" value="수리완료">수리완료</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">담당자</label>
+                        <input id="lManager" type="text" placeholder="예: 공무팀 김철수" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">고장 내용 (제목)</label>
+                    <input id="lTitle" type="text" placeholder="예: 루프탑 순환 모터 소음" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상세 내용</label>
+                    <textarea id="lDesc" rows="3" placeholder="고장 원인 및 조치사항..." style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box; resize:vertical;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">예상 비용 (원)</label>
+                    <input id="lCost" type="text" placeholder="예: 450,000원 (없으면 미정)" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+            </div>
+            <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
+                <button id="cancelLedgerModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
+                <button id="saveLedgerBtn" style="background:linear-gradient(135deg,#F59E0B,#EF4444); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 등록하기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Vendor Add Modal -->
     <div id="vendorModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
         <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:480px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
@@ -441,6 +485,6 @@
 
     <!-- Custom View logic -->
     <script src="app.js?v=2"></script>
-    <script src="inventory.js?v=11"></script>
+    <script src="inventory.js?v=12"></script>
 </body>
 </html>

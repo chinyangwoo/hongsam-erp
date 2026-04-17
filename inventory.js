@@ -68,11 +68,82 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. Ledger new registration
-    const ledgerNewBtn = document.querySelector('.maint-panel .btn-text');
-    if(ledgerNewBtn) {
-        ledgerNewBtn.addEventListener('click', () => {
-            alert('새로운 유지보수 고장 내용을 신규 등록합니다.');
+    // 5. Ledger (Maintenance) Modal Logic
+    const ledgerModal    = document.getElementById('ledgerModal');
+    const btnNewLedger   = document.getElementById('btnNewLedger');
+    const closeLedgerModal  = document.getElementById('closeLedgerModal');
+    const cancelLedgerModal = document.getElementById('cancelLedgerModal');
+    const saveLedgerBtn  = document.getElementById('saveLedgerBtn');
+    const ledgerListContainer = document.querySelector('.ledger-list-container');
+
+    function openLedgerModal() {
+        if (!ledgerModal) return;
+        ['lTitle','lDesc','lManager','lCost'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        const lStatus = document.getElementById('lStatus');
+        if (lStatus) lStatus.selectedIndex = 0;
+        ledgerModal.style.display = 'flex';
+    }
+
+    function closeLedgerModalFn() {
+        if (ledgerModal) ledgerModal.style.display = 'none';
+    }
+
+    if (btnNewLedger)      btnNewLedger.addEventListener('click', openLedgerModal);
+    if (closeLedgerModal)  closeLedgerModal.addEventListener('click', closeLedgerModalFn);
+    if (cancelLedgerModal) cancelLedgerModal.addEventListener('click', closeLedgerModalFn);
+    if (ledgerModal) {
+        ledgerModal.addEventListener('click', (e) => {
+            if (e.target === ledgerModal) closeLedgerModalFn();
+        });
+    }
+
+    if (saveLedgerBtn) {
+        saveLedgerBtn.addEventListener('click', () => {
+            const title   = document.getElementById('lTitle')?.value.trim();
+            const desc    = document.getElementById('lDesc')?.value.trim();
+            const manager = document.getElementById('lManager')?.value.trim();
+            const cost    = document.getElementById('lCost')?.value.trim();
+            const status  = document.getElementById('lStatus')?.value;
+
+            if (!title) {
+                alert('고장 내용(제목)을 입력해주세요.');
+                return;
+            }
+
+            const today = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'.').replace('.','').slice(0,-1);
+
+            // status → CSS class + tag class
+            const statusClassMap = { '접수대기': 'pending', '수리중': 'critical', '수리완료': 'resolved' };
+            const tagClassMap    = { '접수대기': 'tag-hr', '수리중': 'tag-important', '수리완료': 'tag-general' };
+            const itemClass = statusClassMap[status] || 'pending';
+            const tagClass  = tagClassMap[status]  || 'tag-hr';
+
+            const card = document.createElement('div');
+            card.className = `ledger-item ${itemClass}`;
+            card.style.background = 'rgba(59,130,246,0.07)';
+            card.innerHTML = `
+                <div class="ledger-meta">
+                    <span class="tag ${tagClass}">${status}</span>
+                    <span class="l-date">접수: ${today}</span>
+                </div>
+                <h4>${title}</h4>
+                <p>${desc || '상세 내용 없음.'}</p>
+                <div class="l-footer">
+                    <span>담당: ${manager || '미배정'}</span>
+                    <span>비용 예상: ${cost || '미정'}</span>
+                </div>
+            `;
+
+            if (ledgerListContainer) {
+                // Insert at top so newest is first
+                ledgerListContainer.insertBefore(card, ledgerListContainer.firstChild);
+                setTimeout(() => card.style.background = '', 1500);
+            }
+
+            closeLedgerModalFn();
         });
     }
 
