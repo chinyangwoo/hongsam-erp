@@ -379,8 +379,64 @@ body {
     border-radius: 4px;
 }
 
+/* ---------------- Action Bar (Global) ---------------- */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
 
-/* ---------------- Charts Grid ---------------- */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: var(--radius-lg);
+    width: 450px; /* Increased from 300px for better visibility */
+    transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--accent-blue);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.search-box i {
+    color: var(--text-secondary);
+    margin-right: 12px;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+.search-box:focus-within i {
+    color: var(--accent-blue);
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    width: 100%;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.search-box input::placeholder {
+    color: #64748B;
+}
+
+.filter-box {
+    display: flex;
+    gap: 12px;
+}
+
+
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
