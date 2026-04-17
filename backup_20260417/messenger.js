@@ -1,0 +1,106 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+    const chatInput = document.getElementById('chatInput');
+    const btnSendMsg = document.getElementById('btnSendMsg');
+    const chatMessagesArea = document.getElementById('chatMessagesArea');
+    const checkBroadcast = document.getElementById('checkBroadcast');
+
+    // Auto-resize textarea logic
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        if (this.value === '') {
+            this.style.height = 'auto'; // Reset if empty
+        }
+    });
+
+    // Send Message on Enter (but allow Shift+Enter for new line)
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    btnSendMsg.addEventListener('click', sendMessage);
+
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if(!text) return;
+
+        const isBroadcast = checkBroadcast.checked;
+        
+        // Time Formatting
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
+        const ampm = hours >= 12 ? '오후' : '오전';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const timeStr = `${ampm} ${hours}:${minutes}`;
+
+        // Create Message DOM
+        const msgWrapper = document.createElement('div');
+        msgWrapper.className = 'msg-wrapper self';
+
+        let innerHTML = `
+            <div class="msg-content-block">
+                <div class="msg-meta">
+                    <span class="m-time">${timeStr}</span>
+                </div>
+        `;
+
+        if(isBroadcast) {
+            innerHTML += `
+                <div class="msg-bubble broadcast">
+                    <strong class="b-title"><i class="fa-solid fa-bullhorn"></i> 긴급 공지 (Broadcast)</strong>
+                    <p>${text.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+        } else {
+            innerHTML += `
+                <div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>
+            `;
+        }
+
+        innerHTML += `</div>`;
+        
+        msgWrapper.innerHTML = innerHTML;
+        
+        // Append to chat area
+        chatMessagesArea.appendChild(msgWrapper);
+
+        // Scroll to bottom
+        chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
+
+        // Reset Input
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        checkBroadcast.checked = false; // Reset Broadcast toggle after send
+    }
+
+    // Scroll to bottom on load
+    chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
+
+    // Toggle active classes on Channels / DMs (Visual Simulation)
+    const listsItems = document.querySelectorAll('.channel-item, .dm-item');
+    listsItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove from all
+            document.querySelectorAll('.channel-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.dm-item').forEach(i => i.style.background = 'transparent'); // Reset DMs
+
+            if (this.classList.contains('channel-item')) {
+                this.classList.add('active');
+            } else {
+                this.style.background = 'rgba(255, 255, 255, 0.05)';
+            }
+
+            // Remove unread badge if present
+            this.classList.remove('has-unread');
+            const badge = this.querySelector('.ch-badge');
+            if(badge) badge.style.display = 'none';
+        });
+    });
+
+});

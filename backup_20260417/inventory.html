@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홍삼스파 - 재고관리</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="inventory.css?v=11">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+            <a href="inventory.html" class="nav-item active">
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>재고관리</h1>
+                <p>구역별 재고 현황 및 시설물 유지보수 기록</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            
+            <!-- 안전재고 미달 품목 경보 배너 -->
+            <div id="stockAlertBanner" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 16px;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #EF4444; font-size: 1.4rem; flex-shrink:0;"></i>
+                <div>
+                    <strong style="color: #EF4444; font-size: 1rem;">⚠ 안전재고 미달 품목 발생!</strong>
+                    <p style="margin-top: 4px; font-size: 0.88rem; color: #FCA5A5; line-height: 1.5;">
+                        <span style="font-weight:700;">대형 비치타월 (루프탑)</span> — 현재 <b>35장</b> / 안전기준 100장 &nbsp;|&nbsp;
+                        <span style="font-weight:700;">바디 워시 대용량 (2층 스파)</span> — 현재 <b>2말</b> / 안전기준 5말<br>
+                        즉시 발주 또는 입고 처리가 필요합니다.
+                    </p>
+                </div>
+                <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:#94A3B8;cursor:pointer;margin-left:auto;font-size:1.1rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="inv-tabs-container">
+                <ul class="inv-tabs">
+                    <li class="tab-btn active" data-target="tab-inventory">
+                        <i class="fa-solid fa-boxes-stacked"></i> 재고 현황
+                    </li>
+                    <li class="tab-btn" data-target="tab-maintenance">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> 시설 점검 대장
+                    </li>
+                    <li class="tab-btn" data-target="tab-item-register">
+                        <i class="fa-solid fa-clipboard-list"></i> 품목 등록
+                    </li>
+                    <li class="tab-btn" data-target="tab-vendors">
+                        <i class="fa-solid fa-handshake"></i> 거래체 현황
+                    </li>
+                </ul>
+            </div>
+
+            <!-- TAB 1: Inventory Table -->
+            <div class="tab-content active" id="tab-inventory">
+                <div class="action-bar glassmorphism">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="품목명, 카테고리 검색...">
+                    </div>
+                    <div class="filter-box">
+                        <select class="styled-select">
+                            <option value="all">전체 구역</option>
+                            <option value="1f">1층 (프런트/카페)</option>
+                            <option value="2f">2층 (스파/대온천탕)</option>
+                            <option value="rooftop">루프탑 (인피니티풀/사우나)</option>
+                            <option value="common">공통 창고</option>
+                        </select>
+                        <select class="styled-select">
+                            <option value="all">상태 전체</option>
+                            <option value="warning">재고 부족 (안전치 미달)</option>
+                            <option value="normal">정상</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container glassmorphism">
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>품목명</th>
+                                    <th>구역</th>
+                                    <th>카테고리</th>
+                                    <th class="text-right">현재 재고</th>
+                                    <th class="text-right">안전 재고 기준</th>
+                                    <th>상태 (Status)</th>
+                                    <th>재고수량</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="stock-critical">
+                                    <td><strong>대형 비치타월</strong></td>
+                                    <td>루프탑</td>
+                                    <td>비품/린넨</td>
+                                    <td class="text-right qty-critical">35 장</td>
+                                    <td class="text-right">100 장</td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>고급 원두 (에스프레소)</strong></td>
+                                    <td>1층</td>
+                                    <td>식자재</td>
+                                    <td class="text-right">12 Kg</td>
+                                    <td class="text-right">5 Kg</td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="stock-critical">
+                                    <td><strong>바디 워시 (대용량)</strong></td>
+                                    <td>2층 스파</td>
+                                    <td>어메니티</td>
+                                    <td class="text-right qty-critical">2 말</td>
+                                    <td class="text-right">5 말</td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 발주 필요</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>A4 복사용지 (상자)</strong></td>
+                                    <td>공통 창고</td>
+                                    <td>사무용품</td>
+                                    <td class="text-right">14 박스</td>
+                                    <td class="text-right">5 박스</td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Maintenance Ledger (Split View) -->
+            <div class="tab-content" id="tab-maintenance" style="display: none;">
+                <div class="maintenance-grid">
+                    
+                    <!-- LEFT: Daily Inspection Form -->
+                    <div class="maint-panel glassmorphism">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-clipboard-check"></i> 일일 정기점검 폼 (Form)</h2>
+                            <span class="date-badge">2026. 04. 17</span>
+                        </div>
+                        <div class="panel-body">
+                            <form class="inspection-form">
+                                <div class="form-group">
+                                    <label>1. 보일러실 가스 누출 여부 점검</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="gas" value="ok" checked> 정상 (누출없음)</label>
+                                        <label><input type="radio" name="gas" value="bad"> 이상 있음 방면</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>2. 메인 수배전반(전기) 전압 및 온도 기록</label>
+                                    <div class="input-inline">
+                                        <input type="number" placeholder="전압 (V)" class="f-input" value="380">
+                                        <input type="number" placeholder="온도 (℃)" class="f-input" value="28">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>3. 각 층 소화기 비치 상태 및 압력 게이지</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="fire" value="ok" checked> 정상 범위</label>
+                                        <label><input type="radio" name="fire" value="bad"> 재충전 필요 (비고 기재)</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>특이사항 (비고란)</label>
+                                    <textarea placeholder="특이사항 없음" class="f-textarea" rows="3"></textarea>
+                                </div>
+                                <div class="form-submit">
+                                    <button type="button" class="btn-primary w-100" id="btnSubmitInspection">오늘 점검 완료 저장</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Fault & Repair Ledger -->
+                    <div class="maint-panel glassmorphism">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
+                            <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
+                        </div>
+                        <div class="panel-body ledger-list-container">
+                            <div class="ledger-item critical">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-important">수리중</span>
+                                    <span class="l-date">접수: 2026.04.16</span>
+                                </div>
+                                <h4>루프탑 인피니티풀 순환 모터 소음 불량</h4>
+                                <p>모터 베어링 파손 의심. 현재 외부 수리업체(한일모터스) 방문 대기 중. 예비 모터 가동 중.</p>
+                                <div class="l-footer">
+                                    <span>담당: 공무팀 박철수</span>
+                                    <span>비용 예상: 450,000원</span>
+                                </div>
+                            </div>
+
+                            <div class="ledger-item resolved">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-general">수리완료</span>
+                                    <span class="l-date">접수: 2026.04.14</span>
+                                </div>
+                                <h4>2층 남탕 샤워기 3번 수압 약함</h4>
+                                <p>샤워기 헤드 내부 스케일 제거 및 고무패킹 교체 완료.</p>
+                                <div class="l-footer">
+                                    <span>담당: 공무팀 김민규</span>
+                                    <span>완료: 2026.04.15</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ledger-item pending">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-hr">접수대기</span>
+                                    <span class="l-date">접수: 2026.04.17</span>
+                                </div>
+                                <h4>1층 프런트 우측 조명 램프 1개 나감</h4>
+                                <p>LED 다운라이트(주백색) 교체 요망.</p>
+                                <div class="l-footer">
+                                    <span>보고자: 운영팀 프런트</span>
+                                    <span>배정 요망</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Item Registration -->
+            <div class="tab-content" id="tab-item-register" style="display:none;">
+                <div class="glassmorphism" style="padding: 32px; max-width: 720px; margin: 0 auto;">
+                    <div style="margin-bottom: 28px;">
+                        <h2 style="font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:10px;">
+                            <i class="fa-solid fa-clipboard-list" style="color:var(--accent-blue);"></i> 품목 등록
+                        </h2>
+                        <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:6px;">신규 품목을 등록하거나 기존 품목 정보를 수정합니다.</p>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">카테고리</label>
+                            <select class="styled-select" id="itemCategory" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none;">
+                                <option value="" style="background:#0F172A;">카테고리 선택</option>
+                                <option style="background:#0F172A;">비품/린넌</option>
+                                <option style="background:#0F172A;">염니티</option>
+                                <option style="background:#0F172A;">식자재</option>
+                                <option style="background:#0F172A;">사무용품</option>
+                                <option style="background:#0F172A;">청소용품</option>
+                                <option style="background:#0F172A;">시설/부품</option>
+                                <option style="background:#0F172A;">기타</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">품목명</label>
+                            <input type="text" id="itemName" placeholder="예: 대형 비치타월" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">공급업체명</label>
+                            <input type="text" id="itemSupplier" placeholder="예: (주)한국린렌" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">단가 (원)</label>
+                            <input type="number" id="itemPrice" placeholder="예: 5000" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px; grid-column: 1 / -1;">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">안전재고 기준수량</label>
+                            <input type="number" id="itemSafeQty" placeholder="예: 100 (이 수량 이하로 떨어지면 경보)" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:28px; display:flex; justify-content:flex-end; gap:12px;">
+                        <button onclick="document.getElementById('itemCategory').value=''; ['itemName','itemSupplier','itemPrice','itemSafeQty'].forEach(id => document.getElementById(id).value='')" style="background:rgba(255,255,255,0.07); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">전체 지우기</button>
+                        <button onclick="alert('품목이 등록되었습니다. (DB 연동 전 프로토타입)')" style="background: linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; font-size:0.9rem;"><i class="fa-solid fa-plus"></i> 품목 저장</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Vendor Status -->
+            <div class="tab-content" id="tab-vendors" style="display:none;">
+                <div class="table-container glassmorphism">
+                    <div style="padding:20px 24px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h2 style="font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-handshake" style="color:var(--accent-blue);"></i> 거래체 현황
+                            </h2>
+                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">등록된 공급 거래체 목록 및 담당자 연락처 정보입니다.</p>
+                        </div>
+                        <button id="btnAddVendor" style="background: linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:9px 20px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit; font-size:0.88rem;">
+                            <i class="fa-solid fa-plus"></i> 거래체 추가
+                        </button>
+                    </div>
+                    <div class="table-responsive" style="padding:0 0 16px;">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>품목명</th>
+                                    <th>공급업체명</th>
+                                    <th>담당자명</th>
+                                    <th>연락처</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>대형 비치타월</strong></td>
+                                    <td>(주)한국린넌</td>
+                                    <td>김대혁 차장</td>
+                                    <td>010-3322-5544</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>바디 워시 대용량</strong></td>
+                                    <td>서울코스모 업실링</td>
+                                    <td>이진수 과장</td>
+                                    <td>02-1234-5678</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>고급 원두 (에스프레소)</strong></td>
+                                    <td>코투 cafe공급</td>
+                                    <td>박재형 대표</td>
+                                    <td>010-9988-2211</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>A4 복사용지</strong></td>
+                                    <td>(주)오피스디포</td>
+                                    <td>앞 영업팀</td>
+                                    <td>1588-0072</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Repair / Maintenance Ledger Add Modal -->
+    <div id="ledgerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:520px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-screwdriver-wrench" style="color:#F59E0B;"></i> 고장/유지보수 신규 등록
+                </h2>
+                <button id="closeLedgerModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상태</label>
+                        <select id="lStatus" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%;">
+                            <option style="background:#0F172A;" value="접수대기">접수대기</option>
+                            <option style="background:#0F172A;" value="수리중">수리중</option>
+                            <option style="background:#0F172A;" value="수리완료">수리완료</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">담당자</label>
+                        <input id="lManager" type="text" placeholder="예: 공무팀 김철수" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">고장 내용 (제목)</label>
+                    <input id="lTitle" type="text" placeholder="예: 루프탑 순환 모터 소음" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상세 내용</label>
+                    <textarea id="lDesc" rows="3" placeholder="고장 원인 및 조치사항..." style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box; resize:vertical;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">예상 비용 (원)</label>
+                    <input id="lCost" type="text" placeholder="예: 450,000원 (없으면 미정)" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+            </div>
+            <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
+                <button id="cancelLedgerModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
+                <button id="saveLedgerBtn" style="background:linear-gradient(135deg,#F59E0B,#EF4444); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 등록하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor Add Modal -->
+    <div id="vendorModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:480px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-handshake" style="color:#3B82F6;"></i> 거래체 신규 등록
+                </h2>
+                <button id="closeVendorModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">품목명</label>
+                    <input id="vItemName" type="text" placeholder="예: 대형 비치타월" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">공급업체명</label>
+                    <input id="vSupplierName" type="text" placeholder="예: (주)한국린넌" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">담당자명</label>
+                    <input id="vManagerName" type="text" placeholder="예: 김대혁 차장" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">연락처</label>
+                    <input id="vContact" type="text" placeholder="예: 010-1234-5678" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                </div>
+            </div>
+            <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
+                <button id="cancelVendorModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
+                <button id="saveVendorBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom View logic -->
+    <script src="app.js?v=2"></script>
+    <script src="inventory.js?v=12"></script>
+</body>
+</html>

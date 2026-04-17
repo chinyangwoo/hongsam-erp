@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홍삼스파 - 문서 관리</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="document.css">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item active">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>문서 관리 시스템</h1>
+                <p>사내 주요 규정, 매뉴얼 및 양식 보관소</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-primary" id="btnUploadDoc"><i class="fa-solid fa-cloud-arrow-up"></i> 새 문서 업로드</button>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="doc-container glassmorphism">
+            
+            <!-- Left Pane: Folder Tree -->
+            <div class="doc-sidebar">
+                <div class="folder-header">
+                    <h3>카테고리 폴더</h3>
+                    <button class="btn-icon-small" title="새 폴더"><i class="fa-solid fa-folder-plus"></i></button>
+                </div>
+                
+                <ul class="folder-list">
+                    <li class="folder-item active"><i class="fa-solid fa-folder-open"></i> 전체 문서 (최근 항목)</li>
+                    <li class="folder-item restricted" title="보안 폴더"><i class="fa-solid fa-lock"></i> 사규 및 규정</li>
+                    <li class="folder-item restricted" title="보안 폴더"><i class="fa-solid fa-lock"></i> 경영 및 회계 보고서</li>
+                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 인사 (HR) 양식</li>
+                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 시설 및 공무 자료</li>
+                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 매장 운영 매뉴얼</li>
+                </ul>
+                
+                <div class="storage-info">
+                    <div class="s-text">
+                        <span>스토리지 사용량</span>
+                        <span>4.2 GB / 50 GB</span>
+                    </div>
+                    <div class="progress-bar-bg" style="height: 6px; margin:0;">
+                        <div class="progress-bar-fill" style="width: 8.4%; background: var(--accent-blue);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Pane: File Explorer -->
+            <div class="doc-explorer">
+                <div class="explorer-toolbar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="문서 이름이나 확장자 검색...">
+                    </div>
+                    <div class="view-toggles">
+                        <button class="btn-icon active" title="리스트 보기"><i class="fa-solid fa-list"></i></button>
+                        <button class="btn-icon" title="섬네일 보기"><i class="fa-solid fa-border-all"></i></button>
+                    </div>
+                </div>
+
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <span>홍삼스파 ERP</span> <i class="fa-solid fa-chevron-right"></i> <span class="active">전체 문서 (최근 항목)</span>
+                </div>
+
+                <div class="file-list-header">
+                    <div class="col-name">파일명</div>
+                    <div class="col-date">등록일</div>
+                    <div class="col-user">등록자</div>
+                    <div class="col-size text-right">크기</div>
+                    <div class="col-actions text-right">관리</div>
+                </div>
+
+                <div class="file-list-body">
+                    
+                    <!-- File Item: PDF -->
+                    <div class="file-item pdf-type">
+                        <div class="col-name">
+                            <i class="fa-solid fa-file-pdf icon-pdf"></i>
+                            <span class="f-name">사우나_안전관리_매뉴얼_v2.pdf</span>
+                        </div>
+                        <div class="col-date">2026.04.16</div>
+                        <div class="col-user">김지원 (지원팀)</div>
+                        <div class="col-size text-right">2.4 MB</div>
+                        <div class="col-actions text-right">
+                            <button class="btn-action" title="미리보기"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
+                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- File Item: HWP -->
+                    <div class="file-item hwp-type">
+                        <div class="col-name">
+                            <i class="fa-solid fa-file-word icon-hwp"></i> <!-- FontAwesome 6 doesn't have hwp specifically, word used as sub -->
+                            <span class="f-name">2026년도_임직원_근로계약서_양식.hwp</span>
+                        </div>
+                        <div class="col-date">2026.04.14</div>
+                        <div class="col-user">진양우 (대표)</div>
+                        <div class="col-size text-right">452 KB</div>
+                        <div class="col-actions text-right">
+                            <button class="btn-action restricted-view" data-type="hwp" title="뷰어 확인"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
+                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- File Item: Excel -->
+                    <div class="file-item excel-type">
+                        <div class="col-name">
+                            <i class="fa-solid fa-file-excel icon-excel"></i>
+                            <span class="f-name">인사카드_일괄등록_양식.xls</span>
+                        </div>
+                        <div class="col-date">2026.04.10</div>
+                        <div class="col-user">김지원 (지원팀)</div>
+                        <div class="col-size text-right">1.1 MB</div>
+                        <div class="col-actions text-right">
+                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
+                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- File Item: Image -->
+                    <div class="file-item img-type">
+                        <div class="col-name">
+                            <i class="fa-solid fa-file-image icon-img"></i>
+                            <span class="f-name">사업자등록증_헤일로유니버스.pdf</span> <!-- Displaying fake pdf data as image extension check for style -->
+                        </div>
+                        <div class="col-date">2026.04.05</div>
+                        <div class="col-user">진양우 (대표)</div>
+                        <div class="col-size text-right">85 KB</div>
+                        <div class="col-actions text-right">
+                            <button class="btn-action" title="미리보기"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
+                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: HWP Warning Alert -->
+    <div class="modal-overlay" id="hwpAlertModal">
+        <div class="modal-content glassmorphism" style="width: 400px; text-align: center;">
+            <div class="modal-header" style="justify-content: center; border-bottom: none;">
+                <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-orange); font-size: 2rem; margin-bottom: 10px; display: block;"></i> 시스템 알림</h2>
+            </div>
+            <div class="modal-body" style="padding-top: 0;">
+                <p style="color: var(--text-secondary); line-height: 1.6;">
+                    선택하신 파일은 <strong>아래한글(HWP)</strong> 포맷입니다.<br>
+                    보안 및 클라우드 호환성 정책상 웹 브라우저 자체 뷰어에서는 HWP 문서를 표시할 수 없습니다.
+                </p>
+                <p style="margin-top: 15px; font-weight: 500; color: var(--text-primary);">
+                    문서를 PC로 다운로드하여 한컴오피스 또는 폴라리스 오피스 등을 사용해 열람해 주시기 바랍니다.
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content: center; border-top: none;">
+                <button class="btn-secondary" id="closeHwpAlert">취소</button>
+                <button class="btn-primary" id="btnHwpDownload"><i class="fa-solid fa-download"></i> 바로 다운로드</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom View logic -->
+    <script src="app.js?v=2"></script>
+    <script src="document.js"></script>
+</body>
+</html>
