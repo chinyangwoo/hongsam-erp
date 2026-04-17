@@ -36,7 +36,7 @@
             <a href="hr.html" class="nav-item">
                 <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item active">
-                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
             <a href="inventory.html" class="nav-item">
                 <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
             
@@ -70,8 +70,8 @@
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-title">
-                <h1>영업 및 현금흐름</h1>
-                <p>일정 공유 및 입출금 회계 관리</p>
+                <h1>영업관리</h1>
+                <p>일정 공유 및 현금흐름 뷰어</p>
             </div>
             
             <div class="header-actions">
@@ -88,46 +88,39 @@
                 <div class="f-pill glassmorphism box-income">
                     <div class="f-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                     <div class="f-text">
-                        <span>이번 달 누적 수입결의</span>
+                        <span>금월누적매출</span>
                         <h3>₩ 125,500,000</h3>
                     </div>
                 </div>
                 <div class="f-pill glassmorphism box-expense">
                     <div class="f-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     <div class="f-text">
-                        <span>이번 달 누적 지출결의</span>
+                        <span>금주누적매출</span>
                         <h3>₩ 38,200,000</h3>
                     </div>
                 </div>
                 <div class="f-pill glassmorphism box-event">
-                    <div class="f-icon"><i class="fa-solid fa-calendar-star"></i></div>
+                    <div class="f-icon"><i class="fa-solid fa-users"></i></div>
                     <div class="f-text">
-                        <span>이번 달 주요 영업 일정</span>
-                        <h3>14 건 대기중</h3>
+                        <span>금월누적방문객수</span>
+                        <h3 style="display:flex; align-items:center; gap:8px;">
+                            <span id="visitorCountDisplay">1,450 명</span> 
+                            <button id="btnEditVisitor" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="fa-solid fa-pen" style="font-size:0.9rem;"></i></button>
+                        </h3>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab Navigation for Logic Separation -->
-            <div class="sales-tabs-container">
-                <ul class="hr-tabs"> <!-- Reusing tab styles from hr -->
-                    <li class="tab-btn active" data-target="tab-calendar">
-                        <i class="fa-regular fa-calendar-days"></i> 스마트 영업 캘린더
-                    </li>
-                    <li class="tab-btn" data-target="tab-cashflow">
-                        <i class="fa-solid fa-money-bill-transfer"></i> 현금흐름 요약 리스트
-                    </li>
-                </ul>
-            </div>
+            <!-- Tabs removed as requested -->
 
-            <div class="tab-content active" id="tab-calendar">
-                <div class="action-bar glassmorphism">
+            <div id="tab-calendar" style="margin-bottom: 40px;">
+                <div class="action-bar glassmorphism" style="margin-bottom: 0;">
                     <div class="legend-box">
                         <span class="legend"><span class="dot c-green"></span> 여행사/단체방문</span>
                         <span class="legend"><span class="dot c-blue"></span> 시설 대관</span>
                         <span class="legend"><span class="dot c-purple"></span> VIP 의전 및 기타</span>
                     </div>
-                    <button class="btn-primary"><i class="fa-solid fa-plus"></i> 일정 신규 등록</button>
+                    <button class="btn-secondary" style="font-weight: 500; border: 1px solid var(--border-color);"><i class="fa-regular fa-calendar-plus"></i> 영업 일정 등록</button>
                 </div>
                 
                 <div class="calendar-wrapper glassmorphism">
@@ -135,8 +128,8 @@
                 </div>
             </div>
 
-            <div class="tab-content" id="tab-cashflow" style="display: none;">
-                <div class="table-container glassmorphism">
+            <div id="tab-cashflow" style="display: block; padding-bottom: 50px;">
+                <div class="table-container glassmorphism" style="margin-bottom: 50px;">
                     <div class="table-header action-bar-override">
                         <div class="filter-box">
                             <select class="styled-select">
@@ -231,6 +224,21 @@
             <div class="modal-footer">
                 <button class="btn-secondary" id="closeEventBtn">닫기</button>
                 <button class="btn-primary">수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Visitor Count Modal -->
+    <div class="modal-overlay" id="visitorEditModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000;">
+        <div class="modal-content glassmorphism" style="width: 400px; padding: 24px;">
+            <h3 style="margin-bottom: 16px;">금월누적방문객수 수정</h3>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom: 24px;">
+                <label style="font-size:0.85rem; color:var(--text-secondary);">수정할 숫자를 기입하세요</label>
+                <input type="number" id="visitorInput" style="background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); padding:10px; border-radius:8px;" placeholder="예: 1450">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn-secondary" id="closeVisitorModal" style="border:none;">취소</button>
+                <button class="btn-primary" id="saveVisitorBtn">저장하기</button>
             </div>
         </div>
     </div>

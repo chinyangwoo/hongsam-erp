@@ -1,34 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Tab Navigation Logic
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+    // 1. Visitor Count Edit Logic
+    const btnEditVisitor = document.getElementById('btnEditVisitor');
+    const visitorEditModal = document.getElementById('visitorEditModal');
+    const closeVisitorModal = document.getElementById('closeVisitorModal');
+    const saveVisitorBtn = document.getElementById('saveVisitorBtn');
+    const visitorInput = document.getElementById('visitorInput');
+    const visitorCountDisplay = document.getElementById('visitorCountDisplay');
 
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => {
-                c.style.display = 'none';
-                c.classList.remove('active');
-            });
-
-            btn.classList.add('active');
-            const targetId = btn.getAttribute('data-target');
-            const targetContent = document.getElementById(targetId);
-            
-            if(targetContent) {
-                targetContent.style.display = 'block';
-                setTimeout(() => targetContent.classList.add('active'), 10);
+    function openVisitorModal() {
+        if(visitorEditModal) {
+            visitorEditModal.style.display = 'flex';
+            // Pre-fill current number by extracting only digits
+            if(visitorCountDisplay) {
+                const currentText = visitorCountDisplay.innerText.replace(/[^0-9]/g, '');
+                visitorInput.value = currentText;
             }
+        }
+    }
 
-            // Important: FullCalendar needs to re-render if it was hidden when initialized
-            if(targetId === 'tab-calendar' && window.salesCalendar) {
-                setTimeout(() => {
-                    window.salesCalendar.render();
-                }, 50);
+    function closeVisModal() {
+        if(visitorEditModal) visitorEditModal.style.display = 'none';
+    }
+
+    if (btnEditVisitor) btnEditVisitor.addEventListener('click', openVisitorModal);
+    if (closeVisitorModal) closeVisitorModal.addEventListener('click', closeVisModal);
+    
+    if (saveVisitorBtn) {
+        saveVisitorBtn.addEventListener('click', () => {
+            if(visitorInput.value) {
+                // Update display with formatted number
+                const num = parseInt(visitorInput.value, 10);
+                visitorCountDisplay.innerText = num.toLocaleString() + ' 명';
+                closeVisModal();
+                alert('방문객수가 업데이트되었습니다.');
             }
         });
-    });
+    }
+
+    // Close on overlay click
+    if (visitorEditModal) {
+        visitorEditModal.addEventListener('click', (e) => {
+            if(e.target === visitorEditModal) {
+                closeVisModal();
+            }
+        });
+    }
 
     // 2. FullCalendar Initialization
     const calendarEl = document.getElementById('calendar');
@@ -90,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             ],
             eventClick: function(info) {
-                // Open Custom Modal rather than default browser alert
                 openEventModal(info.event);
             }
         });
@@ -104,16 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeEventModalX = document.getElementById('closeEventModal');
 
     window.openEventModal = function(eventObj) {
-        // Populate data
         document.getElementById('evTitle').innerText = eventObj.title;
         document.getElementById('evTag').innerText = eventObj.extendedProps.tagLabel || '기타 일정';
 
-        // Format Date
         const startDate = eventObj.start.toLocaleString('ko-KR');
         const endDate = eventObj.end ? eventObj.end.toLocaleString('ko-KR') : '';
         document.getElementById('evDate').innerText = endDate ? `${startDate} ~ ${endDate}` : startDate;
 
-        // Custom Props
         document.getElementById('evPeople').innerText = eventObj.extendedProps.people || '-';
         document.getElementById('evRevenue').innerText = eventObj.extendedProps.revenue || '-';
         document.getElementById('evPrep').innerText = eventObj.extendedProps.prep || '등록된 준비사항이 없습니다.';
@@ -128,10 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeEventBtn) closeEventBtn.addEventListener('click', closeEvModal);
     if (closeEventModalX) closeEventModalX.addEventListener('click', closeEvModal);
 
-    eventModal.addEventListener('click', (e) => {
-        if(e.target === eventModal) {
-            closeEvModal();
-        }
-    });
+    if (eventModal) {
+        eventModal.addEventListener('click', (e) => {
+            if(e.target === eventModal) {
+                closeEvModal();
+            }
+        });
+    }
 
 });
