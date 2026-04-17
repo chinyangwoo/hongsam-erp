@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeNewModal() {
         if (newEmpModal) {
-            newEmpModal.style.display = 'none';
+            newEmpModal.classList.remove('show');
             const form = document.getElementById('newEmpForm');
             if(form) form.reset();
             if(photoPreview) photoPreview.src = 'https://via.placeholder.com/150';
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(btnAddNewEmployee) {
         btnAddNewEmployee.addEventListener('click', () => {
-            if (newEmpModal) newEmpModal.style.display = 'flex';
+            if (newEmpModal) newEmpModal.classList.add('show');
         });
     }
     
