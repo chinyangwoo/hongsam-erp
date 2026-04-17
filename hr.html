@@ -461,19 +461,23 @@
                 <h2>신규 사원 등록 (인사기록카드)</h2>
                 <button class="btn-close" id="closeNewEmpModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" style="padding: 20px;">
-                <form id="newEmpForm" style="display:grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+            <div class="modal-body" style="padding: 30px;">
+                <form id="newEmpForm" class="new-emp-form">
                     <!-- Photo -->
-                    <div class="form-group" style="text-align:center;">
-                        <img id="photoPreview" src="https://via.placeholder.com/150" style="width:150px; height:150px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--border-color);">
-                        <input type="file" id="empPhotoUpload" accept="image/*" style="width:100%;">
+                    <div class="form-group photo-group">
+                        <div class="photo-upload-wrapper">
+                            <img id="photoPreview" src="https://ui-avatars.com/api/?name=New&background=random" alt="Photo Preview">
+                            <label for="empPhotoUpload" class="photo-upload-btn"><i class="fa-solid fa-camera"></i></label>
+                            <input type="file" id="empPhotoUpload" accept="image/*">
+                        </div>
+                        <p class="photo-guide">등록할 사원 사진 업로드<br><span>(권장: 정방형 300x300px)</span></p>
                     </div>
                     
                     <!-- Basic Info -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label>기본 인적사항 (성명/주민번호)</label>
-                            <input type="text" class="styled-input" placeholder="성명 및 앞자리">
+                            <input type="text" class="styled-input" placeholder="예: 홍길동 (900101-1)">
                         </div>
                         <div class="form-group">
                             <label>입사일</label>
@@ -485,48 +489,52 @@
                         </div>
                         <div class="form-group">
                             <label>가족사항</label>
-                            <input type="text" class="styled-input" placeholder="기혼/미혼/자녀 등">
+                            <input type="text" class="styled-input" placeholder="기혼/미혼 및 자녀 등">
                         </div>
-                        <div class="form-group" style="grid-column: span 2;">
-                            <label>주소</label>
-                            <input type="text" class="styled-input" placeholder="상세주소">
+                        <div class="form-group full-width">
+                            <label>거주지 주소</label>
+                            <input type="text" class="styled-input" placeholder="도로명/지번 주소 및 상세주소">
                         </div>
                         <div class="form-group">
                             <label>계약 연봉</label>
-                            <input type="number" class="styled-input" placeholder="숫자만 입력">
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-won-sign"></i>
+                                <input type="number" class="styled-input with-icon" placeholder="단위: 원">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>특이사항</label>
-                            <input type="text" class="styled-input" placeholder="비고란">
+                            <input type="text" class="styled-input" placeholder="입사 시 특이사항 등">
                         </div>
                     </div>
 
                     <!-- Permissions Grid -->
-                    <div style="grid-column: span 2; margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:20px;">
-                        <h3>모듈별 접근 권한 설정</h3>
-                        <table class="erp-table" style="margin-top: 10px;">
+                    <div class="permissions-section">
+                        <h3><i class="fa-solid fa-shield-halved"></i> 시스템 접근 권한 세팅</h3>
+                        <p class="section-desc">해당 사원에게 부여할 시스템 접근 및 수정 권한을 모듈별로 지정합니다.</p>
+                        <table class="erp-table perm-table">
                             <thead>
                                 <tr>
                                     <th>메뉴 모듈</th>
-                                    <th>읽기 권한 (Read)</th>
-                                    <th>쓰기/수정 권한 (Write)</th>
+                                    <th class="text-center">열람 권한 (Read)</th>
+                                    <th class="text-center">생성/수정 권한 (Write)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>인사/근태기록</td>
-                                    <td><input type="checkbox" checked></td>
-                                    <td><input type="checkbox"></td>
+                                    <td>인사 및 근태 관리</td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox" checked></td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>급여관리</td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
+                                    <td>급여 및 현금흐름</td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>영업/결제관리</td>
-                                    <td><input type="checkbox"></td>
-                                    <td><input type="checkbox"></td>
+                                    <td>재고 및 전자결재</td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
+                                    <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                             </tbody>
                         </table>
