@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openVisitorModal() {
         if(visitorEditModal) {
-            visitorEditModal.style.display = 'flex';
+            visitorEditModal.classList.add('show');
             // Pre-fill current number by extracting only digits
             if(visitorCountDisplay) {
                 const currentText = visitorCountDisplay.innerText.replace(/[^0-9]/g, '');
@@ -20,11 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function closeVisModal() {
-        if(visitorEditModal) visitorEditModal.style.display = 'none';
+        if(visitorEditModal) visitorEditModal.classList.remove('show');
     }
 
     if (btnEditVisitor) btnEditVisitor.addEventListener('click', openVisitorModal);
     if (closeVisitorModal) closeVisitorModal.addEventListener('click', closeVisModal);
+    const closeVisitorModalHeader = document.getElementById('closeVisitorModalHeader');
+    if (closeVisitorModalHeader) closeVisitorModalHeader.addEventListener('click', closeVisModal);
     
     if (saveVisitorBtn) {
         saveVisitorBtn.addEventListener('click', () => {
