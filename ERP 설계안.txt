@@ -290,3 +290,8 @@ arn:aws:ec2:ap-northeast-2:727990091652:instance/i-02363786c3edc6ad2
 false
 
 
+https://github.com/chinyangwoo/hongsam-erp.git
+GitHub  ; 
+chinyangwoo
+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
+

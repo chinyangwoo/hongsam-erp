@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listWeek'
             },
-            height: '100%',
+            height: 650,
             events: [
                 {
                     title: '하나투어 진안관광 45명',
