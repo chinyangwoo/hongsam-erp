@@ -216,69 +216,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Infrastructure Line Chart
-    const ctxInfra = document.getElementById('infraChart').getContext('2d');
-    const infraChart = new Chart(ctxInfra, {
+    // 3. Infrastructure Charts (Elec, Gas, Water)
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+            x: { grid: { display: false } }
+        }
+    };
+    const labels = ['04.11', '04.12', '04.13', '04.14', '04.15', '04.16', '오늘'];
+
+    const elecChart = new Chart(document.getElementById('elecChart').getContext('2d'), {
         type: 'line',
         data: {
-            labels: ['04.11', '04.12', '04.13', '04.14', '04.15', '04.16', '오늘'],
-            datasets: [
-                {
-                    label: '전기 (kWh)',
-                    data: [420, 450, 480, 410, 400, 430, 415],
-                    borderColor: '#F59E0B', // Orange
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 0
-                },
-                {
-                    label: '가스 (m3)',
-                    data: [150, 160, 180, 140, 135, 145, 140],
-                    borderColor: '#EF4444', // Red
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 0
-                },
-                {
-                    label: '수도 (ton)',
-                    data: [200, 220, 250, 190, 180, 195, 185],
-                    borderColor: '#3B82F6', // Blue
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 0
-                }
-            ]
+            labels: labels,
+            datasets: [{ label: '전기 (kWh)', data: [420, 450, 480, 410, 400, 430, 415], borderColor: '#F59E0B', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { usePointStyle: true, boxWidth: 8 }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    grid: { display: false }
-                }
-            }
-        }
+        options: chartOptions
     });
+
+    const gasChart = new Chart(document.getElementById('gasChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: '가스 (m3)', data: [150, 160, 180, 140, 135, 145, 140], borderColor: '#EF4444', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
+        },
+        options: chartOptions
+    });
+
+    const waterChart = new Chart(document.getElementById('waterChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: '수도 (ton)', data: [200, 220, 250, 190, 180, 195, 185], borderColor: '#3B82F6', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
+        },
+        options: chartOptions
+    });
+
+    // POS & Accounting Logic Mock Update
+    function updateKPIs() {
+        // [POS 매출 연동 로직 설명]
+        // 1. POS 시스템의 API(예: OKPOS)를 호출하여 금일(today) 및 월간(month) 누적 매출 데이터를 가져옵니다.
+        // 2. Fetch API나 Axios 등을 사용하여 백엔드(서버)에서 POS연동 데이터를 가져오고 HTML에 렌더링합니다.
+        
+        // [지출결의 연동 로직 설명]
+        // 1. 회계 담당자가 시스템에 입력한 지출 데이터베이스(erp_cashflow_db)를 조회.
+        // 2. 전일 날짜에 해당하는 지출을 합산하여 '전일 지출'에 반영.
+        // 3. 매달 1일부터 전일까지 해당하는 지출을 합산하여 '월간 누적 지출'에 반영.
+        
+        let yesterdayTotal = 350000;
+        let monthTotal = 18300400;
+        
+        // 실제 데이터가 있다고 가정할 때의 업데이트
+        const kpiYestExp = document.getElementById('kpi-yesterday-exp');
+        const kpiMonthExp = document.getElementById('kpi-month-exp');
+        if (kpiYestExp) kpiYestExp.innerText = yesterdayTotal.toLocaleString();
+        if (kpiMonthExp) kpiMonthExp.innerText = monthTotal.toLocaleString();
+    }
+    updateKPIs();
 
     function updateChartsTheme() {
         const textColor = body.classList.contains('dark-theme') ? '#94A3B8' : '#6B7280';
         const gridColor = body.classList.contains('dark-theme') ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
         
-        [revenueChart, expenseChart, infraChart].forEach(chart => {
+        [revenueChart, expenseChart, elecChart, gasChart, waterChart].forEach(chart => {
             if(chart.options.scales && chart.options.scales.y) {
                 chart.options.scales.y.grid.color = gridColor;
             }

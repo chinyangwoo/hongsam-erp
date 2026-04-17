@@ -108,8 +108,8 @@
                     <div class="kpi-icon blue"><i class="fa-solid fa-won-sign"></i></div>
                     <div class="kpi-details">
                         <h3>금일 매출</h3>
-                        <p class="amount">1,250,000</p>
-                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> 12.5% vs 어제</span>
+                        <p class="amount" id="kpi-today-rev">1,250,000</p>
+                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
                     </div>
                 </div>
 
@@ -117,17 +117,17 @@
                     <div class="kpi-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
                     <div class="kpi-details">
                         <h3>월간 누적 매출</h3>
-                        <p class="amount">45,120,000</p>
-                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> 8.2% vs 지난달</span>
+                        <p class="amount" id="kpi-month-rev">45,120,000</p>
+                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
                     </div>
                 </div>
                 
                 <div class="kpi-card glassmorphism">
                     <div class="kpi-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     <div class="kpi-details">
-                        <h3>금일 지출</h3>
-                        <p class="amount">350,000</p>
-                        <span class="trend negative"><i class="fa-solid fa-arrow-down"></i> -2.4% vs 평균</span>
+                        <h3>전일 지출</h3>
+                        <p class="amount" id="kpi-yesterday-exp">350,000</p>
+                        <span class="trend negative"><i class="fa-solid fa-arrow-down"></i> 지출결의 연동됨</span>
                     </div>
                 </div>
 
@@ -135,11 +135,11 @@
                     <div class="kpi-icon red"><i class="fa-solid fa-wallet"></i></div>
                     <div class="kpi-details">
                         <h3>월간 누적 지출</h3>
-                        <p class="amount">18,300,400</p>
+                        <p class="amount" id="kpi-month-exp">18,300,400</p>
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" style="width: 45%;"></div>
                         </div>
-                        <span class="trend neutral">예산 대비 45% 소진</span>
+                        <span class="trend neutral">지출결의 연동됨</span>
                     </div>
                 </div>
             </section>
@@ -168,19 +168,31 @@
                     </div>
                 </div>
 
-                <!-- Line Chart: Infra -->
-                <div class="chart-container glassmorphism col-span-3">
+                <!-- Line Chart: Electricity -->
+                <div class="chart-container glassmorphism col-span-1">
                     <div class="chart-header">
-                        <h2>인프라 일일 사용량 (전기 / 가스 / 수도)</h2>
-                        <div class="chart-actions">
-                            <select class="styled-select">
-                                <option>최근 7일</option>
-                                <option>이번 달</option>
-                            </select>
-                        </div>
+                        <h2>전기 사용량</h2>
                     </div>
-                    <div class="chart-body" style="height: 250px;">
-                        <canvas id="infraChart"></canvas>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="elecChart"></canvas>
+                    </div>
+                </div>
+                <!-- Line Chart: Gas -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>가스 사용량</h2>
+                    </div>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="gasChart"></canvas>
+                    </div>
+                </div>
+                <!-- Line Chart: Water -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>수도 사용량</h2>
+                    </div>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="waterChart"></canvas>
                     </div>
                 </div>
             </section>
