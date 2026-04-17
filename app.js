@@ -148,19 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Sidebar Toggle for Mobile
-    const sidebarToggleBtn = document.getElementById('sidebarToggle');
-    const sidebar = document.querySelector('.sidebar');
-    
-    sidebarToggleBtn.addEventListener('click', () => {
-        const currentTransform = sidebar.style.transform;
-        if (currentTransform === 'translateX(0px)') {
-            sidebar.style.transform = 'translateX(-100%)';
-        } else {
-            sidebar.style.transform = 'translateX(0px)';
-        }
-    });
-
     // Chart.js Default styling
     Chart.defaults.color = body.classList.contains('dark-theme') ? '#94A3B8' : '#6B7280';
     Chart.defaults.font.family = "'Inter', sans-serif";
