@@ -26,6 +26,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // 1-b. Payroll KPI Dropdown Selectors
+    function formatWon(num) {
+        if (num >= 10000000) return (num / 10000000).toFixed(1).replace(/\.0$/, '') + '천만';
+        if (num >= 1000000)  return (num / 1000000).toFixed(0) + '만';
+        return num.toLocaleString('ko-KR') + '원';
+    }
+
+    const teamSelect = document.getElementById('teamSelect');
+    const teamAmountDisplay = document.getElementById('teamAmountDisplay');
+    if (teamSelect && teamAmountDisplay) {
+        teamSelect.addEventListener('change', () => {
+            const selected = teamSelect.options[teamSelect.selectedIndex];
+            const amount = parseInt(selected.getAttribute('data-amount'), 10);
+            teamAmountDisplay.textContent = formatWon(amount);
+        });
+    }
+
+    const rankSelect = document.getElementById('rankSelect');
+    const rankAmountDisplay = document.getElementById('rankAmountDisplay');
+    if (rankSelect && rankAmountDisplay) {
+        rankSelect.addEventListener('change', () => {
+            const selected = rankSelect.options[rankSelect.selectedIndex];
+            const amount = parseInt(selected.getAttribute('data-amount'), 10);
+            rankAmountDisplay.textContent = formatWon(amount);
+        });
+    }
+
     // 2. Profile Modal Logic
     const profileModal = document.getElementById('profileModal');
     const closeBtn1 = document.getElementById('closeProfileModal');

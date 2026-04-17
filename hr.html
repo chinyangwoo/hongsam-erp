@@ -194,18 +194,36 @@
             <!-- TAB (NEW): 급여관리 -->
             <section id="tab-payroll" class="tab-content" style="display: none;">
                 <div class="kpi-grid">
+                    <!-- 팀별 급여총액 카드 -->
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon indigo"><i class="fa-solid fa-people-group"></i></div>
-                        <div class="kpi-details">
+                        <div class="kpi-details" style="width:100%;">
                             <h3>팀별 급여지급총액</h3>
-                            <p class="amount">운영팀 2,500만</p>
+                            <select id="teamSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
+                                <option value="운영팀" data-amount="25000000" style="background:#0F172A;">운영팀</option>
+                                <option value="식음료팀" data-amount="18500000" style="background:#0F172A;">식음료팀</option>
+                                <option value="경영지원팀" data-amount="12000000" style="background:#0F172A;">경영지원팀</option>
+                                <option value="공무팀" data-amount="9900000" style="background:#0F172A;">공무팀</option>
+                                <option value="마케팅팀" data-amount="7800000" style="background:#0F172A;">마케팅팀</option>
+                            </select>
+                            <p class="amount" id="teamAmountDisplay">2,500만</p>
                         </div>
                     </div>
+                    <!-- 직급별 급여총액 카드 -->
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon blue"><i class="fa-solid fa-user-tie"></i></div>
-                        <div class="kpi-details">
+                        <div class="kpi-details" style="width:100%;">
                             <h3>직급별 급여지급총액</h3>
-                            <p class="amount">크루 1,800만</p>
+                            <select id="rankSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
+                                <option value="크루" data-amount="18000000" style="background:#0F172A;">크루 (일반직)</option>
+                                <option value="주임" data-amount="22000000" style="background:#0F172A;">주임</option>
+                                <option value="대리" data-amount="25500000" style="background:#0F172A;">대리</option>
+                                <option value="과장" data-amount="29000000" style="background:#0F172A;">과장</option>
+                                <option value="차장" data-amount="34000000" style="background:#0F172A;">차장</option>
+                                <option value="부장" data-amount="42000000" style="background:#0F172A;">부장</option>
+                                <option value="임원" data-amount="65000000" style="background:#0F172A;">임원</option>
+                            </select>
+                            <p class="amount" id="rankAmountDisplay">1,800만</p>
                         </div>
                     </div>
                     <div class="kpi-card glassmorphism">
