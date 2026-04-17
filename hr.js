@@ -109,11 +109,113 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Edit Payroll (Mock)
-    const btnEditPayroll = document.getElementById('btnEditPayroll');
-    if (btnEditPayroll) {
-        btnEditPayroll.addEventListener('click', () => {
-            alert('급여 내역은 자체 전용 프로그램(더존 등)에서 직접 관리/동기화됩니다.\nERP 대시보드에서는 직원별 급여명세 조회 목적으로만 열람 가능합니다.');
+    // Payroll Quick Edit Modal
+    const payrollModal      = document.getElementById('payrollModal');
+    const btnEditPayroll    = document.getElementById('btnEditPayroll');
+    const closePayrollModal = document.getElementById('closePayrollModal');
+    const cancelPayrollModal= document.getElementById('cancelPayrollModal');
+    const savePayrollBtn    = document.getElementById('savePayrollBtn');
+    const pNetDisplay       = document.getElementById('pNetDisplay');
+    const payrollTbody      = document.querySelector('#tab-payroll table tbody');
+
+    const payrollInputIds = ['pBase','pMeal','pOT','pNP','pHI','pEI','pTax'];
+
+    function calcNet() {
+        const base = Number(document.getElementById('pBase')?.value) || 0;
+        const meal = Number(document.getElementById('pMeal')?.value) || 0;
+        const ot   = Number(document.getElementById('pOT')?.value)   || 0;
+        const np   = Number(document.getElementById('pNP')?.value)   || 0;
+        const hi   = Number(document.getElementById('pHI')?.value)   || 0;
+        const ei   = Number(document.getElementById('pEI')?.value)   || 0;
+        const tax  = Number(document.getElementById('pTax')?.value)  || 0;
+        const net  = base + meal + ot - np - hi - ei - tax;
+        if (pNetDisplay) pNetDisplay.textContent = net.toLocaleString('ko-KR') + ' 원';
+        return net;
+    }
+
+    // Live update on any input change
+    payrollInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', calcNet);
+    });
+
+    function openPayrollModal() {
+        if (!payrollModal) return;
+        ['pEmpId','pName', ...payrollInputIds].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        if (pNetDisplay) pNetDisplay.textContent = '0 원';
+        payrollModal.style.display = 'flex';
+        document.getElementById('pEmpId')?.focus();
+    }
+
+    function closePayrollModalFn() {
+        if (payrollModal) payrollModal.style.display = 'none';
+    }
+
+    if (btnEditPayroll)     btnEditPayroll.addEventListener('click', openPayrollModal);
+    if (closePayrollModal)  closePayrollModal.addEventListener('click', closePayrollModalFn);
+    if (cancelPayrollModal) cancelPayrollModal.addEventListener('click', closePayrollModalFn);
+    if (payrollModal) {
+        payrollModal.addEventListener('click', (e) => {
+            if (e.target === payrollModal) closePayrollModalFn();
+        });
+    }
+
+    if (savePayrollBtn) {
+        savePayrollBtn.addEventListener('click', () => {
+            const empId = document.getElementById('pEmpId')?.value.trim();
+            const name  = document.getElementById('pName')?.value.trim();
+            if (!empId || !name) {
+                alert('사번과 이름은 필수 입력 항목입니다.');
+                return;
+            }
+
+            const base = Number(document.getElementById('pBase')?.value) || 0;
+            const meal = Number(document.getElementById('pMeal')?.value) || 0;
+            const ot   = Number(document.getElementById('pOT')?.value)   || 0;
+            const np   = Number(document.getElementById('pNP')?.value)   || 0;
+            const hi   = Number(document.getElementById('pHI')?.value)   || 0;
+            const ei   = Number(document.getElementById('pEI')?.value)   || 0;
+            const tax  = Number(document.getElementById('pTax')?.value)  || 0;
+            const net  = base + meal + ot - np - hi - ei - tax;
+
+            const fmt = (n, neg=false) => (neg ? '-' : '') + n.toLocaleString('ko-KR');
+
+            if (payrollTbody) {
+                // Check if row for same empId already exists → update it
+                let existingRow = null;
+                payrollTbody.querySelectorAll('tr').forEach(row => {
+                    if (row.cells[0]?.textContent.trim() === empId) existingRow = row;
+                });
+
+                const rowHTML = `
+                    <td>${empId}</td>
+                    <td>${name}</td>
+                    <td class="text-right">${fmt(base)}</td>
+                    <td class="text-right">${fmt(meal)}</td>
+                    <td class="text-right">${fmt(ot)}</td>
+                    <td class="text-right">${fmt(np, true)}</td>
+                    <td class="text-right">${fmt(hi, true)}</td>
+                    <td class="text-right">${fmt(ei, true)}</td>
+                    <td class="text-right">${fmt(tax, true)}</td>
+                    <td class="text-right highlight">${fmt(net)}</td>
+                `;
+                if (existingRow) {
+                    existingRow.innerHTML = rowHTML;
+                    existingRow.style.background = 'rgba(16,185,129,0.12)';
+                    setTimeout(() => existingRow.style.background = '', 1500);
+                } else {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = rowHTML;
+                    newRow.style.background = 'rgba(59,130,246,0.10)';
+                    payrollTbody.appendChild(newRow);
+                    setTimeout(() => newRow.style.background = '', 1500);
+                }
+            }
+
+            closePayrollModalFn();
         });
     }
 
