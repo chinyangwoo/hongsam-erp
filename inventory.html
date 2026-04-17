@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홍삼스파 - 재고 및 공무 관리</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="inventory.css">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+            <button class="toggle-btn" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item active">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>재고 및 공무 관리</h1>
+                <p>구역별 실시간 재고장 및 시설물 유지보수 기록</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-primary" id="btnRequestOrder">
+                    <i class="fa-solid fa-cart-arrow-down"></i> 부족 물품 전체 발주
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            
+            <!-- Global Inventory Alert Banner if safe stock is reached -->
+            <div class="alert-banner" id="inventoryAlertWarning" style="margin-bottom: 0;">
+                <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="alert-content">
+                    <strong>1층, 루프탑 재고 부족 알림:</strong> 현재 2개 품목이 안전 재고량 이하로 떨어졌습니다. 발주 승인이 필요합니다.
+                </div>
+                <button class="alert-close" onclick="document.getElementById('inventoryAlertWarning').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Tab Navigation (Reusing HR CSS for tabs) -->
+            <div class="inv-tabs-container">
+                <ul class="inv-tabs">
+                    <li class="tab-btn active" data-target="tab-inventory">
+                        <i class="fa-solid fa-layer-group"></i> 구역별 실시간 재고장
+                    </li>
+                    <li class="tab-btn" data-target="tab-maintenance">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> 시설 점검 및 고장 대장
+                    </li>
+                </ul>
+            </div>
+
+            <!-- TAB 1: Inventory Table -->
+            <div class="tab-content active" id="tab-inventory">
+                <div class="action-bar glassmorphism">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="품목명, 카테고리 검색...">
+                    </div>
+                    <div class="filter-box">
+                        <select class="styled-select">
+                            <option value="all">전체 구역</option>
+                            <option value="1f">1층 (프런트/카페)</option>
+                            <option value="2f">2층 (스파/대온천탕)</option>
+                            <option value="rooftop">루프탑 (인피니티풀/사우나)</option>
+                            <option value="common">공통 창고</option>
+                        </select>
+                        <select class="styled-select">
+                            <option value="all">상태 전체</option>
+                            <option value="warning">재고 부족 (안전치 미달)</option>
+                            <option value="normal">정상</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container glassmorphism">
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>품목명</th>
+                                    <th>구역</th>
+                                    <th>카테고리</th>
+                                    <th class="text-right">현재 재고</th>
+                                    <th class="text-right">안전 재고 기준</th>
+                                    <th>상태 (Status)</th>
+                                    <th>액션</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="stock-critical">
+                                    <td><strong>대형 비치타월</strong></td>
+                                    <td>루프탑</td>
+                                    <td>비품/린넨</td>
+                                    <td class="text-right qty-critical">35 장</td>
+                                    <td class="text-right">100 장</td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>고급 원두 (에스프레소)</strong></td>
+                                    <td>1층</td>
+                                    <td>식자재</td>
+                                    <td class="text-right">12 Kg</td>
+                                    <td class="text-right">5 Kg</td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="stock-critical">
+                                    <td><strong>바디 워시 (대용량)</strong></td>
+                                    <td>2층 스파</td>
+                                    <td>어메니티</td>
+                                    <td class="text-right qty-critical">2 말</td>
+                                    <td class="text-right">5 말</td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 발주 필요</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>A4 복사용지 (상자)</strong></td>
+                                    <td>공통 창고</td>
+                                    <td>사무용품</td>
+                                    <td class="text-right">14 박스</td>
+                                    <td class="text-right">5 박스</td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td>
+                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Maintenance Ledger (Split View) -->
+            <div class="tab-content" id="tab-maintenance" style="display: none;">
+                <div class="maintenance-grid">
+                    
+                    <!-- LEFT: Daily Inspection Form -->
+                    <div class="maint-panel glassmorphism">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-clipboard-check"></i> 일일 정기점검 폼 (Form)</h2>
+                            <span class="date-badge">2026. 04. 17</span>
+                        </div>
+                        <div class="panel-body">
+                            <form class="inspection-form">
+                                <div class="form-group">
+                                    <label>1. 보일러실 가스 누출 여부 점검</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="gas" value="ok" checked> 정상 (누출없음)</label>
+                                        <label><input type="radio" name="gas" value="bad"> 이상 있음 방면</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>2. 메인 수배전반(전기) 전압 및 온도 기록</label>
+                                    <div class="input-inline">
+                                        <input type="number" placeholder="전압 (V)" class="f-input" value="380">
+                                        <input type="number" placeholder="온도 (℃)" class="f-input" value="28">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>3. 각 층 소화기 비치 상태 및 압력 게이지</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="fire" value="ok" checked> 정상 범위</label>
+                                        <label><input type="radio" name="fire" value="bad"> 재충전 필요 (비고 기재)</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>특이사항 (비고란)</label>
+                                    <textarea placeholder="특이사항 없음" class="f-textarea" rows="3"></textarea>
+                                </div>
+                                <div class="form-submit">
+                                    <button type="button" class="btn-primary w-100" id="btnSubmitInspection">오늘 점검 완료 저장</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Fault & Repair Ledger -->
+                    <div class="maint-panel glassmorphism">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
+                            <button class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
+                        </div>
+                        <div class="panel-body ledger-list-container">
+                            <div class="ledger-item critical">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-important">수리중</span>
+                                    <span class="l-date">접수: 2026.04.16</span>
+                                </div>
+                                <h4>루프탑 인피니티풀 순환 모터 소음 불량</h4>
+                                <p>모터 베어링 파손 의심. 현재 외부 수리업체(한일모터스) 방문 대기 중. 예비 모터 가동 중.</p>
+                                <div class="l-footer">
+                                    <span>담당: 공무팀 박철수</span>
+                                    <span>비용 예상: 450,000원</span>
+                                </div>
+                            </div>
+
+                            <div class="ledger-item resolved">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-general">수리완료</span>
+                                    <span class="l-date">접수: 2026.04.14</span>
+                                </div>
+                                <h4>2층 남탕 샤워기 3번 수압 약함</h4>
+                                <p>샤워기 헤드 내부 스케일 제거 및 고무패킹 교체 완료.</p>
+                                <div class="l-footer">
+                                    <span>담당: 공무팀 김민규</span>
+                                    <span>완료: 2026.04.15</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ledger-item pending">
+                                <div class="ledger-meta">
+                                    <span class="tag tag-hr">접수대기</span>
+                                    <span class="l-date">접수: 2026.04.17</span>
+                                </div>
+                                <h4>1층 프런트 우측 조명 램프 1개 나감</h4>
+                                <p>LED 다운라이트(주백색) 교체 요망.</p>
+                                <div class="l-footer">
+                                    <span>보고자: 운영팀 프런트</span>
+                                    <span>배정 요망</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Custom View logic -->
+    <script src="app.js"></script>
+    <script src="inventory.js"></script>
+</body>
+</html>

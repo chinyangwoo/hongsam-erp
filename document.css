@@ -1,0 +1,245 @@
+/* Document Management Module Specific Styles */
+
+.doc-container {
+    display: flex;
+    flex: 1;
+    margin: 10px 40px;
+    margin-bottom: 30px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    height: calc(100vh - var(--header-height) - 40px);
+}
+
+@media (max-width: 1024px) {
+    .doc-container {
+        margin: 10px 20px;
+        flex-direction: column;
+        height: auto;
+    }
+}
+
+/* ---------------- Left Pane (Folder Tree) ---------------- */
+.doc-sidebar {
+    width: 280px;
+    background: rgba(0, 0, 0, 0.2);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+@media (max-width: 1024px) {
+    .doc-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}
+
+.folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+.folder-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.btn-icon-small {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+.btn-icon-small:hover { color: var(--accent-blue); }
+
+.folder-list {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.folder-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.folder-item i {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.folder-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.folder-item.active {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+    border-right: 3px solid var(--accent-blue);
+    font-weight: 600;
+}
+.folder-item.active i {
+    color: var(--accent-blue);
+}
+
+.folder-item.restricted i {
+    color: var(--accent-orange);
+}
+
+/* Storage Bar */
+.storage-info {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+.storage-info .s-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* ---------------- Right Pane (File Explorer) ---------------- */
+.doc-explorer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.explorer-toolbar {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-box i {
+    position: absolute;
+    margin-left: 14px;
+    margin-top: 12px;
+    color: var(--text-secondary);
+}
+
+.search-box input {
+    width: 350px;
+    padding: 10px 10px 10px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+}
+.search-box input:focus { border-color: var(--accent-blue); }
+
+.view-toggles {
+    display: flex;
+    gap: 8px;
+}
+.view-toggles .btn-icon {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+.view-toggles .btn-icon.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+}
+
+.breadcrumb {
+    padding: 16px 30px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+.breadcrumb span.active {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.breadcrumb i {
+    font-size: 0.7rem;
+    margin: 0 8px;
+}
+
+/* File List Grid */
+.file-list-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+    padding: 12px 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.file-list-body {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.file-item {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+    padding: 16px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    align-items: center;
+    transition: var(--transition);
+    font-size: 0.95rem;
+}
+.file-item:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.col-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.col-date, .col-user, .col-size {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Icons */
+.icon-pdf { color: var(--accent-red); font-size: 1.4rem; }
+.icon-hwp { color: var(--accent-blue); font-size: 1.4rem; } 
+.icon-excel { color: var(--accent-green); font-size: 1.4rem; }
+.icon-img { color: var(--accent-orange); font-size: 1.4rem; }
+
+.f-name { font-weight: 500; }
+
+.btn-action {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 12px;
+    transition: var(--transition);
+}
+.btn-action:hover { color: var(--accent-blue); }
+.text-danger:hover { color: var(--accent-red); }

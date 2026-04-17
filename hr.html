@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홍삼스파 - 인사 및 근태</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hr.css">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+            <button class="toggle-btn" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="hr.html" class="nav-item active">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header section -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>HR · 인사 · 근태</h1>
+                <p>총원 50명 / 재직 인력 관리</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-primary" id="btnAddNewEmployee">
+                    <i class="fa-solid fa-user-plus"></i> 신규 사원 등록
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                <div class="notification-bell">
+                    <i class="fa-regular fa-bell"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- HR Container -->
+        <div class="dashboard-container">
+            
+            <!-- Tab Navigation -->
+            <div class="hr-tabs-container glassmorphism">
+                <ul class="hr-tabs">
+                    <li class="tab-btn active" data-target="tab-personnel">
+                        <i class="fa-regular fa-id-card"></i> 인사기록카드
+                    </li>
+                    <li class="tab-btn" data-target="tab-attendance">
+                        <i class="fa-solid fa-fingerprint"></i> 근태 및 출퇴근
+                    </li>
+                    <li class="tab-btn" data-target="tab-vacation">
+                        <i class="fa-solid fa-plane-departure"></i> 연차/휴가 현황
+                    </li>
+                </ul>
+            </div>
+
+            <!-- TAB 1: 인사기록카드 목록 -->
+            <section id="tab-personnel" class="tab-content active">
+                <div class="action-bar glassmorphism">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="사번, 이름, 부서 검색...">
+                    </div>
+                    <div class="filter-box">
+                        <select class="styled-select">
+                            <option value="all">부서 전체</option>
+                            <option value="지원팀">지원팀</option>
+                            <option value="운영팀">운영팀</option>
+                            <option value="식음료팀">식음료팀</option>
+                            <option value="공무팀">공무팀</option>
+                        </select>
+                        <select class="styled-select">
+                            <option value="all">직급 전체</option>
+                            <option value="큐레이터">팀장 (큐레이터)</option>
+                            <option value="크루">팀원 (크루)</option>
+                            <option value="알바">계약직 (알바)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="personnel-grid">
+                    <!-- Sample Card 1 -->
+                    <div class="employee-card glassmorphism" onclick="openProfileModal(105)">
+                        <div class="emp-photo">
+                            <img src="https://ui-avatars.com/api/?name=홍길동&background=random" alt="Photo">
+                        </div>
+                        <div class="emp-info">
+                            <h3 class="emp-name">홍길동 <span class="emp-id">105</span></h3>
+                            <p class="emp-dept">운영팀 (2층 스파담당)</p>
+                            <span class="emp-role tag-general">팀원 (크루)</span>
+                        </div>
+                        <div class="emp-status">
+                            <div class="status-dot online"></div> 정상근무
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Card 2 -->
+                    <div class="employee-card glassmorphism" onclick="openProfileModal(021)">
+                        <div class="emp-photo">
+                            <img src="https://ui-avatars.com/api/?name=김지원&background=random" alt="Photo">
+                        </div>
+                        <div class="emp-info">
+                            <h3 class="emp-name">김지원 <span class="emp-id">021</span></h3>
+                            <p class="emp-dept">지원팀 (인사/총무)</p>
+                            <span class="emp-role tag-important">팀장 (큐레이터)</span>
+                        </div>
+                        <div class="emp-status">
+                            <div class="status-dot offline"></div> 휴가중
+                        </div>
+                    </div>
+
+                    <!-- Sample Card 3 -->
+                    <div class="employee-card glassmorphism" onclick="openProfileModal(203)">
+                        <div class="emp-photo">
+                            <img src="https://ui-avatars.com/api/?name=박철수&background=random" alt="Photo">
+                        </div>
+                        <div class="emp-info">
+                            <h3 class="emp-name">박철수 <span class="emp-id">203</span></h3>
+                            <p class="emp-dept">공무팀 (시설/전기)</p>
+                            <span class="emp-role tag-general">팀원 (크루)</span>
+                        </div>
+                        <div class="emp-status">
+                            <div class="status-dot online"></div> 정상근무
+                        </div>
+                    </div>
+
+                    <!-- Sample Card 4 -->
+                    <div class="employee-card glassmorphism" onclick="openProfileModal(304)">
+                        <div class="emp-photo">
+                            <img src="https://ui-avatars.com/api/?name=이영희&background=random" alt="Photo">
+                        </div>
+                        <div class="emp-info">
+                            <h3 class="emp-name">이영희 <span class="emp-id">304</span></h3>
+                            <p class="emp-dept">식음료팀 (루프탑)</p>
+                            <span class="emp-role tag-hr">계약직 (알바)</span>
+                        </div>
+                        <div class="emp-status">
+                            <div class="status-dot online"></div> 정상근무
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: 근태 기록 및 출퇴근 -->
+            <section id="tab-attendance" class="tab-content" style="display: none;">
+                <div class="table-container glassmorphism">
+                    <div class="table-header">
+                        <h2>금일 캡스(CAPS) 출퇴근 기록 연동</h2>
+                        <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>날짜</th>
+                                    <th>사번</th>
+                                    <th>이름</th>
+                                    <th>부서</th>
+                                    <th>출근 (지문/태그)</th>
+                                    <th>퇴근</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2026.04.17</td>
+                                    <td>105</td>
+                                    <td>홍길동</td>
+                                    <td>운영팀</td>
+                                    <td class="time-stamp">08:52:11</td>
+                                    <td class="time-stamp">-</td>
+                                    <td><span class="status st-approved">정상출근</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2026.04.17</td>
+                                    <td>203</td>
+                                    <td>박철수</td>
+                                    <td>공무팀</td>
+                                    <td class="time-stamp late-stamp">09:12:45</td>
+                                    <td class="time-stamp">-</td>
+                                    <td><span class="status st-pending">지각</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2026.04.17</td>
+                                    <td>021</td>
+                                    <td>김지원</td>
+                                    <td>지원팀</td>
+                                    <td class="time-stamp">-</td>
+                                    <td class="time-stamp">-</td>
+                                    <td><span class="status st-vacation">휴가 (연차)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: 연차 및 휴가 현황 -->
+            <section id="tab-vacation" class="tab-content" style="display: none;">
+                <div class="table-container glassmorphism">
+                    <div class="table-header">
+                        <h2>부서별 연차 사용 현황 (2026년 기준)</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>사번</th>
+                                    <th>이름</th>
+                                    <th>부서</th>
+                                    <th>총 연차배정</th>
+                                    <th>사용 연차</th>
+                                    <th>잔여 연차</th>
+                                    <th>사용률 현황</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>105</td>
+                                    <td>홍길동</td>
+                                    <td>운영팀</td>
+                                    <td>15일</td>
+                                    <td>3일</td>
+                                    <td class="highlight text-right">12일</td>
+                                    <td class="progress-cell">
+                                        <div class="progress-bar-bg" style="margin:0;">
+                                            <div class="progress-bar-fill" style="width: 20%; background: var(--accent-blue);"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>021</td>
+                                    <td>김지원</td>
+                                    <td>지원팀</td>
+                                    <td>15일</td>
+                                    <td>12일</td>
+                                    <td class="late-stamp text-right">3일</td>
+                                    <td class="progress-cell">
+                                        <div class="progress-bar-bg" style="margin:0;">
+                                            <div class="progress-bar-fill" style="width: 80%; background: var(--accent-red);"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modal: Digital Profile Card -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-content glassmorphism">
+            <div class="modal-header">
+                <h2>디지털 인사기록카드</h2>
+                <div class="modal-actions">
+                    <button class="btn-pdf" title="PDF 출력"><i class="fa-solid fa-file-pdf"></i></button>
+                    <button class="btn-close" id="closeProfileModal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            
+            <div class="modal-body profile-grid">
+                <!-- Left: Photo & Basic Check -->
+                <div class="profile-left">
+                    <div class="emp-photo-large">
+                        <img src="https://ui-avatars.com/api/?name=홍길동&background=random&size=150" alt="Profile">
+                    </div>
+                    <div class="basic-tags">
+                        <span class="tag tag-important">정규직</span>
+                        <span class="tag tag-general">운영팀</span>
+                    </div>
+                </div>
+                
+                <!-- Right: Tabs Details -->
+                <div class="profile-right">
+                    <h1 class="p-name">홍길동 <span class="p-id">사번: 105</span></h1>
+                    <p class="p-job">직무: 스파 2층 담당 / 직급: 팀원 (크루)</p>
+                    
+                    <div class="p-info-grid">
+                        <div class="info-item">
+                            <span class="label">입사일</span>
+                            <span class="val">2025. 01. 15</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">연락처</span>
+                            <span class="val">010-1234-5678</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">생년월일</span>
+                            <span class="val">1990. 05. 21</span>
+                        </div>
+                        <div class="info-item restricted-info" title="읽기 권한자만 열람 가능">
+                            <span class="label">연봉(계약)</span>
+                            <span class="val blur-if-no-auth"><i class="fa-solid fa-lock"></i> 38,000,000</span>
+                        </div>
+                    </div>
+
+                    <div class="p-family">
+                        <h4>가족사항</h4>
+                        <p>기혼 (자녀 1명)</p>
+                    </div>
+
+                    <div class="p-timeline-section">
+                        <h4>근속/상벌 타임라인 이력</h4>
+                        <ul class="timeline">
+                            <li>
+                                <div class="t-date">2026.03.10</div>
+                                <div class="t-event">우수사원 표창 (본사)</div>
+                            </li>
+                            <li>
+                                <div class="t-date">2025.12.01</div>
+                                <div class="t-event">면담내용: 직무 만족도 높음, 스파 관리자 교육 이수 완.</div>
+                            </li>
+                            <li>
+                                <div class="t-date">2025.01.15</div>
+                                <div class="t-event">경력직(운영팀 크루) 최종 입사</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeProfileModalBtn">닫기</button>
+                <button class="btn-primary"><i class="fa-solid fa-pen-to-square"></i> 정보수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom View logic -->
+    <script src="app.js"></script>
+    <script src="hr.js"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+/* Bulletin Board Module Specific Styles */
+
+.board-layout {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-height) - 40px);
+    margin: 10px 40px;
+    margin-bottom: 30px;
+    border-radius: var(--radius-lg);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1024px) {
+    .board-layout {
+        margin: 10px 20px;
+        height: auto;
+        min-height: 80vh;
+    }
+}
+
+/* ---------------- Toolbar ---------------- */
+.board-toolbar {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.b-categories {
+    display: flex;
+    gap: 8px;
+}
+
+.b-cat-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.b-cat-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+.b-cat-btn.active {
+    background: var(--accent-blue);
+    color: #fff;
+    font-weight: 600;
+}
+
+.b-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.search-box i {
+    position: absolute;
+    margin-left: 14px;
+    margin-top: 10px;
+    color: var(--text-secondary);
+}
+
+.search-box input {
+    width: 250px;
+    padding: 10px 10px 10px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+}
+.search-box input:focus { border-color: var(--accent-blue); }
+
+/* ---------------- Table Area ---------------- */
+.board-table-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 30px;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.board-table th {
+    padding: 16px 12px;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: left;
+}
+.board-table th.text-center { text-align: center; }
+
+.board-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+.board-table td.text-center { text-align: center; }
+.board-table td.b-title { font-weight: 500; cursor: pointer; transition: color 0.2s;}
+.board-table td.b-title:hover { color: var(--accent-blue); text-decoration: underline;}
+
+.clickable-row { transition: var(--transition); }
+.clickable-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+.pinned {
+    background: rgba(59, 130, 246, 0.03);
+}
+.pinned td {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Category Tags */
+.tag-cat {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.tag-cat.important { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+.tag-cat.notice { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+.tag-cat.study { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+.tag-cat.free { background: rgba(107, 114, 128, 0.2); color: var(--text-primary); }
+
+.reply-cnt {
+    color: var(--accent-blue);
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-left: 6px;
+}
+.b-new {
+    background: var(--accent-orange);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-weight: 700;
+}
+
+/* ---------------- Pagination ---------------- */
+.b-pagination {
+    padding: 20px 30px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pg-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+.pg-btn:not(.disabled):hover {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+.pg-btn.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+}
+.pg-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---------------- Post View Overlay ---------------- */
+.post-view-area {
+    display: flex;
+    flex-direction: column;
+    height: calc(90vh - 70px); /* Fill modal body height properly */
+}
+
+.post-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.post-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.p-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+.p-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.p-details {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.post-content {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    padding-right: 10px; /* Optional custom scrollbar spacing */
+}
+.post-content p {
+    margin-bottom: 16px;
+}
+
+.post-comments {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 20px;
+}
+
+.post-comments h4 {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+}
+
+.comment-input-area {
+    display: flex;
+    gap: 10px;
+}
+.comment-input-area input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    outline: none;
+}
+.comment-input-area input:focus {
+    border-color: var(--accent-blue);
+}
