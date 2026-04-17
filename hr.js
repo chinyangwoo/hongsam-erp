@@ -60,11 +60,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Add New Employee Button
+    // 4. Add New Employee Modal Logic
     const btnAddNewEmployee = document.getElementById('btnAddNewEmployee');
+    const newEmpModal = document.getElementById('newEmpModal');
+    const closeNewEmpModal = document.getElementById('closeNewEmpModal');
+    const closeNewEmpModalBtn = document.getElementById('closeNewEmpModalBtn');
+    const saveNewEmpBtn = document.getElementById('saveNewEmpBtn');
+    
+    // Photo preview
+    const empPhotoUpload = document.getElementById('empPhotoUpload');
+    const photoPreview = document.getElementById('photoPreview');
+    
+    if (empPhotoUpload) {
+        empPhotoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    if (photoPreview) photoPreview.src = evt.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    function closeNewModal() {
+        if (newEmpModal) {
+            newEmpModal.style.display = 'none';
+            const form = document.getElementById('newEmpForm');
+            if(form) form.reset();
+            if(photoPreview) photoPreview.src = 'https://via.placeholder.com/150';
+        }
+    }
+
     if(btnAddNewEmployee) {
         btnAddNewEmployee.addEventListener('click', () => {
-            alert('신규 사원 등록 양식이 준비 중입니다. (기능 연동 대기)');
+            if (newEmpModal) newEmpModal.style.display = 'flex';
+        });
+    }
+    
+    if (closeNewEmpModal) closeNewEmpModal.addEventListener('click', closeNewModal);
+    if (closeNewEmpModalBtn) closeNewEmpModalBtn.addEventListener('click', closeNewModal);
+    
+    if (saveNewEmpBtn) {
+        saveNewEmpBtn.addEventListener('click', () => {
+            alert('신규 사원이 성공적으로 등록되었습니다.');
+            closeNewModal();
+        });
+    }
+    
+    // Edit Payroll (Mock)
+    const btnEditPayroll = document.getElementById('btnEditPayroll');
+    if (btnEditPayroll) {
+        btnEditPayroll.addEventListener('click', () => {
+            alert('급여 내역은 자체 전용 프로그램(더존 등)에서 직접 관리/동기화됩니다.\nERP 대시보드에서는 직원별 급여명세 조회 목적으로만 열람 가능합니다.');
         });
     }
 

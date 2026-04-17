@@ -92,8 +92,11 @@
                     <li class="tab-btn active" data-target="tab-personnel">
                         <i class="fa-regular fa-id-card"></i> 인사기록카드
                     </li>
+                    <li class="tab-btn" data-target="tab-payroll">
+                        <i class="fa-solid fa-money-check-dollar"></i> 급여관리
+                    </li>
                     <li class="tab-btn" data-target="tab-attendance">
-                        <i class="fa-solid fa-fingerprint"></i> 근태 및 출퇴근
+                        <i class="fa-solid fa-fingerprint"></i> 근태관리
                     </li>
                     <li class="tab-btn" data-target="tab-vacation">
                         <i class="fa-solid fa-plane-departure"></i> 연차/휴가 현황
@@ -184,6 +187,80 @@
                         <div class="emp-status">
                             <div class="status-dot online"></div> 정상근무
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB (NEW): 급여관리 -->
+            <section id="tab-payroll" class="tab-content" style="display: none;">
+                <div class="kpi-grid">
+                    <div class="kpi-card glassmorphism">
+                        <div class="kpi-icon indigo"><i class="fa-solid fa-people-group"></i></div>
+                        <div class="kpi-details">
+                            <h3>팀별 급여지급총액</h3>
+                            <p class="amount">운영팀 2,500만</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card glassmorphism">
+                        <div class="kpi-icon blue"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="kpi-details">
+                            <h3>직급별 급여지급총액</h3>
+                            <p class="amount">크루 1,800만</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card glassmorphism">
+                        <div class="kpi-icon red"><i class="fa-solid fa-sack-dollar"></i></div>
+                        <div class="kpi-details">
+                            <h3>전사원 급여지급총액</h3>
+                            <p class="amount">65,400,000</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card glassmorphism">
+                        <div class="kpi-icon orange"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div class="kpi-details">
+                            <h3>월 매출 대비 인건비 비중</h3>
+                            <p class="amount">28.5%</p>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 28.5%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container glassmorphism" style="margin-top: 20px;">
+                    <div class="table-header">
+                        <h2>직원별 간편 급여 내역 (더존 양식 기준)</h2>
+                        <button class="btn-primary" id="btnEditPayroll"><i class="fa-solid fa-pen"></i> 간편 입력/수정</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>사번</th>
+                                    <th>이름</th>
+                                    <th>기본급</th>
+                                    <th>식대</th>
+                                    <th>연장/야간</th>
+                                    <th>국민연금</th>
+                                    <th>건강보험</th>
+                                    <th>고용보험</th>
+                                    <th>갑근세/주민세</th>
+                                    <th>실수령액</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>105</td>
+                                    <td>홍길동</td>
+                                    <td class="text-right">3,000,000</td>
+                                    <td class="text-right">200,000</td>
+                                    <td class="text-right">450,000</td>
+                                    <td class="text-right">-135,000</td>
+                                    <td class="text-right">-106,350</td>
+                                    <td class="text-right">-27,000</td>
+                                    <td class="text-right">-98,000</td>
+                                    <td class="text-right highlight">3,283,650</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -299,11 +376,11 @@
 
     <!-- Modal: Digital Profile Card -->
     <div class="modal-overlay" id="profileModal">
-        <div class="modal-content glassmorphism">
+        <div class="modal-content glassmorphism printable-section">
             <div class="modal-header">
                 <h2>디지털 인사기록카드</h2>
                 <div class="modal-actions">
-                    <button class="btn-pdf" title="PDF 출력"><i class="fa-solid fa-file-pdf"></i></button>
+                    <button class="btn-pdf" title="인쇄하기" onclick="window.print()"><i class="fa-solid fa-print"></i></button>
                     <button class="btn-close" id="closeProfileModal"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
@@ -373,6 +450,92 @@
             <div class="modal-footer">
                 <button class="btn-secondary" id="closeProfileModalBtn">닫기</button>
                 <button class="btn-primary"><i class="fa-solid fa-pen-to-square"></i> 정보수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: New Employee Registration -->
+    <div class="modal-overlay" id="newEmpModal" style="display:none;">
+        <div class="modal-content glassmorphism" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2>신규 사원 등록 (인사기록카드)</h2>
+                <button class="btn-close" id="closeNewEmpModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form id="newEmpForm" style="display:grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                    <!-- Photo -->
+                    <div class="form-group" style="text-align:center;">
+                        <img id="photoPreview" src="https://via.placeholder.com/150" style="width:150px; height:150px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--border-color);">
+                        <input type="file" id="empPhotoUpload" accept="image/*" style="width:100%;">
+                    </div>
+                    
+                    <!-- Basic Info -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>기본 인적사항 (성명/주민번호)</label>
+                            <input type="text" class="styled-input" placeholder="성명 및 앞자리">
+                        </div>
+                        <div class="form-group">
+                            <label>입사일</label>
+                            <input type="date" class="styled-input">
+                        </div>
+                        <div class="form-group">
+                            <label>연락처</label>
+                            <input type="text" class="styled-input" placeholder="010-0000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>가족사항</label>
+                            <input type="text" class="styled-input" placeholder="기혼/미혼/자녀 등">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>주소</label>
+                            <input type="text" class="styled-input" placeholder="상세주소">
+                        </div>
+                        <div class="form-group">
+                            <label>계약 연봉</label>
+                            <input type="number" class="styled-input" placeholder="숫자만 입력">
+                        </div>
+                        <div class="form-group">
+                            <label>특이사항</label>
+                            <input type="text" class="styled-input" placeholder="비고란">
+                        </div>
+                    </div>
+
+                    <!-- Permissions Grid -->
+                    <div style="grid-column: span 2; margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:20px;">
+                        <h3>모듈별 접근 권한 설정</h3>
+                        <table class="erp-table" style="margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th>메뉴 모듈</th>
+                                    <th>읽기 권한 (Read)</th>
+                                    <th>쓰기/수정 권한 (Write)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>인사/근태기록</td>
+                                    <td><input type="checkbox" checked></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>급여관리</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>영업/결제관리</td>
+                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeNewEmpModalBtn">취소</button>
+                <button class="btn-primary" id="saveNewEmpBtn">사원 등록 저장</button>
             </div>
         </div>
     </div>

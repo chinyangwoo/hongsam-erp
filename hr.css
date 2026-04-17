@@ -356,3 +356,42 @@
     font-size: 0.95rem;
     line-height: 1.5;
 }
+
+/* ---------------- Print Styles ---------------- */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .printable-section, .printable-section * {
+        visibility: visible;
+    }
+    .printable-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    /* Hide scrollbars, sidebar, header */
+    .sidebar, .top-header, .hr-tabs-container {
+        display: none !important;
+    }
+    .modal-overlay {
+        background: transparent;
+        position: static;
+        display: block;
+    }
+    .modal-content {
+        transform: none;
+        max-height: none;
+    }
+    .btn-close, .modal-actions, .modal-footer {
+        display: none !important;
+    }
+    .info-item .val.blur-if-no-auth {
+        filter: none;
+        color: #000;
+    }
+}
