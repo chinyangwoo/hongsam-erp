@@ -11,6 +11,37 @@
     gap: 8px;
 }
 
+/* ---------------- Dropdown Select Fix ---------------- */
+.styled-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(15, 23, 42, 0.8);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 36px 8px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394A3B8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: border-color 0.2s;
+}
+.styled-select:hover {
+    border-color: rgba(59, 130, 246, 0.6);
+}
+.styled-select:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.styled-select option {
+    background: #0F172A;
+    color: #F8FAFC;
+}
+
 /* ---------------- Inventory Table Ext ---------------- */
 .stock-critical {
     background: rgba(239, 68, 68, 0.05); /* very faint red row */
