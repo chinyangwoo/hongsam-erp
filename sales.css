@@ -59,6 +59,7 @@
     padding: 24px;
     margin-top: 16px;
     min-height: 600px;
+    overflow: visible;
 }
 
 .legend-box {
