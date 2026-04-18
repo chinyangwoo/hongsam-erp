@@ -36,28 +36,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(btnCloseViewer) btnCloseViewer.addEventListener('click', hideViewer);
 
-    // 3. New Draft Selector Modal
+    // 3. Draft Form Editor Logic
     const btnNewDraft = document.getElementById('btnNewDraft');
-    const draftModal = document.getElementById('draftModal');
-    const closeDraftModal = document.getElementById('closeDraftModal');
+    const draftEditModal = document.getElementById('draftEditModal');
+    const closeDraftEditModal = document.getElementById('closeDraftEditModal');
+    const btnCancelDraftBtn = document.getElementById('btnCancelDraftBtn');
+    const btnSubmitDraft = document.getElementById('btnSubmitDraft');
+    
+    // Approval Line Logic
+    const drafterRole = document.getElementById('drafterRole');
+    const approver1 = document.getElementById('approver1');
+    const approver2 = document.getElementById('approver2');
 
-    if(btnNewDraft) {
-        btnNewDraft.addEventListener('click', () => {
-            draftModal.classList.add('show');
+    if (drafterRole && approver1 && approver2) {
+        drafterRole.addEventListener('change', (e) => {
+            const role = e.target.value;
+            if (role === 'crew') {
+                approver1.value = '큐레이터 (팀장)';
+                approver2.value = '호스트 (지배인)';
+            } else if (role === 'curator') {
+                approver1.value = '호스트 (지배인)';
+                approver2.value = '진양우 (대표이사)';
+            }
         });
     }
 
-    const hideDraftModal = () => {
-        draftModal.classList.remove('show');
+    const showDraftEdit = () => {
+        if (draftEditModal) {
+            const draftSubject = document.getElementById('draftSubject');
+            const draftType = document.getElementById('draftType');
+            if (draftSubject) draftSubject.value = '';
+            if (draftType) draftType.value = '지출결의서';
+            
+            if (drafterRole && approver1 && approver2) {
+                drafterRole.value = 'crew';
+                approver1.value = '큐레이터 (팀장)';
+                approver2.value = '호스트 (지배인)';
+            }
+            draftEditModal.classList.add('show');
+        }
     };
 
-    if(closeDraftModal) closeDraftModal.addEventListener('click', hideDraftModal);
+    const hideDraftEdit = () => {
+        if (draftEditModal) draftEditModal.classList.remove('show');
+    };
+
+    if (btnNewDraft) btnNewDraft.addEventListener('click', showDraftEdit);
+
+    if (closeDraftEditModal) closeDraftEditModal.addEventListener('click', hideDraftEdit);
+    if (btnCancelDraftBtn) btnCancelDraftBtn.addEventListener('click', hideDraftEdit);
     
-    draftModal.addEventListener('click', (e) => {
-        if(e.target === draftModal) {
-            hideDraftModal();
-        }
-    });
+    // Close on outside click
+    if (draftEditModal) {
+        draftEditModal.addEventListener('click', (e) => {
+            if (e.target === draftEditModal) {
+                hideDraftEdit();
+            }
+        });
+    }
+
+    if (btnSubmitDraft) {
+        btnSubmitDraft.addEventListener('click', () => {
+            const subject = document.getElementById('draftSubject').value;
+            const draftTypeSelect = document.getElementById('draftType');
+            const draftType = draftTypeSelect ? draftTypeSelect.value : '기안서';
+            
+            if (!subject) {
+                alert('문서 제목을 입력해주세요.');
+                return;
+            }
+            alert(`[${draftType}] "${subject}"\n기안이 성공적으로 상신되었습니다.\n결재 진행 현황은 '결재 한 문서'함에서 확인할 수 있습니다.`);
+            hideDraftEdit();
+        });
+    }
 
     // 4. Approval / Rejection mock actions
     const btnApprove = document.querySelector('.btn-approve');
@@ -77,56 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  alert('해당 문서가 반려 처리되었습니다. 사유: ' + reason);
                  hideViewer();
              }
-        });
-    }
-
-    // 5. Draft Form Editor Logic
-    window.openDraftEditor = function(type) {
-        // Hide the format selector modal
-        hideDraftModal();
-        
-        // Setup and Show Editor Modal
-        const draftEditModal = document.getElementById('draftEditModal');
-        const draftEditTitle = document.getElementById('draftEditTitle');
-        const draftSubject = document.getElementById('draftSubject');
-        
-        if (draftEditModal && draftEditTitle) {
-            draftEditTitle.innerText = type;
-            draftSubject.value = ''; // clear previous
-            draftEditModal.classList.add('show');
-        }
-    };
-
-    const closeDraftEditModal = document.getElementById('closeDraftEditModal');
-    const btnCancelDraftBtn = document.getElementById('btnCancelDraftBtn');
-    const btnSubmitDraft = document.getElementById('btnSubmitDraft');
-    const draftEditModal = document.getElementById('draftEditModal');
-
-    const hideDraftEdit = () => {
-        if (draftEditModal) draftEditModal.classList.remove('show');
-    };
-
-    if (closeDraftEditModal) closeDraftEditModal.addEventListener('click', hideDraftEdit);
-    if (btnCancelDraftBtn) btnCancelDraftBtn.addEventListener('click', hideDraftEdit);
-    
-    // Close on outside click
-    if (draftEditModal) {
-        draftEditModal.addEventListener('click', (e) => {
-            if (e.target === draftEditModal) {
-                hideDraftEdit();
-            }
-        });
-    }
-
-    if (btnSubmitDraft) {
-        btnSubmitDraft.addEventListener('click', () => {
-            const subject = document.getElementById('draftSubject').value;
-            if (!subject) {
-                alert('문서 제목을 입력해주세요.');
-                return;
-            }
-            alert(`[${document.getElementById('draftEditTitle').innerText}] "${subject}"\n기안이 성공적으로 상신되었습니다.\n결재 진행 현황은 '결재 한 문서'함에서 확인할 수 있습니다.`);
-            hideDraftEdit();
         });
     }
 
