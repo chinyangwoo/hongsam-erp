@@ -10,6 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css?v=11">
     <link rel="stylesheet" href="hr.css?v=3">
@@ -224,6 +229,17 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- 신규: 전월매출 대비 총급여 비율 & 1인당 매출 3D 차트 -->
+                <div style="display:flex; gap:20px; margin-top:20px; margin-bottom:40px;">
+                    <div class="glassmorphism" style="flex:1; padding:20px; border-radius:12px;">
+                        <div id="payrollDonutChart" style="height: 350px;"></div>
+                    </div>
+                    <div class="glassmorphism" style="flex:1; padding:20px; border-radius:12px;">
+                        <div id="perCapita3DChart" style="height: 350px;"></div>
+                    </div>
+                </div>
+
             </section>
 
             <!-- TAB 2: 근태 기록 및 출퇴근 -->

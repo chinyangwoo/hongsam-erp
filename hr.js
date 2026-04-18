@@ -832,4 +832,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ─── 급여관리 하단 차트 렌더링 ───
+    function renderPayrollCharts() {
+        if (!window.Highcharts) {
+            setTimeout(renderPayrollCharts, 200);
+            return; // Wait for script load
+        }
+
+        // 1. 도넛 그래프: 전월매출 대비 총급여 비중
+        // Mock Data: 전월매출 2억 3천만 (230,000,000) / 급여총액 6천 5백만 (65,400,000) -> 28.4%
+        Highcharts.chart('payrollDonutChart', {
+            chart: { type: 'pie', backgroundColor: 'transparent' },
+            title: { 
+                text: '전월매출 대비<br>급여지급비중', 
+                align: 'center', 
+                verticalAlign: 'middle', 
+                y: 10,
+                style: { color: '#F8FAFC', fontSize: '14px', fontWeight: 'bold' } 
+            },
+            tooltip: { formatter: function() { return `<b>${this.point.name}</b><br>금액: ${this.y.toLocaleString()} 원<br>비중: ${this.percentage.toFixed(1)}%`; } },
+            plotOptions: {
+                pie: {
+                    innerSize: '75%',
+                    borderWidth: 0,
+                    dataLabels: { enabled: true, color: '#CBD5E1', connectorColor: '#64748B', style:{textOutline:'none'}, format: '<b>{point.name}</b><br>{point.percentage:.1f}%' }
+                }
+            },
+            credits: { enabled: false },
+            series: [{
+                name: '금액',
+                data: [
+                    { name: '총급여 지급', y: 65400000, color: '#EF4444' },
+                    { name: '잔여 매출', y: 164600000, color: '#3B82F6' }
+                ]
+            }]
+        });
+
+        // 2. 3D 차트: 1인당 매출 (전월매출 / 전월 방문객수)
+        // Mock Data: 전월매출 230,000,000 / 방문객 4500명 = ~51,111원
+        Highcharts.chart('perCapita3DChart', {
+            chart: {
+                type: 'column',
+                backgroundColor: 'transparent',
+                options3d: { enabled: true, alpha: 15, beta: 15, depth: 50, viewDistance: 25 }
+            },
+            title: { 
+                text: '월별 1인당 객단가 (1인당 매출현황)', 
+                style: { color: '#F8FAFC', fontSize: '15px', fontWeight: 'bold' } 
+            },
+            xAxis: {
+                categories: ['전월 (3월)', '금월 (4월 전망)'],
+                labels: { style: { color: '#94A3B8' } }
+            },
+            yAxis: {
+                title: { text: null },
+                labels: { style: { color: '#94A3B8' }, format: '{value:,.0f} 원' },
+                gridLineColor: 'rgba(255,255,255,0.05)'
+            },
+            tooltip: { formatter: function() { return `<b>${this.x}</b><br>1인당 매출: <b>${this.y.toLocaleString()} 원</b>`; } },
+            plotOptions: {
+                column: { depth: 40, colorByPoint: true, borderRadius: 4 }
+            },
+            colors: ['#059669', '#6366F1'],
+            credits: { enabled: false },
+            legend: { enabled: false },
+            series: [{
+                name: '1인당 매출',
+                data: [51111, 55250]
+            }]
+        });
+    }
+    
+    // Call renderer
+    setTimeout(renderPayrollCharts, 500);
+
 });
