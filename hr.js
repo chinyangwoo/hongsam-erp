@@ -891,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 style: { color: '#F8FAFC', fontSize: '15px', fontWeight: 'bold' } 
             },
             xAxis: {
-                categories: ['전월 (3월)', '금월 (4월 전망)'],
+                categories: ['11월', '12월', '1월', '2월', '3월', '4월(전망)'],
                 labels: { style: { color: '#94A3B8' } }
             },
             yAxis: {
@@ -903,12 +903,12 @@ document.addEventListener('DOMContentLoaded', () => {
             plotOptions: {
                 column: { depth: 40, colorByPoint: true, borderRadius: 4 }
             },
-            colors: ['#059669', '#6366F1'],
+            colors: ['#64748B', '#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#6366F1'],
             credits: { enabled: false },
             legend: { enabled: false },
             series: [{
                 name: '1인당 매출',
-                data: [51111, 55250]
+                data: [42500, 48300, 46100, 49800, 51111, 55250]
             }]
         });
     }
