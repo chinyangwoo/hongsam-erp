@@ -83,8 +83,8 @@ OS	Ubuntu 24.04 LTS
 웹서버	Nginx 1.24
 접속 주소	http://43.203.237.63/
 파일 위치	/var/www/hongsam-erp/
-PEM 키	halouniverse.pem
-SSH 접속	ssh -i halouniverse.pem ubuntu@43.203.237.63
+PEM 키	halouniverse-new.pem
+SSH 접속	ssh -i halouniverse-new ubuntu@43.203.237.63
 
 
 5. 대시보드 메뉴중 CCTV 연동 관련 ; 5개의 공간을 실시간으로 모니터링하여 고객안전 및 트래픽을 분산할 용도임
@@ -342,3 +342,5 @@ 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
 
 
 - 고장 및 유지보수 대장에서 신규등록 버튼을 눌러도 동작하지 않습니다. 
+
+

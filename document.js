@@ -101,12 +101,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-actions text-right">
                     ${doc.ext === 'hwp'
                         ? '<button class="btn-action restricted-view" data-type="hwp" title="뷰어 확인"><i class="fa-solid fa-eye"></i></button>'
-                        : '<button class="btn-action" title="미리보기"><i class="fa-solid fa-eye"></i></button>'}
-                    <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
-                    <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
+                        : '<button class="btn-action btn-preview" title="미리보기"><i class="fa-solid fa-eye"></i></button>'}
+                    <button class="btn-action btn-download" title="다운로드" data-filename="${doc.name}"><i class="fa-solid fa-download"></i></button>
+                    <button class="btn-action text-danger btn-delete" title="삭제" data-filename="${doc.name}"><i class="fa-regular fa-trash-can"></i></button>
                 </div>
             `;
             fileBody.appendChild(div);
+        });
+
+        // 미리보기 버튼
+        fileBody.querySelectorAll('.btn-preview').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('📄 미리보기 기능은 실제 파일이 업로드된 후 이용 가능합니다.\n\n현재는 양식 목록(카탈로그)만 등록된 상태입니다.\n관리자가 "새 문서 업로드" 버튼으로 실제 파일을 등록해 주세요.');
+            });
+        });
+
+        // 다운로드 버튼
+        fileBody.querySelectorAll('.btn-download').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const fname = btn.getAttribute('data-filename');
+                alert(`📥 "${fname}" 다운로드\n\n현재는 양식 목록(카탈로그)만 등록된 상태입니다.\n실제 파일이 업로드되면 다운로드가 가능합니다.\n\n관리자가 "새 문서 업로드" 버튼으로 실제 파일을 등록해 주세요.`);
+            });
+        });
+
+        // 삭제 버튼
+        fileBody.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const fname = btn.getAttribute('data-filename');
+                if (confirm(`"${fname}" 문서를 삭제하시겠습니까?`)) {
+                    alert('삭제 기능은 백엔드 연동 후 사용 가능합니다.');
+                }
+            });
         });
 
         // HWP 뷰어 경고 재바인드
