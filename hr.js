@@ -911,5 +911,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: [51111, 55250]
             }]
         });
+    }
     // Wait for the user to visit tab-payroll to render
 });
