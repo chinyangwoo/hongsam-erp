@@ -302,6 +302,122 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
     }
     
+    // --- NEW: Payroll Excel Upload Handler ---
+    const payrollExcelUpload = document.getElementById('payrollExcelUpload');
+    if (payrollExcelUpload) {
+        payrollExcelUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    // Use XLSX from global (loaded in HTML)
+                    const workbook = window.XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    // Treat first row as header
+                    const rows = window.XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                    
+                    if (rows.length < 2) {
+                        alert('데이터가 없거나 올바르지 않은 엑셀 형식입니다.');
+                        return;
+                    }
+
+                    const headers = rows[0].map(h => h ? h.toString().replace(/\s+/g,'') : '');
+                    
+                    // Simple heuristic mapping for Douzone-like columns
+                    // We need indices for: 사번, 직급, 성명, 기본급, 식대, 연장/야간, 국민연금, 건강보험, 고용보험, 소득세+지방소득세, 차인지급액(실수령)
+                    const findCol = (keywords) => {
+                        for(let k of keywords) {
+                            let idx = headers.findIndex(h => h.includes(k));
+                            if(idx !== -1) return idx;
+                        }
+                        return -1;
+                    };
+
+                    const cId = findCol(['사번','ID']);
+                    const cRank = findCol(['직위','직급','Rank']);
+                    const cName = findCol(['성명','이름','사원명']);
+                    const cBase = findCol(['기본급','급여']);
+                    const cMeal = findCol(['식대']);
+                    const cOt = findCol(['연장','수당','야간','야간수당']);
+                    const cNp = findCol(['국민연금']);
+                    const cHi = findCol(['건강보험']);
+                    const cEi = findCol(['고용보험']);
+                    const cTax = findCol(['근세','소득세','주민세','지방']);
+                    const cNet = findCol(['차인','지급액','실수령','차인지급액']);
+
+                    if (cId === -1 || cName === -1) {
+                        alert('엑셀 양식에서 "사번"이나 "성명" 컬럼을 찾을 수 없습니다.');
+                        return;
+                    }
+
+                    const tbody = document.getElementById('payrollTableBody');
+                    if (tbody) tbody.innerHTML = ''; // Clear empty placeholder
+                    
+                    let hrEmployees = [];
+                    try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e){}
+
+                    const fmt = (n, neg=false) => {
+                        let num = Number(n) || 0;
+                        if(neg && num > 0) num = -num;
+                        return num.toLocaleString('ko-KR');
+                    };
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length === 0 || !row[cId] || !row[cName]) continue;
+
+                        const empId = String(row[cId]).trim();
+                        let rank = cRank !== -1 ? (row[cRank] || '') : '';
+                        const name = row[cName] || '';
+                        
+                        // If rank not provided in excel, try getting from localStorage
+                        if (!rank) {
+                            const empInfo = hrEmployees.find(e => e.emp_id === empId);
+                            if (empInfo) rank = empInfo.rank;
+                        }
+
+                        const base = row[cBase] || 0;
+                        const meal = row[cMeal] || 0;
+                        const ot = row[cOt] || 0;
+                        const np = row[cNp] || 0;
+                        const hi = row[cHi] || 0;
+                        const ei = row[cEi] || 0;
+                        const tax = row[cTax] || 0;
+                        const net = row[cNet] || ((Number(base)+Number(meal)+Number(ot)) - (Number(np)+Number(hi)+Number(ei)+Number(tax)));
+
+                        const rowHTML = `
+                            <tr>
+                                <td>${empId}</td>
+                                <td>${rank}</td>
+                                <td>${name}</td>
+                                <td class="text-right">${fmt(base)}</td>
+                                <td class="text-right">${fmt(meal)}</td>
+                                <td class="text-right">${fmt(ot)}</td>
+                                <td class="text-right">${fmt(np, true)}</td>
+                                <td class="text-right">${fmt(hi, true)}</td>
+                                <td class="text-right">${fmt(ei, true)}</td>
+                                <td class="text-right">${fmt(tax, true)}</td>
+                                <td class="text-right highlight">${fmt(net)}</td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', rowHTML);
+                    }
+
+                    toastMsg('급여 엑셀 데이터가 성공적으로 로드되었습니다.');
+                    payrollExcelUpload.value = ''; // reset
+
+                } catch (err) {
+                    console.error(err);
+                    alert('엑셀 파일 처리 중 오류가 발생했습니다: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
     // Payroll Quick Edit Modal
     const payrollModal      = document.getElementById('payrollModal');
     const btnEditPayroll    = document.getElementById('btnEditPayroll');
@@ -365,6 +481,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            let rank = '-';
+            try {
+                const employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
+                const emp = employees.find(e => e.emp_id === empIdStr);
+                if (emp) rank = emp.rank;
+            } catch(e) {}
+
+
             const base = Number(document.getElementById('pBase')?.value) || 0;
             const meal = Number(document.getElementById('pMeal')?.value) || 0;
             const ot   = Number(document.getElementById('pOT')?.value)   || 0;
@@ -385,6 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const rowHTML = `
                     <td>${empId}</td>
+                    <td>${rank}</td>
                     <td>${name}</td>
                     <td class="text-right">${fmt(base)}</td>
                     <td class="text-right">${fmt(meal)}</td>
