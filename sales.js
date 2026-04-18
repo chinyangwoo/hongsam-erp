@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
+                right: 'dayGridMonth,timeGridWeek'
             },
             height: 650,
             selectable: true,
