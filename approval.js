@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (role === 'curator') {
                 approver1.value = '호스트 (지배인)';
                 approver2.value = '진양우 (대표이사)';
+            } else if (role === 'host') {
+                approver1.value = '- (생략)';
+                approver2.value = '진양우 (대표이사)';
             }
         });
     }
