@@ -56,6 +56,12 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* Global Select Options Styling */
+select option {
+    background-color: var(--bg-sidebar);
+    color: var(--text-primary);
+}
+
 /* ---------------- Sidebar ---------------- */
 .sidebar {
     position: fixed;

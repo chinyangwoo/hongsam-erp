@@ -44,15 +44,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Mock DB Verification ---
         const dbStr = localStorage.getItem('erp_users_db');
-        const users = JSON.parse(dbStr);
+        const users = JSON.parse(dbStr || '{}');
+
+        // Retrieve employees created via HR module
+        const hrEmployeesStr = localStorage.getItem('hongsam_employees');
+        let hrEmployees = [];
+        try { hrEmployees = JSON.parse(hrEmployeesStr || '[]'); } catch (_) {}
+        
+        hrEmployees.forEach(emp => {
+            users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+        });
 
         if (!users[empIdStr]) {
-            alert('존재하지 않는 사원번호입니다. (001~099 사용 가능)');
+            alert('존재하지 않는 사원번호입니다. (인사기록 확인 요망)');
             return;
         }
 
         if (users[empIdStr].password !== pwdStr) {
-            alert('비밀번호가 일치하지 않습니다. (초기 비밀번호: 0000)');
+            alert('비밀번호가 일치하지 않습니다.');
             return;
         }
 

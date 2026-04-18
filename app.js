@@ -95,18 +95,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const dbStr = localStorage.getItem('erp_users_db');
-        if(dbStr) {
-            let users = JSON.parse(dbStr);
+        let users = dbStr ? JSON.parse(dbStr) : {};
+        
+        // Also load from hr module
+        const hrEmployeesStr = localStorage.getItem('hongsam_employees');
+        let hrEmployees = [];
+        try { hrEmployees = JSON.parse(hrEmployeesStr || '[]'); } catch (_) {}
+        
+        hrEmployees.forEach(emp => {
+            if (!users[emp.emp_id]) {
+                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+            }
+        });
+
+        if (users[currentUser]) {
             if(users[currentUser].password !== currentPwd) {
                 alert('현재 비밀번호가 일치하지 않습니다.');
                 return;
             }
-            
             // Success: update password
             users[currentUser].password = newPwd;
-            localStorage.setItem('erp_users_db', JSON.stringify(users));
+            
+            // Check if user is in erp_users_db natively
+            let originalDb = dbStr ? JSON.parse(dbStr) : {};
+            if (originalDb[currentUser]) {
+                originalDb[currentUser].password = newPwd;
+                localStorage.setItem('erp_users_db', JSON.stringify(originalDb));
+            }
+            
+            // Check if user is in hrEmployees
+            let foundInHr = false;
+            hrEmployees.forEach(emp => {
+                if (emp.emp_id === currentUser) {
+                    emp.login_pw = newPwd;
+                    foundInHr = true;
+                }
+            });
+            if (foundInHr) {
+                localStorage.setItem('hongsam_employees', JSON.stringify(hrEmployees));
+            }
+            
+            if (!originalDb[currentUser] && !foundInHr) {
+                // edge case
+                originalDb[currentUser] = { password: newPwd, name: users[currentUser].name };
+                localStorage.setItem('erp_users_db', JSON.stringify(originalDb));
+            }
+
             alert('비밀번호가 성공적으로 변경되었습니다.\n다음에 로그인할 때 새 비밀번호를 사용하세요.');
             pwdModal.style.display = 'none';
+        } else {
+            alert('사용자 정보를 찾을 수 없습니다.');
         }
     });
 
