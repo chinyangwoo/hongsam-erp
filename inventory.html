@@ -103,7 +103,7 @@
                         <i class="fa-solid fa-boxes-stacked"></i> 재고 현황
                     </li>
                     <li class="tab-btn" data-target="tab-maintenance">
-                        <i class="fa-solid fa-screwdriver-wrench"></i> 시설 점검 대장
+                        <i class="fa-solid fa-screwdriver-wrench"></i> 시설 현황
                     </li>
                     <li class="tab-btn" data-target="tab-item-register">
                         <i class="fa-solid fa-clipboard-list"></i> 품목 등록
@@ -210,43 +210,93 @@
             <div class="tab-content" id="tab-maintenance" style="display: none;">
                 <div class="maintenance-grid">
                     
-                    <!-- LEFT: Daily Inspection Form -->
+                    <!-- LEFT: Facility Sensor Monitor -->
                     <div class="maint-panel glassmorphism">
-                        <div class="panel-header">
-                            <h2><i class="fa-solid fa-clipboard-check"></i> 일일 정기점검 폼 (Form)</h2>
-                            <span class="date-badge">2026. 04. 17</span>
+                        <div class="panel-header" style="justify-content: space-between;">
+                            <h2><i class="fa-solid fa-satellite-dish"></i> 실시간 시설 현황 모니터링</h2>
+                            <span class="badge" style="background:rgba(16,185,129,0.2); color:#10B981; border:1px solid rgba(16,185,129,0.4);"><i class="fa-solid fa-wifi"></i> 센서 연동 중</span>
                         </div>
-                        <div class="panel-body">
-                            <form class="inspection-form">
-                                <div class="form-group">
-                                    <label>1. 보일러실 가스 누출 여부 점검</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="gas" value="ok" checked> 정상 (누출없음)</label>
-                                        <label><input type="radio" name="gas" value="bad"> 이상 있음 방면</label>
+                        <div class="panel-body" style="display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
+                            
+                            <!-- 1. 보일러실 -->
+                            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
+                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-fire-burner" style="color:#EF4444;"></i> 보일러실</h3>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
+                                    <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">센서 온도</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#F8FAFC;" id="snsBoilerTemp">85.4 <small style="font-size:0.7rem;font-weight:400;">℃</small></div>
+                                    </div>
+                                    <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">LPG 사용량/h</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#F8FAFC;" id="snsBoilerLpg">12.5 <small style="font-size:0.7rem;font-weight:400;">kg</small></div>
+                                    </div>
+                                    <div style="background:rgba(16,185,129,0.1); padding:12px 10px; border-radius:8px; border:1px solid rgba(16,185,129,0.2);">
+                                        <div style="font-size:0.75rem; color:#10B981; margin-bottom:4px;">가스 유출</div>
+                                        <div style="font-size:1rem; font-weight:700; color:#10B981;" id="snsBoilerLeak"><i class="fa-solid fa-check"></i> 정상</div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>2. 메인 수배전반(전기) 전압 및 온도 기록</label>
-                                    <div class="input-inline">
-                                        <input type="number" placeholder="전압 (V)" class="f-input" value="380">
-                                        <input type="number" placeholder="온도 (℃)" class="f-input" value="28">
+                            </div>
+
+                            <!-- 2 & 3. 전기실 & 실시간 사용량 -->
+                            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
+                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> 전력 사용량 모니터링</span>
+                                    <span style="font-size:0.8rem; color:#94A3B8; font-weight:400;">당일 누적: <strong style="color:#F8FAFC;" id="snsTotalKwh">1,245</strong> kWh</span>
+                                </h3>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
+                                    <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">1층 전기망</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElec1F">42.1 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
+                                    </div>
+                                    <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">2층 전기망</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElec2F">88.3 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
+                                    </div>
+                                    <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">루프탑 전기망</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElecRF">56.7 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>3. 각 층 소화기 비치 상태 및 압력 게이지</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="fire" value="ok" checked> 정상 범위</label>
-                                        <label><input type="radio" name="fire" value="bad"> 재충전 필요 (비고 기재)</label>
+                            </div>
+                            
+                            <!-- 4 ~ 6. 스파/풀 온도 -->
+                            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
+                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-water" style="color:#0EA5E9;"></i> 스파 및 풀장 적정 온도</h3>
+                                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
+                                        <span style="font-size:0.8rem; color:#94A3B8;">2F 대온천탕</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa1">40.5 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
+                                        <span style="font-size:0.8rem; color:#94A3B8;">2F 이벤트탕</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa2">38.2 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
+                                        <span style="font-size:0.8rem; color:#94A3B8;">루프탑 풀</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsPool">32.8 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
+                                        <span style="font-size:0.8rem; color:#94A3B8;">루프탑 사우나</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#EF4444;" id="snsSauna">82.1 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>특이사항 (비고란)</label>
-                                    <textarea placeholder="특이사항 없음" class="f-textarea" rows="3"></textarea>
+                            </div>
+                            
+                            <!-- 화재 및 연동 가이드 -->
+                            <div style="display:flex; gap:12px;">
+                                <div style="flex:1; background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); padding:12px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <i class="fa-solid fa-shield-halved" style="color:#10B981; font-size:1.2rem;"></i>
+                                        <div>
+                                            <div style="font-size:0.85rem; font-weight:700; color:#10B981;">전 구역 감지기 정상</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-submit">
-                                    <button type="button" class="btn-primary w-100" id="btnSubmitInspection">오늘 점검 완료 저장</button>
-                                </div>
-                            </form>
+                                <button onclick="document.getElementById('iotGuideModal').style.display='flex'" style="background:linear-gradient(135deg, #1E293B, #0F172A); border:1px solid rgba(255,255,255,0.1); color:#94A3B8; padding:10px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:600; font-family:inherit; transition:color 0.2s;" onmouseover="this.style.color='#F8FAFC'" onmouseout="this.style.color='#94A3B8'">
+                                    <i class="fa-solid fa-circle-info"></i> 센서 데이터 연동 가이드
+                                </button>
+                            </div>
+
                         </div>
                     </div>
 
@@ -495,6 +545,36 @@
             <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
                 <button id="cancelVendorModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
                 <button id="saveVendorBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IoT Sensor Integration Guide Modal -->
+    <div id="iotGuideModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(16,185,129,0.3); border-radius:16px; width:540px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="font-size:1.15rem; font-weight:700; color:#10B981; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-satellite-dish"></i> 센서 데이터 ERP 연동 안내
+                </h2>
+                <button onclick="document.getElementById('iotGuideModal').style.display='none'" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
+                <p style="font-size:0.9rem; color:#E2E8F0; line-height:1.6;">
+                    향후 시설에 설치된 실제 하드웨어 센서 정보를 이 ERP 시스템으로 자동 연동하기 위한 아키텍처입니다.
+                </p>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:16px; margin-top:4px;">
+                    <ol style="font-size:0.85rem; color:#94A3B8; padding-left:18px; display:flex; flex-direction:column; gap:10px; margin:0;">
+                        <li><strong>에지 디바이스 (Sensor Edge):</strong> 보일러실, 전기실, 스파 등에 설치된 계측기(IoT 장비, ESP32, PLC)가 MQTT 프로토콜 또는 HTTP POST 통신으로 내부 로컬 망 또는 클라우드 API 게이트웨이로 데이터를 송출합니다.</li>
+                        <li><strong>백엔드 서버 (Backend/DB):</strong> 수집 서버에서 초단위 또는 분단위로 전송된 데이터를 정제하여 시계열 속성 데이터베이스(예: PostgreSQL, InfluxDB, AWS Timestream)에 축적합니다.</li>
+                        <li><strong>ERP 프론트 (현재 화면):</strong> 브라우저에서 WebSocket이나 SSE(Server-Sent Events) 기술을 사용하여 백엔드와 연결을 유지, 상태가 변동될 때마다 이 화면의 인터랙티브 대시보드가 실시간 업데이트됩니다.</li>
+                    </ol>
+                </div>
+                <p style="font-size:0.85rem; color:#F59E0B; background:rgba(245,158,11,0.1); padding:12px; border-radius:8px; margin-top:4px; line-height:1.4;">
+                    <i class="fa-solid fa-circle-info"></i> 현재는 프로토타입 디자인이 적용되어 있으며, 자바스크립트 시뮬레이터를 통해 3~5초 단위로 수치가 라이브로 변동하도록 구성되어 있습니다.
+                </p>
+            </div>
+            <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end;">
+                <button onclick="document.getElementById('iotGuideModal').style.display='none'" style="background:linear-gradient(135deg,#10B981,#059669); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;">확인했습니다</button>
             </div>
         </div>
     </div>

@@ -268,7 +268,58 @@ if (vendorExcelUpload && vendorTableBody) {
         reader.readAsArrayBuffer(file);
     });
 }
-});
+
+// 9. Interactive IoT Sensor Simulation
+const snsIds = {
+    boilerTemp: document.getElementById('snsBoilerTemp'),
+    boilerLpg: document.getElementById('snsBoilerLpg'),
+    totalKwh: document.getElementById('snsTotalKwh'),
+    elec1F: document.getElementById('snsElec1F'),
+    elec2F: document.getElementById('snsElec2F'),
+    elecRF: document.getElementById('snsElecRF'),
+    spa1: document.getElementById('snsSpa1'),
+    spa2: document.getElementById('snsSpa2'),
+    pool: document.getElementById('snsPool'),
+    sauna: document.getElementById('snsSauna')
+};
+
+// Helper func
+const randOffset = (base, maxDev) => (base + (Math.random() * maxDev * 2 - maxDev)).toFixed(1);
+
+if (snsIds.boilerTemp) {
+    setInterval(() => {
+        snsIds.boilerTemp.innerHTML = `${randOffset(85.4, 1.2)} <small style="font-size:0.7rem;font-weight:400;">℃</small>`;
+        snsIds.boilerLpg.innerHTML = `${randOffset(12.5, 0.5)} <small style="font-size:0.7rem;font-weight:400;">kg</small>`;
+        
+        // Electricity increments slowly
+        let currentTotalStr = snsIds.totalKwh.innerText.replace(/,/g, '');
+        let currentTotal = parseInt(currentTotalStr, 10);
+        if (!isNaN(currentTotal) && Math.random() > 0.4) {
+            currentTotal += 1;
+            snsIds.totalKwh.innerText = currentTotal.toLocaleString();
+        }
+
+        // Fluctuate KW
+        snsIds.elec1F.innerHTML = `${randOffset(42.1, 2.5)} <small style="font-size:0.7rem;font-weight:400;">kW</small>`;
+        snsIds.elec2F.innerHTML = `${randOffset(88.3, 4.0)} <small style="font-size:0.7rem;font-weight:400;">kW</small>`;
+        snsIds.elecRF.innerHTML = `${randOffset(56.7, 3.2)} <small style="font-size:0.7rem;font-weight:400;">kW</small>`;
+
+        // Fluctuate Temp
+        snsIds.spa1.innerHTML = `${randOffset(40.5, 0.4)} <small style="font-size:0.7rem;font-weight:400;">℃</small>`;
+        snsIds.spa2.innerHTML = `${randOffset(38.2, 0.3)} <small style="font-size:0.7rem;font-weight:400;">℃</small>`;
+        snsIds.pool.innerHTML = `${randOffset(32.8, 0.5)} <small style="font-size:0.7rem;font-weight:400;">℃</small>`;
+        snsIds.sauna.innerHTML = `${randOffset(82.1, 1.5)} <small style="font-size:0.7rem;font-weight:400;">℃</small>`;
+        
+        // Brief highlight effect on elements that change
+        [snsIds.boilerTemp, snsIds.elec2F, snsIds.spa1].forEach(el => {
+            if(!el) return;
+            const origColor = el.style.color;
+            el.style.color = '#F59E0B';
+            setTimeout(() => el.style.color = origColor, 300);
+        });
+
+    }, 3500); // 3.5 seconds
+}
 
 // 7. Inventory Excel Upload
 const itemExcelUpload = document.getElementById('itemExcelUpload');
