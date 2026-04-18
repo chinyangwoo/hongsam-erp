@@ -193,6 +193,8 @@
 .c-green { background: #10B981; }
 .c-blue  { background: #3B82F6; }
 .c-purple{ background: #8B5CF6; }
+.c-orange{ background: #F97316; }
+.c-gray  { background: #6B7280; }
 
 /* Force FullCalendar to respect dark theme variables */
 .fc-theme-standard td, .fc-theme-standard th {
