@@ -118,14 +118,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        let onlineCount = 0;
+        
         dmList.innerHTML = '';
         employees.forEach(emp => {
             const li = document.createElement('li');
             li.className = 'dm-item';
             
             const dept = emp.department || '부서미정';
-            const statusClass = emp.status === '재직' ? 'online' : 'offline';
-            const statusText = emp.status === '재직' ? '온라인' : '오프라인';
+            
+            // Randomly Simulate Online, Away, Offline
+            let statusClass = 'offline';
+            let statusText = '오프라인';
+            const rnd = Math.random();
+            if (emp.status === '재직') {
+                if (rnd > 0.6) {
+                    statusClass = 'online';
+                    statusText = '온라인';
+                    onlineCount++;
+                } else if (rnd > 0.4) {
+                    statusClass = 'away';
+                    statusText = '자리비움';
+                }
+            }
+            
             const photoSrc = emp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
             
             li.innerHTML = `
