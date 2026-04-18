@@ -494,46 +494,162 @@
                         <p class="photo-guide">등록할 사원 사진 업로드<br><span>(권장: 정방형 300x300px)</span></p>
                     </div>
                     
-                    <!-- Basic Info -->
+                    <!-- 사번 / 아이디 섹션 -->
+                    <div class="form-section-title" style="margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-id-badge"></i> 사번 및 계정 정보
+                        </h4>
+                        <p style="font-size:0.78rem; color:#64748B; margin:4px 0 0;">사번은 ERP 시스템 내 고유 식별번호입니다.</p>
+                    </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>성명</label>
-                            <input type="text" class="styled-input" placeholder="사원 성명 입력">
+                            <label>사번 (Employee ID) <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpId" class="styled-input" placeholder="예: 106" required>
+                        </div>
+                        <div class="form-group">
+                            <label>성명 <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpName" class="styled-input" placeholder="사원 성명 입력" required>
+                        </div>
+                        <div class="form-group">
+                            <label>로그인 아이디</label>
+                            <input type="text" id="newEmpLoginId" class="styled-input" placeholder="영문 아이디 (미입력 시 사번 사용)">
+                        </div>
+                        <div class="form-group">
+                            <label>초기 비밀번호</label>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <input type="text" id="newEmpLoginPw" class="styled-input" value="0000" style="flex:1; width:auto;">
+                                <span style="font-size:0.75rem; color:#64748B; white-space:nowrap;">기본: 0000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 인적 사항 -->
+                    <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-user"></i> 기본 인적사항
+                        </h4>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>생년월일 <span style="color:#EF4444;">*</span></label>
+                            <input type="date" id="newEmpBirth" class="styled-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>성별</label>
+                            <select id="newEmpGender" class="styled-input">
+                                <option value="남">남</option>
+                                <option value="여">여</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>주민등록번호</label>
                             <div style="display:flex; align-items:center; gap:8px;">
-                                <input type="text" class="styled-input" placeholder="앞 6자리" maxlength="6" style="flex:1; width:auto;">
+                                <input type="text" id="newEmpIdFront" class="styled-input" placeholder="앞 6자리" maxlength="6" style="flex:1; width:auto;">
                                 <span style="color:var(--text-secondary);">-</span>
-                                <input type="password" class="styled-input" placeholder="뒤 7자리" maxlength="7" style="flex:1; width:auto;">
+                                <input type="password" id="newEmpIdBack" class="styled-input" placeholder="뒤 7자리" maxlength="7" style="flex:1; width:auto;">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>입사일</label>
-                            <input type="date" class="styled-input">
+                            <label>연락처 <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpPhone" class="styled-input" placeholder="010-0000-0000" required>
                         </div>
                         <div class="form-group">
-                            <label>연락처</label>
-                            <input type="text" class="styled-input" placeholder="010-0000-0000">
+                            <label>비상연락처</label>
+                            <input type="text" id="newEmpEmergPhone" class="styled-input" placeholder="010-0000-0000">
                         </div>
                         <div class="form-group">
-                            <label>가족사항</label>
-                            <input type="text" class="styled-input" placeholder="기혼/미혼 및 자녀 등">
+                            <label>이메일</label>
+                            <input type="email" id="newEmpEmail" class="styled-input" placeholder="example@email.com">
                         </div>
                         <div class="form-group full-width">
-                            <label>거주지 주소</label>
-                            <input type="text" class="styled-input" placeholder="도로명/지번 주소 및 상세주소">
+                            <label>거주지 주소 <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpAddr" class="styled-input" placeholder="도로명/지번 주소 및 상세주소" required>
                         </div>
+                    </div>
+
+                    <!-- 발령 정보 -->
+                    <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-building"></i> 발령 / 재직 정보
+                        </h4>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>입사일 <span style="color:#EF4444;">*</span></label>
+                            <input type="date" id="newEmpHireDate" class="styled-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>부서 <span style="color:#EF4444;">*</span></label>
+                            <select id="newEmpDept" class="styled-input" required>
+                                <option value="">부서 선택</option>
+                                <option value="지원팀">지원팀</option>
+                                <option value="운영팀">운영팀</option>
+                                <option value="식음료팀">식음료팀</option>
+                                <option value="공무팀">공무팀</option>
+                                <option value="마케팅팀">마케팅팀</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>세부팀(담당)</label>
+                            <input type="text" id="newEmpTeamDetail" class="styled-input" placeholder="예: 2층 스파담당">
+                        </div>
+                        <div class="form-group">
+                            <label>직급 <span style="color:#EF4444;">*</span></label>
+                            <select id="newEmpRank" class="styled-input" required>
+                                <option value="">직급 선택</option>
+                                <option value="크루">팀원 (크루)</option>
+                                <option value="주임">주임</option>
+                                <option value="대리">대리</option>
+                                <option value="과장">과장</option>
+                                <option value="차장">차장</option>
+                                <option value="부장">부장</option>
+                                <option value="임원">임원</option>
+                                <option value="대표이사">대표이사</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>고용형태 <span style="color:#EF4444;">*</span></label>
+                            <select id="newEmpType" class="styled-input" required>
+                                <option value="정규직">정규직</option>
+                                <option value="계약직">계약직</option>
+                                <option value="아르바이트">아르바이트</option>
+                                <option value="인턴">인턴</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>계약만료일</label>
+                            <input type="date" id="newEmpContractEnd" class="styled-input" placeholder="계약직만 입력">
+                        </div>
+                    </div>
+
+                    <!-- 급여 정보 -->
+                    <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-sack-dollar"></i> 급여 / 계약 정보
+                        </h4>
+                    </div>
+                    <div class="form-grid">
                         <div class="form-group">
                             <label>계약 연봉</label>
                             <div class="input-with-icon">
                                 <i class="fa-solid fa-won-sign"></i>
-                                <input type="number" class="styled-input with-icon" placeholder="단위: 원">
+                                <input type="number" id="newEmpAnnualSalary" class="styled-input with-icon" placeholder="단위: 원">
                             </div>
                         </div>
                         <div class="form-group">
+                            <label>기본급 (월)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-won-sign"></i>
+                                <input type="number" id="newEmpBaseSalary" class="styled-input with-icon" placeholder="월 기본급">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>가족사항</label>
+                            <input type="text" id="newEmpFamily" class="styled-input" placeholder="기혼/미혼 및 자녀 등">
+                        </div>
+                        <div class="form-group">
                             <label>특이사항</label>
-                            <input type="text" class="styled-input" placeholder="입사 시 특이사항 등">
+                            <input type="text" id="newEmpNotes" class="styled-input" placeholder="입사 시 특이사항 등">
                         </div>
                     </div>
 
