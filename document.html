@@ -91,12 +91,7 @@
                 </div>
                 
                 <ul class="folder-list">
-                    <li class="folder-item active"><i class="fa-solid fa-folder-open"></i> 전체 문서 (최근 항목)</li>
-                    <li class="folder-item restricted" title="보안 폴더"><i class="fa-solid fa-lock"></i> 사규 및 규정</li>
-                    <li class="folder-item restricted" title="보안 폴더"><i class="fa-solid fa-lock"></i> 경영 및 회계 보고서</li>
-                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 인사 (HR) 양식</li>
-                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 시설 및 공무 자료</li>
-                    <li class="folder-item"><i class="fa-solid fa-folder"></i> 매장 운영 매뉴얼</li>
+                    <!-- JS에서 동적 생성 -->
                 </ul>
                 
                 <div class="storage-info">
@@ -137,70 +132,7 @@
                 </div>
 
                 <div class="file-list-body">
-                    
-                    <!-- File Item: PDF -->
-                    <div class="file-item pdf-type">
-                        <div class="col-name">
-                            <i class="fa-solid fa-file-pdf icon-pdf"></i>
-                            <span class="f-name">사우나_안전관리_매뉴얼_v2.pdf</span>
-                        </div>
-                        <div class="col-date">2026.04.16</div>
-                        <div class="col-user">김지원 (지원팀)</div>
-                        <div class="col-size text-right">2.4 MB</div>
-                        <div class="col-actions text-right">
-                            <button class="btn-action" title="미리보기"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
-                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- File Item: HWP -->
-                    <div class="file-item hwp-type">
-                        <div class="col-name">
-                            <i class="fa-solid fa-file-word icon-hwp"></i> <!-- FontAwesome 6 doesn't have hwp specifically, word used as sub -->
-                            <span class="f-name">2026년도_임직원_근로계약서_양식.hwp</span>
-                        </div>
-                        <div class="col-date">2026.04.14</div>
-                        <div class="col-user">진양우 (대표)</div>
-                        <div class="col-size text-right">452 KB</div>
-                        <div class="col-actions text-right">
-                            <button class="btn-action restricted-view" data-type="hwp" title="뷰어 확인"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
-                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- File Item: Excel -->
-                    <div class="file-item excel-type">
-                        <div class="col-name">
-                            <i class="fa-solid fa-file-excel icon-excel"></i>
-                            <span class="f-name">인사카드_일괄등록_양식.xls</span>
-                        </div>
-                        <div class="col-date">2026.04.10</div>
-                        <div class="col-user">김지원 (지원팀)</div>
-                        <div class="col-size text-right">1.1 MB</div>
-                        <div class="col-actions text-right">
-                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
-                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- File Item: Image -->
-                    <div class="file-item img-type">
-                        <div class="col-name">
-                            <i class="fa-solid fa-file-image icon-img"></i>
-                            <span class="f-name">사업자등록증_헤일로유니버스.pdf</span> <!-- Displaying fake pdf data as image extension check for style -->
-                        </div>
-                        <div class="col-date">2026.04.05</div>
-                        <div class="col-user">진양우 (대표)</div>
-                        <div class="col-size text-right">85 KB</div>
-                        <div class="col-actions text-right">
-                            <button class="btn-action" title="미리보기"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn-action" title="다운로드"><i class="fa-solid fa-download"></i></button>
-                            <button class="btn-action text-danger" title="삭제"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
-                    </div>
-
+                    <!-- JS에서 동적 렌더링 -->
                 </div>
             </div>
         </div>
@@ -228,8 +160,24 @@
         </div>
     </div>
 
+    <!-- Pagination & folder count styles -->
+    <style>
+        .folder-cnt { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.7; margin-left: 4px; }
+        .folder-item.active .folder-cnt { color: var(--accent-blue); opacity: 1; }
+        .doc-pagination { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px; }
+        .pg-info { font-size: 0.8rem; color: var(--text-secondary); margin-right: 12px; }
+        .pg-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .pg-btn:hover:not(.disabled):not(.active) { background: rgba(255,255,255,0.12); color: var(--text-primary); }
+        .pg-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+        .pg-btn.disabled { opacity: 0.3; cursor: default; }
+        .pg-dots { color: var(--text-secondary); font-size: 0.8rem; }
+        .icon-word { color: #2B579A; }
+        .word-type .col-name i { color: #2B579A; }
+    </style>
+
     <!-- Custom View logic -->
     <script src="app.js?v=2"></script>
+    <script src="document_data.js"></script>
     <script src="document.js"></script>
 </body>
 </html>
