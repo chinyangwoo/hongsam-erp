@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tagLabel: tagLabel
                     }
                 });
+                if (typeof renderAgendaList === 'function') renderAgendaList();
             }
             closeNewEvModal();
         });
@@ -134,6 +135,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.salesCalendar.render();
+        renderAgendaList(); // Initial render
+    }
+
+    // ============================================================
+    // 2-B. DYNAMIC AGENDA LIST RENDERER
+    // ============================================================
+    function renderAgendaList() {
+        const agendaUl = document.getElementById('agendaList');
+        if (!agendaUl || !window.salesCalendar) return;
+
+        const events = window.salesCalendar.getEvents();
+        // Sort events by start date
+        events.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+        agendaUl.innerHTML = '';
+        if (events.length === 0) {
+            agendaUl.innerHTML = '<li style="color:var(--text-secondary); text-align:center; padding:20px;">등록된 일정이 없습니다.</li>';
+            return;
+        }
+
+        events.forEach(ev => {
+            const startDate = new Date(ev.start);
+            const m = startDate.getMonth() + 1;
+            const d = startDate.getDate();
+            const dateText = `${m}월 ${d}일`;
+
+            // Look for details
+            let peopleText = ev.extendedProps.people !== '-' ? ev.extendedProps.people : '';
+            let contentText = `${ev.title}`;
+            if (peopleText) contentText += ` (${peopleText} 예정)`;
+            if (ev.extendedProps.prep && ev.extendedProps.prep !== '신규 등록된 일정입니다.') {
+                contentText += ` - ${ev.extendedProps.prep}`;
+            }
+
+            const li = document.createElement('li');
+            li.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 14px 20px;
+                background: rgba(0,0,0,0.2);
+                border: 1px solid rgba(255,255,255,0.05);
+                border-radius: 10px;
+                cursor: pointer;
+                transition: background 0.2s;
+            `;
+            li.onmouseover = () => li.style.background = 'rgba(255,255,255,0.05)';
+            li.onmouseout = () => li.style.background = 'rgba(0,0,0,0.2)';
+            li.onclick = () => window.openEventModal(ev); // click to open same modal
+
+            li.innerHTML = `
+                <div style="flex-shrink:0; font-weight:700; color:#3B82F6; background:rgba(59,130,246,0.15); padding:6px 12px; border-radius:6px; min-width:80px; text-align:center;">
+                    ${dateText}
+                </div>
+                <div style="flex:1; color:var(--text-primary); font-size:0.95rem; line-height:1.4;">
+                    <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${ev.backgroundColor}; margin-right:8px; vertical-align:middle;"></span>
+                    ${contentText}
+                </div>
+                <div style="color:var(--text-muted); font-size:0.85rem;">
+                    ${ev.extendedProps.tagLabel || '기타'}
+                </div>
+            `;
+            agendaUl.appendChild(li);
+        });
     }
 
     // ============================================================

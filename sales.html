@@ -131,70 +131,15 @@
                 </div>
             </div>
 
-            <div id="tab-cashflow" style="display: block; padding-bottom: 50px;">
+            <div id="tab-event-list" style="display: block; padding-bottom: 50px;">
                 <div class="table-container glassmorphism" style="margin-bottom: 50px;">
                     <div class="table-header action-bar-override">
-                        <div class="filter-box">
-                            <select class="styled-select">
-                                <option>2026년 4월</option>
-                                <option>2026년 3월</option>
-                            </select>
-                            <select class="styled-select">
-                                <option>전체 현금흐름</option>
-                                <option>수입결의 만 보기</option>
-                                <option>지출결의 만 보기</option>
-                            </select>
-                        </div>
-                        <button class="btn-secondary"><i class="fa-solid fa-file-export"></i> 엑셀 시트 내보내기</button>
+                        <h2><i class="fa-solid fa-list-ul" style="color:#3B82F6; margin-right:8px;"></i>월간 달력 일정 요약 내용</h2>
                     </div>
-
-                    <div class="table-responsive">
-                        <table class="erp-table">
-                            <thead>
-                                <tr>
-                                    <th>승인일자</th>
-                                    <th>유형</th>
-                                    <th>적요 (내용)</th>
-                                    <th>신청부서</th>
-                                    <th>금액 (원)</th>
-                                    <th>상태</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2026.04.17</td>
-                                    <td><span class="tag tag-income">수입</span></td>
-                                    <td>(주)모두투어 주말 관광객 단체 입금 건</td>
-                                    <td>지원팀(영업)</td>
-                                    <td class="text-right highlight">5,500,000</td>
-                                    <td><span class="status st-approved">승인완료</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2026.04.16</td>
-                                    <td><span class="tag tag-expense">지출</span></td>
-                                    <td>루프탑 인피니티풀 정화 필터 교체건</td>
-                                    <td>공무팀(시설)</td>
-                                    <td class="text-right">850,000</td>
-                                    <td><span class="status st-pending">승인대기</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2026.04.14</td>
-                                    <td><span class="tag tag-income">수입</span></td>
-                                    <td>Jinan 지자체 행사 루프탑 단독 대관금</td>
-                                    <td>지원팀(대관)</td>
-                                    <td class="text-right highlight">12,000,000</td>
-                                    <td><span class="status st-approved">승인완료</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2026.04.12</td>
-                                    <td><span class="tag tag-expense">지출</span></td>
-                                    <td>1층 카페 신규 디저트류 초도물량 매입</td>
-                                    <td>식음료팀</td>
-                                    <td class="text-right">1,200,000</td>
-                                    <td><span class="status st-approved">승인완료</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="list-responsive" style="padding: 20px;">
+                        <ul id="agendaList" class="agenda-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Items inserted dynamically via Javascript based on Calendar events -->
+                        </ul>
                     </div>
                 </div>
             </div>

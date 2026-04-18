@@ -167,7 +167,8 @@
 /* ---------------- Full Calendar Overrides ---------------- */
 .calendar-wrapper {
     padding: 24px;
-    margin-top: 16px;
+    margin: 16px auto 0 auto;
+    max-width: 1300px;
     min-height: 600px;
     overflow: visible;
 }
