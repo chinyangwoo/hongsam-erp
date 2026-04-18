@@ -241,9 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = 'employee-card glassmorphism';
         card.setAttribute('data-emp-id', emp.emp_id);
-        card.setAttribute('onclick', `openProfileModal('${emp.emp_id}')`);
         card.style.cursor = 'pointer';
         card.innerHTML = `
+            <div class="emp-card-actions">
+                <button title="수정" onclick="event.stopPropagation(); editEmployee('${emp.emp_id}')"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${emp.emp_id}','${emp.name}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
             <div class="emp-photo"><img src="${imgSrc}" alt="Photo"></div>
             <div class="emp-info">
                 <h3 class="emp-name">${emp.name} <span class="emp-id">${emp.emp_id}</span></h3>
@@ -254,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="status-dot ${statusDot}"></div> ${statusText}
             </div>
         `;
+        card.addEventListener('click', () => openProfileModal(emp.emp_id));
         // 새 카드에 하이라이트 애니메이션
         card.style.animation = 'fadeIn 0.5s ease';
         grid.appendChild(card);
@@ -384,5 +388,135 @@ document.addEventListener('DOMContentLoaded', () => {
             closePayrollModalFn();
         });
     }
+
+    // ─── 인사기록카드 수정 ───
+    window.editEmployee = function(empId) {
+        const KEY = 'hongsam_employees';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) {}
+        const emp = employees.find(e => e.emp_id === empId);
+        
+        if (!emp) {
+            alert(`사번 ${empId}의 데이터를 찾을 수 없습니다.\n(localStorage에 저장된 사원만 수정 가능)`);
+            return;
+        }
+
+        // 신규 사원 등록 모달을 열고 기존 데이터 채우기
+        if (newEmpModal) newEmpModal.classList.add('show');
+        
+        setTimeout(() => {
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+            setVal('newEmpId', emp.emp_id);
+            setVal('newEmpName', emp.name);
+            setVal('newEmpLoginId', emp.login_id);
+            setVal('newEmpLoginPw', emp.login_pw);
+            setVal('newEmpBirth', emp.birth_date);
+            setVal('newEmpGender', emp.gender);
+            setVal('newEmpIdFront', emp.id_front);
+            setVal('newEmpPhone', emp.phone);
+            setVal('newEmpEmergPhone', emp.emergency_phone);
+            setVal('newEmpEmail', emp.email);
+            setVal('newEmpAddr', emp.address);
+            setVal('newEmpHireDate', emp.hire_date);
+            setVal('newEmpDept', emp.department);
+            setVal('newEmpTeamDetail', emp.team_detail);
+            setVal('newEmpRank', emp.rank);
+            setVal('newEmpType', emp.emp_type);
+            setVal('newEmpContractEnd', emp.contract_end);
+            setVal('newEmpAnnualSalary', emp.annual_salary);
+            setVal('newEmpBaseSalary', emp.base_salary);
+            setVal('newEmpFamily', emp.family_info);
+            setVal('newEmpNotes', emp.notes);
+            if (emp.photo && photoPreview) photoPreview.src = emp.photo;
+        }, 100);
+    };
+
+    // ─── 인사기록카드 삭제 ───
+    window.deleteEmployee = function(empId, empName) {
+        if (!confirm(`"${empName}" (사번: ${empId}) 사원을 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) return;
+        
+        const KEY = 'hongsam_employees';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) {}
+        employees = employees.filter(e => e.emp_id !== empId);
+        localStorage.setItem(KEY, JSON.stringify(employees));
+        
+        // 카드 제거
+        const card = document.querySelector(`[data-emp-id="${empId}"]`);
+        if (card) {
+            card.style.transition = 'opacity 0.3s, transform 0.3s';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
+            setTimeout(() => card.remove(), 300);
+        }
+        
+        showSaveToast(`"${empName}" 사원이 삭제되었습니다.`);
+    };
+
+    // ─── 연차/휴가 수정 ───
+    window.editLeave = function(empId, empName, totalDays, usedDays) {
+        const newTotal = prompt(`${empName} (${empId}) - 총 연차배정일수를 입력하세요:`, totalDays);
+        if (newTotal === null) return;
+        const newUsed = prompt(`${empName} (${empId}) - 사용 연차일수를 입력하세요:`, usedDays);
+        if (newUsed === null) return;
+        
+        const total = parseInt(newTotal, 10);
+        const used = parseInt(newUsed, 10);
+        if (isNaN(total) || isNaN(used)) {
+            alert('숫자를 입력해 주세요.');
+            return;
+        }
+        const remain = total - used;
+        const pct = total > 0 ? Math.round((used / total) * 100) : 0;
+
+        // 테이블 행 업데이트
+        const rows = document.querySelectorAll('#tab-vacation .erp-table tbody tr');
+        rows.forEach(row => {
+            if (row.cells[0].textContent.trim() === empId) {
+                row.cells[3].textContent = `${total}일`;
+                row.cells[4].textContent = `${used}일`;
+                row.cells[5].textContent = `${remain}일`;
+                row.cells[5].className = remain <= 3 ? 'late-stamp text-right' : 'highlight text-right';
+                const bar = row.cells[6].querySelector('.progress-bar-fill');
+                if (bar) {
+                    bar.style.width = `${pct}%`;
+                    bar.style.background = pct >= 80 ? 'var(--accent-red)' : pct >= 50 ? 'var(--accent-orange)' : 'var(--accent-blue)';
+                }
+                const btn = row.cells[7]?.querySelector('.btn-edit-leave');
+                if (btn) btn.setAttribute('onclick', `editLeave('${empId}','${empName}',${total},${used})`);
+            }
+        });
+
+        showSaveToast(`${empName}의 연차 정보가 수정되었습니다. (배정:${total}일, 사용:${used}일, 잔여:${remain}일)`);
+    };
+
+    // ─── 페이지 로드 시 localStorage의 사원을 그리드에 렌더 ───
+    function loadSavedEmployees() {
+        const KEY = 'hongsam_employees';
+        try {
+            const employees = JSON.parse(localStorage.getItem(KEY) || '[]');
+            employees.forEach(emp => addEmployeeCard(emp));
+        } catch (_) {}
+    }
+    loadSavedEmployees();
+
+    // ─── 정적 카드에도 수정/삭제 버튼 추가 ───
+    document.querySelectorAll('.employee-card').forEach(card => {
+        if (!card.querySelector('.emp-card-actions')) {
+            const empIdEl = card.querySelector('.emp-id');
+            const empNameEl = card.querySelector('.emp-name');
+            if (empIdEl) {
+                const eid = empIdEl.textContent.trim();
+                const ename = empNameEl ? empNameEl.childNodes[0].textContent.trim() : '';
+                const actions = document.createElement('div');
+                actions.className = 'emp-card-actions';
+                actions.innerHTML = `
+                    <button title="수정" onclick="event.stopPropagation(); editEmployee('${eid}')"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${eid}','${ename}')"><i class="fa-solid fa-trash"></i></button>
+                `;
+                card.appendChild(actions);
+            }
+        }
+    });
 
 });

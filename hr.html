@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css?v=2">
-    <link rel="stylesheet" href="hr.css?v=2">
+    <link rel="stylesheet" href="hr.css?v=3">
 </head>
 <body class="dark-theme">
     
@@ -290,54 +290,154 @@
 
             <!-- TAB 2: 근태 기록 및 출퇴근 -->
             <section id="tab-attendance" class="tab-content" style="display: none;">
+                <!-- 출결 요약 카드 -->
+                <div class="attendance-summary">
+                    <div class="att-card green">
+                        <div class="att-label">금일 출근</div>
+                        <div class="att-value" id="attPresent">38</div>
+                        <div class="att-label">명</div>
+                    </div>
+                    <div class="att-card red">
+                        <div class="att-label">결근</div>
+                        <div class="att-value" id="attAbsent">2</div>
+                        <div class="att-label">명</div>
+                    </div>
+                    <div class="att-card orange">
+                        <div class="att-label">지각</div>
+                        <div class="att-value" id="attLate">3</div>
+                        <div class="att-label">명</div>
+                    </div>
+                    <div class="att-card blue">
+                        <div class="att-label">휴가/휴직</div>
+                        <div class="att-value" id="attVacation">7</div>
+                        <div class="att-label">명</div>
+                    </div>
+                </div>
+
+                <!-- 그래프 영역 -->
+                <div class="att-charts-row">
+                    <!-- 출결 도넛 차트 -->
+                    <div class="att-chart-box">
+                        <h3><i class="fa-solid fa-chart-pie" style="color:#3B82F6; margin-right:8px;"></i>금일 출결 현황</h3>
+                        <div id="attDonutChart" class="donut-chart" style="background:conic-gradient(#10B981 0deg 273.6deg, #EF4444 273.6deg 288deg, #F59E0B 288deg 309.6deg, #6366F1 309.6deg 360deg);">
+                            <div class="donut-center">
+                                <span class="dc-num">50</span>
+                                <span class="dc-label">전체인원</span>
+                            </div>
+                        </div>
+                        <div class="att-legend" style="justify-content:center; margin-top:16px;">
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 출근 38</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 결근 2</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 지각 3</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> 휴가 7</div>
+                        </div>
+                    </div>
+
+                    <!-- 주간 출근율 바 차트 -->
+                    <div class="att-chart-box">
+                        <h3><i class="fa-solid fa-chart-bar" style="color:#10B981; margin-right:8px;"></i>이번 주 출근율</h3>
+                        <div style="display:flex; flex-direction:column; gap:14px; padding:10px 0;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">월</span>
+                                <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
+                                    <div style="width:96%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">96%</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">화</span>
+                                <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
+                                    <div style="width:92%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">92%</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">수</span>
+                                <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
+                                    <div style="width:88%; height:100%; background:linear-gradient(90deg,#F59E0B,#FBBF24); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">88%</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">목</span>
+                                <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
+                                    <div style="width:94%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">94%</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">금 (오늘)</span>
+                                <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
+                                    <div style="width:82%; height:100%; background:linear-gradient(90deg,#3B82F6,#60A5FA); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">82%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 개인별 월간 출결 -->
                 <div class="table-container glassmorphism">
                     <div class="table-header">
-                        <h2>금일 캡스(CAPS) 출퇴근 기록 연동</h2>
+                        <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>개인별 월간 출결 현황 (2026년 4월)</h2>
                         <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
                     </div>
                     <div class="table-responsive">
-                        <table class="erp-table">
+                        <table class="emp-monthly-table">
                             <thead>
                                 <tr>
-                                    <th>날짜</th>
                                     <th>사번</th>
                                     <th>이름</th>
                                     <th>부서</th>
-                                    <th>출근 (지문/태그)</th>
-                                    <th>퇴근</th>
-                                    <th>상태</th>
+                                    <th>출근</th>
+                                    <th>결근</th>
+                                    <th>지각</th>
+                                    <th>휴가</th>
+                                    <th>출근율</th>
+                                    <th>월간 출결 패턴</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>2026.04.17</td>
-                                    <td>105</td>
-                                    <td>홍길동</td>
-                                    <td>운영팀</td>
-                                    <td class="time-stamp">08:52:11</td>
-                                    <td class="time-stamp">-</td>
-                                    <td><span class="status st-approved">정상출근</span></td>
+                                    <td>105</td><td>홍길동</td><td>운영팀</td>
+                                    <td style="color:#10B981; font-weight:700;">13</td>
+                                    <td style="color:#EF4444; font-weight:700;">0</td>
+                                    <td style="color:#F59E0B; font-weight:700;">1</td>
+                                    <td style="color:#6366F1; font-weight:700;">0</td>
+                                    <td style="font-weight:700;">93%</td>
+                                    <td><div class="mini-bar"><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb l"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div></div></td>
                                 </tr>
                                 <tr>
-                                    <td>2026.04.17</td>
-                                    <td>203</td>
-                                    <td>박철수</td>
-                                    <td>공무팀</td>
-                                    <td class="time-stamp late-stamp">09:12:45</td>
-                                    <td class="time-stamp">-</td>
-                                    <td><span class="status st-pending">지각</span></td>
+                                    <td>021</td><td>김지원</td><td>지원팀</td>
+                                    <td style="color:#10B981; font-weight:700;">10</td>
+                                    <td style="color:#EF4444; font-weight:700;">0</td>
+                                    <td style="color:#F59E0B; font-weight:700;">0</td>
+                                    <td style="color:#6366F1; font-weight:700;">4</td>
+                                    <td style="font-weight:700;">71%</td>
+                                    <td><div class="mini-bar"><div class="mb p"></div><div class="mb p"></div><div class="mb v"></div><div class="mb v"></div><div class="mb v"></div><div class="mb w"></div><div class="mb w"></div><div class="mb v"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div></div></td>
                                 </tr>
                                 <tr>
-                                    <td>2026.04.17</td>
-                                    <td>021</td>
-                                    <td>김지원</td>
-                                    <td>지원팀</td>
-                                    <td class="time-stamp">-</td>
-                                    <td class="time-stamp">-</td>
-                                    <td><span class="status st-vacation">휴가 (연차)</span></td>
+                                    <td>203</td><td>박철수</td><td>공무팀</td>
+                                    <td style="color:#10B981; font-weight:700;">12</td>
+                                    <td style="color:#EF4444; font-weight:700;">1</td>
+                                    <td style="color:#F59E0B; font-weight:700;">2</td>
+                                    <td style="color:#6366F1; font-weight:700;">0</td>
+                                    <td style="font-weight:700;">80%</td>
+                                    <td><div class="mini-bar"><div class="mb p"></div><div class="mb l"></div><div class="mb p"></div><div class="mb p"></div><div class="mb a"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb l"></div><div class="mb p"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div></div></td>
+                                </tr>
+                                <tr>
+                                    <td>304</td><td>이영희</td><td>식음료팀</td>
+                                    <td style="color:#10B981; font-weight:700;">14</td>
+                                    <td style="color:#EF4444; font-weight:700;">0</td>
+                                    <td style="color:#F59E0B; font-weight:700;">0</td>
+                                    <td style="color:#6366F1; font-weight:700;">0</td>
+                                    <td style="font-weight:700;">100%</td>
+                                    <td><div class="mini-bar"><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb w"></div><div class="mb w"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div><div class="mb p"></div></div></td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="att-legend" style="padding:12px 0 0;">
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 출근</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 결근</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 지각</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> 휴가</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:rgba(255,255,255,0.06);"></div> 주말</div>
                     </div>
                 </div>
             </section>
@@ -359,6 +459,7 @@
                                     <th>사용 연차</th>
                                     <th>잔여 연차</th>
                                     <th>사용률 현황</th>
+                                    <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -374,6 +475,7 @@
                                             <div class="progress-bar-fill" style="width: 20%; background: var(--accent-blue);"></div>
                                         </div>
                                     </td>
+                                    <td><button class="btn-edit-leave" onclick="editLeave('105','홍길동',15,3)"><i class="fa-solid fa-pen" style="margin-right:4px;"></i>수정</button></td>
                                 </tr>
                                 <tr>
                                     <td>021</td>
@@ -387,6 +489,35 @@
                                             <div class="progress-bar-fill" style="width: 80%; background: var(--accent-red);"></div>
                                         </div>
                                     </td>
+                                    <td><button class="btn-edit-leave" onclick="editLeave('021','김지원',15,12)"><i class="fa-solid fa-pen" style="margin-right:4px;"></i>수정</button></td>
+                                </tr>
+                                <tr>
+                                    <td>203</td>
+                                    <td>박철수</td>
+                                    <td>공무팀</td>
+                                    <td>15일</td>
+                                    <td>6일</td>
+                                    <td class="highlight text-right">9일</td>
+                                    <td class="progress-cell">
+                                        <div class="progress-bar-bg" style="margin:0;">
+                                            <div class="progress-bar-fill" style="width: 40%; background: var(--accent-orange);"></div>
+                                        </div>
+                                    </td>
+                                    <td><button class="btn-edit-leave" onclick="editLeave('203','박철수',15,6)"><i class="fa-solid fa-pen" style="margin-right:4px;"></i>수정</button></td>
+                                </tr>
+                                <tr>
+                                    <td>304</td>
+                                    <td>이영희</td>
+                                    <td>식음료팀</td>
+                                    <td>11일</td>
+                                    <td>2일</td>
+                                    <td class="highlight text-right">9일</td>
+                                    <td class="progress-cell">
+                                        <div class="progress-bar-bg" style="margin:0;">
+                                            <div class="progress-bar-fill" style="width: 18%; background: var(--accent-blue);"></div>
+                                        </div>
+                                    </td>
+                                    <td><button class="btn-edit-leave" onclick="editLeave('304','이영희',11,2)"><i class="fa-solid fa-pen" style="margin-right:4px;"></i>수정</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -854,7 +985,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Custom View logic -->
     <script src="app.js?v=2"></script>
-    <script src="hr.js?v=12"></script>
+    <script src="hr.js?v=13"></script>
     <script src="hr_excel.js?v=1"></script>
 </body>
 </html>
