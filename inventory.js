@@ -208,5 +208,127 @@ document.addEventListener('DOMContentLoaded', () => {
             closeVendorModalFn();
         });
     }
-
 });
+
+// 7. Inventory Excel Upload
+const itemExcelUpload = document.getElementById('itemExcelUpload');
+const inventoryTableBody = document.getElementById('inventoryTableBody');
+if (itemExcelUpload && inventoryTableBody) {
+    itemExcelUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = window.XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = window.XLSX.utils.sheet_to_json(firstSheet, {defval: ''});
+                
+                if (rows.length === 0) {
+                    alert('데이터가 없습니다.');
+                    return;
+                }
+
+                // Data normalization
+                let items = rows.map(r => ({
+                    name: r['품목명'] || r['Item'] || '',
+                    category: r['카테고리'] || r['Category'] || '미분류',
+                    zone: r['구역'] || r['Zone'] || '공통 창고',
+                    current: parseInt(r['현재재고']) || parseInt(r['Current']) || 0,
+                    safe: parseInt(r['안전재고기준']) || parseInt(r['Safe']) || 0,
+                    unit: r['단위'] || r['Unit'] || '개'
+                })).filter(i => i.name.trim() !== '');
+
+                // Sorting: Category -> Zone -> Name
+                items.sort((a, b) => {
+                    if (a.category !== b.category) return a.category.localeCompare(b.category);
+                    if (a.zone !== b.zone) return a.zone.localeCompare(b.zone);
+                    return a.name.localeCompare(b.name);
+                });
+
+                // Render table
+                inventoryTableBody.innerHTML = '';
+                items.forEach(item => {
+                    const isWarning = item.current <= item.safe;
+                    const rowClass = isWarning ? 'class="stock-critical"' : '';
+                    const qtyClass = isWarning ? 'class="text-right qty-critical"' : 'class="text-right"';
+                    const badgeHtml = isWarning 
+                        ? '<span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span>'
+                        : '<span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span>';
+
+                    const tr = document.createElement('tr');
+                    if (isWarning) tr.className = 'stock-critical';
+                    tr.innerHTML = `
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.zone}</td>
+                        <td>${item.category}</td>
+                        <td class="${qtyClass}">${item.current} ${item.unit}</td>
+                        <td class="text-right">${item.safe} ${item.unit}</td>
+                        <td>${badgeHtml}</td>
+                        <td>
+                            <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                            <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                        </td>
+                    `;
+                    inventoryTableBody.appendChild(tr);
+                });
+
+                // Re-attach listeners to +/-
+                const newBtnIcons = inventoryTableBody.querySelectorAll('.btn-icon');
+                newBtnIcons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const qtyCell = row.querySelector('td:nth-child(4)'); 
+                        if(!qtyCell) return;
+                        
+                        let currentText = qtyCell.innerText;
+                        let currentNum = parseInt(currentText.replace(/[^0-9\.-]/g, ''), 10) || 0;
+                        let unitMatch = currentText.match(/[^\d\s\.\-]+/);
+                        let unit = unitMatch ? unitMatch[0] : '개';
+
+                        if(this.title.includes('입고')) {
+                            currentNum += 1;
+                            qtyCell.innerHTML = `<strong>${currentNum}</strong> ${unit}`;
+                            qtyCell.style.color = '#10B981';
+                        } else if(this.title.includes('출고')) {
+                            if(currentNum > 0) currentNum -= 1;
+                            qtyCell.innerHTML = `<strong>${currentNum}</strong> ${unit}`;
+                            qtyCell.style.color = '#EF4444';
+                        }
+                        
+                        // Check if threshold crossed
+                        const safeCell = row.querySelector('td:nth-child(5)');
+                        const safeNum = parseInt(safeCell.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+                        const badgeCell = row.querySelector('td:nth-child(6)');
+                        
+                        if (currentNum <= safeNum) {
+                            row.classList.add('stock-critical');
+                            qtyCell.classList.add('qty-critical');
+                            badgeCell.innerHTML = '<span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span>';
+                        } else {
+                            row.classList.remove('stock-critical');
+                            qtyCell.classList.remove('qty-critical');
+                            badgeCell.innerHTML = '<span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span>';
+                        }
+                        
+                        setTimeout(() => { qtyCell.style.color = ''; }, 500);
+                    });
+                });
+
+                alert('총 ' + items.length + '개의 품목이 카테고리/구역 기준으로 정렬되어 일괄 등록되었습니다.');
+                itemExcelUpload.value = '';
+
+                // Switch back to inventory tab
+                const tabInvBtn = document.querySelector('.tab-btn[data-target="tab-inventory"]');
+                if (tabInvBtn) tabInvBtn.click();
+
+            } catch (err) {
+                console.error(err);
+                alert('파일 파싱 중 오류가 발생했습니다.');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
