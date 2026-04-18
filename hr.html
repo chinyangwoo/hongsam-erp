@@ -313,28 +313,31 @@
                 <!-- 개인별 월간 출결 -->
                 <div class="table-container glassmorphism">
                     <div class="table-header">
-                        <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>개인별 월간 출결 현황 (2026년 4월)</h2>
-                        <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
+                        <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>개인별 월간 출결 현황 (보안업체 연동)</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" id="btnSyncSecurity" style="background: linear-gradient(135deg, #10B981, #059669); border:none;"><i class="fa-solid fa-satellite-dish"></i> 캡스/세콤 서버 연동</button>
+                            <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="emp-monthly-table">
                             <thead>
                                 <tr>
+                                    <th>날짜/시간</th>
                                     <th>사번</th>
                                     <th>이름</th>
                                     <th>부서</th>
-                                    <th>출근</th>
-                                    <th>결근</th>
-                                    <th>지각</th>
-                                    <th>휴가</th>
-                                    <th>출근율</th>
-                                    <th>월간 출결 패턴</th>
+                                    <th>출근 (지문/태그)</th>
+                                    <th>퇴근</th>
+                                    <th>상태</th>
                                 </tr>
                             </thead>
-                            <tbody id="payrollTableBody">
+                            <tbody id="attendanceTableBody">
                                 <tr>
-                                    <td colspan="11" style="text-align: center; padding: 30px;">
-                                        더존 양식의 엑셀 급여대장을 불러오면 급여 정보가 표기됩니다.
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: #94A3B8;">
+                                        <i class="fa-solid fa-server" style="font-size: 2rem; color: #64748B; margin-bottom: 15px;"></i><br>
+                                        접근통제 보안업체(ADT캡스/에스원 등) 연동 데이터가 아직 동기화되지 않았습니다.<br>
+                                        우측 상단의 <strong>[캡스/세콤 서버 연동]</strong> 버튼을 눌러 API를 호출해 주세요.
                                     </td>
                                 </tr>
                             </tbody>

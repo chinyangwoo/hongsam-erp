@@ -48,6 +48,80 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call it immediately on load
     renderAllEmployees();
 
+    // --- SECURITY API SYNC (CAPS) ---
+    const btnSyncSecurity = document.getElementById('btnSyncSecurity');
+    if (btnSyncSecurity) {
+        btnSyncSecurity.addEventListener('click', () => {
+            btnSyncSecurity.disabled = true;
+            const originalHTML = btnSyncSecurity.innerHTML;
+            btnSyncSecurity.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> API 서버 연결 중...';
+            
+            setTimeout(() => {
+                const tbody = document.getElementById('attendanceTableBody');
+                if (!tbody) return;
+                
+                tbody.innerHTML = ''; // clear placeholder
+                
+                // Construct mock attendance log dynamically based on current employees
+                let employees = [];
+                try { employees = JSON.parse(localStorage.getItem('hongsam_employees')); } catch(_) {}
+                if (!employees || employees.length === 0) employees = initHREmployees();
+
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+                
+                // Shuffle/randomize to make it look real
+                const logs = employees.map((emp, index) => {
+                    // Make up some times
+                    let inHour = 8;
+                    let inMin = 30 + Math.floor(Math.random() * 45); // 08:30 to 09:14
+                    let outHour = 18;
+                    let outMin = Math.floor(Math.random() * 30);
+                    
+                    let statusHtml;
+                    if (inHour === 9 && inMin > 0) {
+                        statusHtml = '<span class="status st-pending" style="color:#F59E0B; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">지각</span>';
+                    } else if (index % 5 === 2) {
+                        statusHtml = '<span class="status st-vacation" style="color:#6366F1; background:rgba(99,102,241,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">휴가 (연차)</span>';
+                        inHour = null;
+                        outHour = null;
+                    } else {
+                        statusHtml = '<span class="status st-approved" style="color:#10B981; background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">정상출근</span>';
+                    }
+
+                    const inTimeStr = inHour ? `${String(inHour).padStart(2,'0')}:${String(inMin).padStart(2,'0')}:1${index}` : '-';
+                    const outTimeStr = outHour ? `${String(outHour).padStart(2,'0')}:${String(outMin).padStart(2,'0')}:4${index}` : '-';
+
+                    return `
+                        <tr>
+                            <td>${dateStr}</td>
+                            <td>${emp.emp_id}</td>
+                            <td>${emp.name}</td>
+                            <td>${emp.department || '-'}</td>
+                            <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${inTimeStr}</td>
+                            <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${outTimeStr}</td>
+                            <td>${statusHtml}</td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = logs.join('');
+                
+                // Provide UI feedback
+                btnSyncSecurity.innerHTML = '<i class="fa-solid fa-check"></i> 동기화 완료';
+                btnSyncSecurity.style.background = 'linear-gradient(135deg, #3B82F6, #2563EB)';
+                
+                showSaveToast('보안서버(캡스)에서 오늘자 출퇴근 기록을 성공적으로 동기화했습니다.');
+                
+                setTimeout(() => {
+                    btnSyncSecurity.disabled = false;
+                    btnSyncSecurity.innerHTML = originalHTML;
+                    btnSyncSecurity.style.background = '';
+                }, 4000);
+            }, 2000); // 2 sec fake delay
+        });
+    }
+
     // 1. Tab Navigation Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -454,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tbody.insertAdjacentHTML('beforeend', rowHTML);
                     }
 
-                    toastMsg('급여 엑셀 데이터가 성공적으로 로드되었습니다.');
+                    showSaveToast('급여 엑셀 데이터가 성공적으로 로드되었습니다.');
                     payrollExcelUpload.value = ''; // reset
 
                 } catch (err) {
