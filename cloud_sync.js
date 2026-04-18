@@ -4,7 +4,7 @@
 
 (function() {
     // AWS EC2에 띄워질 Node.js 백엔드 주소
-    const API_BASE = 'http://43.203.237.63:3000/api';
+    const API_BASE = 'http://43.203.237.63:3001/api';
     
     console.log("[Phase 2] Cloud Synchronization Engine Initialization...");
 

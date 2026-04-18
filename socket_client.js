@@ -1,7 +1,7 @@
 // Phase 3: WebSocket 연결 엔진 (실시간 채팅 및 상태 연동)
 (function() {
     // 백엔드 Socket.io 주소
-    const SOCKET_URL = 'http://43.203.237.63:3000';
+    const SOCKET_URL = 'http://43.203.237.63:3001';
     let socket = null;
 
     // 만약 socket.io 라이브러리가 로드되지 않았다면 종료
