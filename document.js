@@ -112,15 +112,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // 미리보기 버튼
         fileBody.querySelectorAll('.btn-preview').forEach(btn => {
             btn.addEventListener('click', () => {
-                alert('📄 미리보기 기능은 실제 파일이 업로드된 후 이용 가능합니다.\n\n현재는 양식 목록(카탈로그)만 등록된 상태입니다.\n관리자가 "새 문서 업로드" 버튼으로 실제 파일을 등록해 주세요.');
+                alert('📄 미리보기 기능은 추후 업데이트 예정입니다.\n다운로드 버튼을 눌러 파일을 받으신 후 열람해 주세요.');
             });
         });
 
-        // 다운로드 버튼
+        // 다운로드 버튼 — 실제 파일 다운로드
         fileBody.querySelectorAll('.btn-download').forEach(btn => {
             btn.addEventListener('click', () => {
                 const fname = btn.getAttribute('data-filename');
-                alert(`📥 "${fname}" 다운로드\n\n현재는 양식 목록(카탈로그)만 등록된 상태입니다.\n실제 파일이 업로드되면 다운로드가 가능합니다.\n\n관리자가 "새 문서 업로드" 버튼으로 실제 파일을 등록해 주세요.`);
+                // HWP → DOCX 변환된 파일명
+                let downloadName = fname;
+                if (fname.endsWith('.hwp')) {
+                    downloadName = fname.replace('.hwp', '.docx');
+                } else if (fname.endsWith('.xls') && !fname.endsWith('.xlsx')) {
+                    downloadName = fname.replace('.xls', '.xlsx');
+                }
+                const link = document.createElement('a');
+                link.href = 'docs/' + encodeURIComponent(downloadName);
+                link.download = downloadName;
+                link.click();
             });
         });
 
