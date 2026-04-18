@@ -143,7 +143,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if(targetContent) {
                 targetContent.style.display = 'block';
                 // small timeout to allow display block to apply before styling active for animation if needed
-                setTimeout(() => targetContent.classList.add('active'), 10);
+                setTimeout(() => {
+                    targetContent.classList.add('active');
+                    
+                    // Highcharts breaks if rendered inside display:none. Trigger when visible!
+                    if (targetId === 'tab-payroll' && !window.payrollChartsRendered) {
+                        if (typeof renderPayrollCharts === 'function') {
+                            renderPayrollCharts();
+                            window.payrollChartsRendered = true;
+                        }
+                    }
+                }, 10);
             }
         });
     });
@@ -901,9 +911,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 data: [51111, 55250]
             }]
         });
-    }
-    
-    // Call renderer
-    setTimeout(renderPayrollCharts, 500);
-
+    // Wait for the user to visit tab-payroll to render
 });
