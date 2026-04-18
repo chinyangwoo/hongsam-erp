@@ -643,15 +643,11 @@
                             <label>성명 <span style="color:#EF4444;">*</span></label>
                             <input type="text" id="newEmpName" class="styled-input" placeholder="사원 성명 입력" required>
                         </div>
-                        <div class="form-group">
-                            <label>로그인 아이디</label>
-                            <input type="text" id="newEmpLoginId" class="styled-input" placeholder="영문 아이디 (미입력 시 사번 사용)">
-                        </div>
-                        <div class="form-group">
-                            <label>초기 비밀번호</label>
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <input type="text" id="newEmpLoginPw" class="styled-input" value="0000" style="flex:1; width:auto;">
-                                <span style="font-size:0.75rem; color:#64748B; white-space:nowrap;">기본: 0000</span>
+                        <div class="form-group full-width">
+                            <label>계정 정보 (로그인)</label>
+                            <div style="display:flex; align-items:center; gap:8px; padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                <span style="color:var(--text-primary); font-family:inherit; flex:1;">초기 비밀번호: 0000 <span style="color:#64748B; font-size:0.85rem;">(로그인 아이디는 본인의 사번을 사용합니다)</span></span>
+                                <span style="font-size:0.75rem; color:#EF4444; white-space:nowrap;"><i class="fa-solid fa-circle-exclamation"></i> 최초 로그인 시 비밀번호 변경 필수</span>
                             </div>
                         </div>
                     </div>
@@ -730,14 +726,12 @@
                             <label>직급 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpRank" class="styled-input" required>
                                 <option value="">직급 선택</option>
-                                <option value="크루">팀원 (크루)</option>
-                                <option value="주임">주임</option>
-                                <option value="대리">대리</option>
-                                <option value="과장">과장</option>
-                                <option value="차장">차장</option>
-                                <option value="부장">부장</option>
+                                <option value="계약직">계약직</option>
+                                <option value="크루">크루(팀원)</option>
+                                <option value="큐레이터">큐레이터(팀장)</option>
+                                <option value="호스트">호스트(지배인)</option>
                                 <option value="임원">임원</option>
-                                <option value="대표이사">대표이사</option>
+                                <option value="마스터">마스터(대표이사)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -836,6 +830,13 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div style="margin-top: 16px; padding: 14px 18px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span style="font-weight: 700; color: #60A5FA;"><i class="fa-solid fa-user-shield"></i> Admin (최고 관리자)</span>
+                                <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 4px;">체크 시 시스템 내 모든 모듈과 메뉴에 대한 열람 및 수정 권한을 부여받습니다.</p>
+                            </div>
+                            <input type="checkbox" id="newEmpAdmin" class="styled-checkbox" style="width: 20px; height: 20px;">
+                        </div>
                     </div>
                 </form>
             </div>
@@ -985,7 +986,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Custom View logic -->
     <script src="app.js?v=2"></script>
-    <script src="hr.js?v=13"></script>
+    <script src="hr.js?v=14"></script>
     <script src="hr_excel.js?v=1"></script>
 </body>
 </html>

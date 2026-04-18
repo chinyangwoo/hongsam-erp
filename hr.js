@@ -129,6 +129,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeNewEmpModal) closeNewEmpModal.addEventListener('click', closeNewModal);
     if (closeNewEmpModalBtn) closeNewEmpModalBtn.addEventListener('click', closeNewModal);
     
+    // Admin 체크 로직
+    const adminCheckbox = document.getElementById('newEmpAdmin');
+    if (adminCheckbox) {
+        adminCheckbox.addEventListener('change', (e) => {
+            const checks = document.querySelectorAll('#newEmpForm .perm-table tbody input[type="checkbox"]');
+            if (e.target.checked) {
+                checks.forEach(c => c.checked = true);
+            }
+        });
+    }
+
     if (saveNewEmpBtn) {
         saveNewEmpBtn.addEventListener('click', () => {
             // 필수항목 검증
@@ -153,8 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const empData = {
                 emp_id:           empId,
                 name:             empName,
-                login_id:         document.getElementById('newEmpLoginId')?.value.trim() || empId,
-                login_pw:         document.getElementById('newEmpLoginPw')?.value.trim() || '0000',
+                login_id:         empId,
+                login_pw:         '0000',
                 birth_date:       document.getElementById('newEmpBirth')?.value || '',
                 gender:           document.getElementById('newEmpGender')?.value || '남',
                 id_front:         document.getElementById('newEmpIdFront')?.value.trim() || '',
@@ -184,16 +195,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 권한 수집
+            const isAdmin = document.getElementById('newEmpAdmin')?.checked || false;
             const permRows = document.querySelectorAll('#newEmpForm .perm-table tbody tr');
             const perms = [];
             permRows.forEach(row => {
                 const cells = row.querySelectorAll('input[type="checkbox"]');
                 perms.push({
-                    read: cells[0]?.checked || false,
-                    write: cells[1]?.checked || false,
+                    read: isAdmin ? true : (cells[0]?.checked || false),
+                    write: isAdmin ? true : (cells[1]?.checked || false),
                 });
             });
             empData.permissions = perms;
+            empData.is_admin = isAdmin;
 
             // localStorage 저장
             const KEY = 'hongsam_employees';
@@ -228,12 +241,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existing) existing.remove();
 
         const rankMap = {
-            '대표이사': 'tag-important', '임원': 'tag-important',
-            '부장': 'tag-important', '차장': 'tag-important',
-            '아르바이트': 'tag-hr', '인턴': 'tag-hr',
+            '마스터': 'tag-important', '임원': 'tag-important',
+            '호스트': 'tag-important', 
+            '큐레이터': 'tag-general',
+            '크루': 'tag-general',
+            '계약직': 'tag-hr'
+        };
+        const rankLabelMap = {
+            '마스터': '마스터(대표이사)',
+            '임원': '임원',
+            '호스트': '호스트(지배인)',
+            '큐레이터': '큐레이터(팀장)',
+            '크루': '크루(팀원)',
+            '계약직': '계약직'
         };
         const tagCls = rankMap[emp.rank] || 'tag-general';
-        const rankLabel = emp.rank === '크루' ? '팀원 (크루)' : emp.rank;
+        const rankLabel = rankLabelMap[emp.rank] || emp.rank;
         const statusDot = emp.status === '재직' ? 'online' : 'offline';
         const statusText = emp.status === '재직' ? '정상근무' : emp.status;
         const imgSrc = emp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
@@ -408,8 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
             setVal('newEmpId', emp.emp_id);
             setVal('newEmpName', emp.name);
-            setVal('newEmpLoginId', emp.login_id);
-            setVal('newEmpLoginPw', emp.login_pw);
             setVal('newEmpBirth', emp.birth_date);
             setVal('newEmpGender', emp.gender);
             setVal('newEmpIdFront', emp.id_front);
@@ -427,6 +448,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setVal('newEmpBaseSalary', emp.base_salary);
             setVal('newEmpFamily', emp.family_info);
             setVal('newEmpNotes', emp.notes);
+            if (document.getElementById('newEmpAdmin')) {
+                document.getElementById('newEmpAdmin').checked = !!emp.is_admin;
+            }
             if (emp.photo && photoPreview) photoPreview.src = emp.photo;
         }, 100);
     };
