@@ -443,3 +443,5 @@ if (itemExcelUpload && inventoryTableBody) {
         reader.readAsArrayBuffer(file);
     });
 }
+
+});
