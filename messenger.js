@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!text) return;
 
         const isBroadcast = checkBroadcast.checked;
+        const myName = localStorage.getItem('currentUserName') || 'User';
+        const myEmpId = localStorage.getItem('currentUser') || '000';
         
         // Time Formatting
         const now = new Date();
@@ -36,17 +38,68 @@ document.addEventListener('DOMContentLoaded', () => {
         let minutes = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
         const ampm = hours >= 12 ? '오후' : '오전';
         hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? hours : 12; 
         const timeStr = `${ampm} ${hours}:${minutes}`;
 
-        // Create Message DOM
-        const msgWrapper = document.createElement('div');
-        msgWrapper.className = 'msg-wrapper self';
+        // Create Payload
+        const payload = {
+            senderId: myEmpId,
+            senderName: myName,
+            text: text,
+            timeStr: timeStr
+        };
 
-        let innerHTML = `
+        // Emit via WebSocket
+        if (window.erpSocket && window.erpSocket.connected) {
+            if (isBroadcast) {
+                window.erpSocket.emit('send_broadcast', payload);
+            } else {
+                window.erpSocket.emit('send_message', payload);
+            }
+        } else {
+            alert("서버와 연결이 끊어졌습니다. 실시간 전송이 불가합니다.");
+            return;
+        }
+
+        // Reset Input
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        checkBroadcast.checked = false;
+    }
+
+    // --- Phase 3: WebSocket Receiver Rendering ---
+    window.handleIncomingSocketMessage = function(msgData) {
+        renderMessageToUI(msgData, false);
+    };
+
+    window.handleIncomingBroadcast = function(msgData) {
+        renderMessageToUI(msgData, true);
+    };
+
+    function renderMessageToUI(msgData, isBroadcast) {
+        const myEmpId = localStorage.getItem('currentUser');
+        const isSelf = (msgData.senderId === myEmpId);
+        
+        const msgWrapper = document.createElement('div');
+        msgWrapper.className = 'msg-wrapper ' + (isSelf ? 'self' : 'peer');
+
+        let innerHTML = ``;
+        
+        // 프로필 렌더링 (내가 아닐 경우만 표시 - 카톡 스타일)
+        if (!isSelf) {
+            let employees = [];
+            try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e){}
+            const senderEmp = employees.find(e => e.emp_id === String(msgData.senderId)) || {};
+            const photoSrc = senderEmp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(msgData.senderName)}&background=random`;
+            
+            innerHTML += `<img src="${photoSrc}" alt="user" class="msg-avatar">`;
+        }
+
+        innerHTML += `
             <div class="msg-content-block">
                 <div class="msg-meta">
-                    <span class="m-time">${timeStr}</span>
+                    ${!isSelf ? `<span class="m-name">${msgData.senderName}</span>` : ''}
+                    <span class="m-time">${msgData.timeStr}</span>
                 </div>
         `;
 
@@ -54,29 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
             innerHTML += `
                 <div class="msg-bubble broadcast">
                     <strong class="b-title"><i class="fa-solid fa-bullhorn"></i> 긴급 공지 (Broadcast)</strong>
-                    <p>${text.replace(/\n/g, '<br>')}</p>
+                    <p>${msgData.text.replace(/\n/g, '<br>')}</p>
                 </div>
             `;
         } else {
             innerHTML += `
-                <div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>
+                <div class="msg-bubble">${msgData.text.replace(/\n/g, '<br>')}</div>
             `;
         }
 
         innerHTML += `</div>`;
         
         msgWrapper.innerHTML = innerHTML;
-        
-        // Append to chat area
         chatMessagesArea.appendChild(msgWrapper);
-
-        // Scroll to bottom
         chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight;
-
-        // Reset Input
-        chatInput.value = '';
-        chatInput.style.height = 'auto';
-        checkBroadcast.checked = false; // Reset Broadcast toggle after send
     }
 
     // Scroll to bottom on load
@@ -103,23 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── Load Employees into DM List from Local Storage (Synced) ──
-    function loadMessengerEmployees() {
+    // ── Phase 3: Real-Time Live Status via WebSocket ──
+    window.refreshMessengerOnlineStatus = function(onlineEmpIds) {
         const dmList = document.getElementById('messengerDmList');
         if (!dmList) return;
 
         let employees = [];
-        try {
-            employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
-        } catch(e) {}
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e) {}
 
-        if (employees.length === 0) {
-            dmList.innerHTML = `<li style="padding: 15px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">인사기록카드에 등록된 직원이 없습니다.</li>`;
-            return;
-        }
-
-        let onlineCount = 0;
-        
         dmList.innerHTML = '';
         employees.forEach(emp => {
             const li = document.createElement('li');
@@ -127,20 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const dept = emp.department || '부서미정';
             
-            // Randomly Simulate Online, Away, Offline
-            let statusClass = 'offline';
-            let statusText = '오프라인';
-            const rnd = Math.random();
-            if (emp.status === '재직') {
-                if (rnd > 0.6) {
-                    statusClass = 'online';
-                    statusText = '온라인';
-                    onlineCount++;
-                } else if (rnd > 0.4) {
-                    statusClass = 'away';
-                    statusText = '자리비움';
-                }
-            }
+            // 실시간 소켓 접속자 명단에 있는지 확인 (온라인/오프라인)
+            let isOnline = onlineEmpIds.includes(String(emp.emp_id));
+            let statusClass = isOnline ? 'online' : 'offline';
+            let statusText = isOnline ? '온라인' : '오프라인';
             
             const photoSrc = emp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
             
@@ -152,13 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // Add click interaction for dynamic items
             li.addEventListener('click', function() {
                 document.querySelectorAll('.channel-item').forEach(i => i.classList.remove('active'));
                 document.querySelectorAll('.dm-item').forEach(i => i.style.background = 'transparent');
                 this.style.background = 'rgba(255, 255, 255, 0.05)';
                 
-                // Change Chat Header
                 const chatHeader = document.querySelector('.ch-header-info');
                 if (chatHeader) {
                     chatHeader.innerHTML = `
@@ -170,9 +193,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             dmList.appendChild(li);
         });
-    }
+    };
 
-    // Delay loading slightly to allow cloud_sync to populate localStorage
-    setTimeout(loadMessengerEmployees, 500);
+    // 초기 로딩 (현재 전역 변수화된 접속자 명단으로 그리기)
+    setTimeout(() => {
+        if(window.activeOnlineUsers) {
+            window.refreshMessengerOnlineStatus(window.activeOnlineUsers);
+        } else {
+            // 소켓 대기
+            window.refreshMessengerOnlineStatus([]);
+        }
+    }, 500);
 
 });
