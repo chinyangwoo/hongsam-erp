@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼스파 - 시스템 보안</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="security.css?v=1">
+    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item active nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div class="header-title">
+                <h1><i class="fa-solid fa-shield-halved" style="color: #EF4444;"></i> 시스템 보안</h1>
+                <p>전사 로그인 감사 로그 (Audit Trail)</p>
+            </div>
+            <div class="header-actions">
+                <div class="security-stats-pill">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>현재 실시간 접속자: </span>
+                    <span class="stat-online" id="secOnlineCount">1</span>명
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- Security KPI Cards -->
+            <div class="security-kpi-row">
+                <div class="sec-kpi glassmorphism">
+                    <div class="sec-kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #3B82F6;">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </div>
+                    <div class="sec-kpi-info">
+                        <span class="sec-kpi-value" id="kpiTotalLogins">0</span>
+                        <span class="sec-kpi-label">금일 총 로그인</span>
+                    </div>
+                </div>
+                <div class="sec-kpi glassmorphism">
+                    <div class="sec-kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="sec-kpi-info">
+                        <span class="sec-kpi-value" id="kpiUniqueUsers">0</span>
+                        <span class="sec-kpi-label">금일 고유 접속자</span>
+                    </div>
+                </div>
+                <div class="sec-kpi glassmorphism">
+                    <div class="sec-kpi-icon" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="sec-kpi-info">
+                        <span class="sec-kpi-value" id="kpiFailedLogins">0</span>
+                        <span class="sec-kpi-label">금일 실패 시도</span>
+                    </div>
+                </div>
+                <div class="sec-kpi glassmorphism">
+                    <div class="sec-kpi-icon" style="background: rgba(139, 92, 246, 0.15); color: #8B5CF6;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div class="sec-kpi-info">
+                        <span class="sec-kpi-value" id="kpiLastLogin">-</span>
+                        <span class="sec-kpi-label">최근 로그인 시각</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Log Table -->
+            <div class="glass-panel glassmorphism" style="margin-top:20px;">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-list-check"></i> 로그인 감사 로그 (최신순)</h2>
+                    <button class="btn-refresh" id="btnRefreshLogs" title="새로고침">
+                        <i class="fa-solid fa-arrows-rotate"></i> 새로고침
+                    </button>
+                </div>
+                <div class="table-container" style="max-height: 600px; overflow-y:auto;">
+                    <table class="sec-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>시각</th>
+                                <th>사번</th>
+                                <th>이름</th>
+                                <th>결과</th>
+                                <th>IP 주소</th>
+                                <th>디바이스</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loginLogBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:40px; color: var(--text-secondary);">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> 로그인 기록을 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Currently Online Users -->
+            <div class="glass-panel glassmorphism" style="margin-top:20px;">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-signal" style="color: #10B981;"></i> 현재 실시간 접속자</h2>
+                </div>
+                <div class="online-users-grid" id="onlineUsersGrid">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="app.js?v=3"></script>
+    <script src="security.js?v=1"></script>
+</body>
+</html>
+

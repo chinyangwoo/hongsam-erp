@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼스파 - 통합 대시보드</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css?v=11">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item active">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header section -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>통합 대시보드</h1>
+                <p>2026년 4월 17일, 금요일</p>
+            </div>
+            
+            <div class="header-actions">
+                <div class="hr-stats-pill">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>금일 출근 현황: </span>
+                    <span class="stat normal">정상 45</span> | 
+                    <span class="stat vacation">휴가 3</span> | 
+                    <span class="stat absent">결근 2</span>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                <div class="notification-bell">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="indicator"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Container for all dashboard stuff -->
+        <div class="dashboard-container">
+            
+            <!-- Global Alert Banner (Hidden by default, shown via JS) -->
+            <div class="alert-banner" id="inventoryAlert">
+                <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="alert-content">
+                    <strong>재고 부족 경고:</strong> 수건(루프탑), 샴푸(2층) 안전재고 기준치 미달 - 즉시 발급 요망
+                </div>
+                <button class="alert-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- KPI Cards -->
+            <section class="kpi-grid">
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon blue"><i class="fa-solid fa-won-sign"></i></div>
+                    <div class="kpi-details">
+                        <h3>금일 매출</h3>
+                        <p class="amount" id="kpi-today-rev">1,250,000</p>
+                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="kpi-details">
+                        <h3>월간 누적 매출</h3>
+                        <p class="amount" id="kpi-month-rev">45,120,000</p>
+                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <div class="kpi-details">
+                        <h3>전일 지출</h3>
+                        <p class="amount" id="kpi-yesterday-exp">350,000</p>
+                        <span class="trend negative"><i class="fa-solid fa-arrow-down"></i> 지출결의 연동됨</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon red"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="kpi-details">
+                        <h3>월간 누적 지출</h3>
+                        <p class="amount" id="kpi-month-exp">18,300,400</p>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 45%;"></div>
+                        </div>
+                        <span class="trend neutral">지출결의 연동됨</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-grid">
+                <!-- Bar Chart -->
+                <div class="chart-container glassmorphism col-span-2">
+                    <div class="chart-header">
+                        <h2>최근 7일 주간 매출 추이</h2>
+                        <button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>이번 달 지출 구성</h2>
+                        <button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Line Chart: Electricity -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>전기 사용량</h2>
+                    </div>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="elecChart"></canvas>
+                    </div>
+                </div>
+                <!-- Line Chart: Gas -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>가스 사용량</h2>
+                    </div>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="gasChart"></canvas>
+                    </div>
+                </div>
+                <!-- Line Chart: Water -->
+                <div class="chart-container glassmorphism col-span-1">
+                    <div class="chart-header">
+                        <h2>수도 사용량</h2>
+                    </div>
+                    <div class="chart-body" style="height: 200px;">
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tables & Lists Section -->
+            <section class="tables-grid">
+                <!-- Cashflow Table -->
+                <div class="table-container glassmorphism col-span-2">
+                    <div class="table-header">
+                        <h2>최근 현금흐름 (수입/지출 결의)</h2>
+                        <button class="btn-text">전체보기 <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>일자</th>
+                                    <th>구분</th>
+                                    <th>적요 (내용)</th>
+                                    <th>부서</th>
+                                    <th>금액 (원)</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2026.04.17</td>
+                                    <td><span class="tag tag-expense">지출</span></td>
+                                    <td>루프탑 샤워타월 및 샴푸 추가 발주 </td>
+                                    <td>운영팀</td>
+                                    <td class="text-right">1,250,000</td>
+                                    <td><span class="status st-pending">승인대기</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2026.04.16</td>
+                                    <td><span class="tag tag-income">수입</span></td>
+                                    <td>여행사 (하나투어) 단체 고객 45명 입금</td>
+                                    <td>지원팀</td>
+                                    <td class="text-right highlight">1,350,000</td>
+                                    <td><span class="status st-approved">승인완료</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2026.04.15</td>
+                                    <td><span class="tag tag-expense">지출</span></td>
+                                    <td>1층 카페 원두 및 부자재 구매</td>
+                                    <td>식음료팀</td>
+                                    <td class="text-right">320,000</td>
+                                    <td><span class="status st-approved">승인완료</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2026.04.15</td>
+                                    <td><span class="tag tag-expense">지출</span></td>
+                                    <td>가스요금 (고지서 납부 완료)</td>
+                                    <td>지원팀</td>
+                                    <td class="text-right">2,100,000</td>
+                                    <td><span class="status st-approved">승인완료</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Notice / Announcements -->
+                <div class="notice-container glassmorphism">
+                    <div class="table-header">
+                        <h2>사내 공지 요약</h2>
+                    </div>
+                    <ul class="notice-list">
+                        <li class="notice-item">
+                            <div class="notice-meta">
+                                <span class="tag tag-important">중요</span>
+                                <span class="date">04.17</span>
+                            </div>
+                            <h4 class="notice-title">안전 점검 관련 전직원 숙지사항</h4>
+                            <p class="notice-desc">가스 보일러실 출입은 공무팀 인원 외 엄격히 통제합니다.</p>
+                        </li>
+                        <li class="notice-item">
+                            <div class="notice-meta">
+                                <span class="tag tag-general">일반</span>
+                                <span class="date">04.15</span>
+                            </div>
+                            <h4 class="notice-title">루프탑 인피니티풀 수질검사 통과 안내</h4>
+                            <p class="notice-desc">4월 정기 수질검사에서 적합 판정을 받았습니다.</p>
+                        </li>
+                        <li class="notice-item">
+                            <div class="notice-meta">
+                                <span class="tag tag-hr">인사</span>
+                                <span class="date">04.12</span>
+                            </div>
+                            <h4 class="notice-title">하계 단체유니폼 사이즈 수요조사</h4>
+                            <p class="notice-desc">이번주 금요일까지 각 팀장님 취합 후 제출 바랍니다.</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Custom View logic -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="app.js?v=2"></script>
+</body>
+</html>
+
+
+
+
+
+

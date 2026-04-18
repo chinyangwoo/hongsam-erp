@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼스파 - 영업 및 캘린더</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FullCalendar CSS via CDN -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="sales.css?v=10">
+    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item active">
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>영업관리</h1>
+                <p>일정 공유 및 현금흐름 뷰어</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container" style="padding-bottom: 120px; overflow: visible;">
+            
+            <!-- Quick Finance Summary Pills -->
+            <div class="finance-summary-grid" style="overflow: visible;">
+                <div class="f-pill glassmorphism box-income">
+                    <div class="f-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <div class="f-text">
+                        <span>금월누적매출</span>
+                        <h3>₩ 125,500,000</h3>
+                    </div>
+                </div>
+                <div class="f-pill glassmorphism box-expense">
+                    <div class="f-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <div class="f-text">
+                        <span>금주누적매출</span>
+                        <h3>₩ 38,200,000</h3>
+                    </div>
+                </div>
+                <div class="f-pill glassmorphism box-event">
+                    <div class="f-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="f-text">
+                        <span>금월누적방문객수</span>
+                        <h3 style="display:flex; align-items:center; gap:8px;">
+                            <span id="visitorCountDisplay">1,450 명</span> 
+                            <button id="btnEditVisitor" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="fa-solid fa-pen" style="font-size:0.9rem;"></i></button>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs removed as requested -->
+
+            <div id="tab-calendar" style="margin-bottom: 40px;">
+                <div class="action-bar glassmorphism" style="margin-bottom: 0;">
+                    <div class="legend-box">
+                        <span class="legend"><span class="dot c-green"></span> 여행사/단체방문</span>
+                        <span class="legend"><span class="dot c-blue"></span> 시설 대관</span>
+                        <span class="legend"><span class="dot c-purple"></span> VIP</span>
+                        <span class="legend"><span class="dot c-orange"></span> 일반단체</span>
+                        <span class="legend"><span class="dot c-gray"></span> 기타</span>
+                    </div>
+                </div>
+                
+                <div class="calendar-wrapper glassmorphism">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
+            <div id="tab-event-list" style="display: block; padding-bottom: 50px;">
+                <div class="table-container glassmorphism" style="margin-bottom: 50px;">
+                    <div class="table-header action-bar-override">
+                        <h2><i class="fa-solid fa-list-ul" style="color:#3B82F6; margin-right:8px;"></i>월간 달력 일정 요약 내용</h2>
+                    </div>
+                    <div class="list-responsive" style="padding: 20px;">
+                        <ul id="agendaList" class="agenda-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Items inserted dynamically via Javascript based on Calendar events -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Calendar Event Modal -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content glassmorphism" style="width: 500px;">
+            <div class="modal-header">
+                <h2>영업 일정 상세정보</h2>
+                <button class="btn-close" id="closeEventModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="event-details">
+                    <h3 id="evTitle" class="ev-title">하나투어 진안관광 45명 방문</h3>
+                    <div class="ev-tag" id="evTag">여행사 단체 (지원팀)</div>
+                    
+                    <ul class="ev-info-list">
+                        <li><strong><i class="fa-regular fa-clock"></i> 일정:</strong> <span id="evDate">2026.04.22 14:00 ~ 18:00</span></li>
+                        <li><strong><i class="fa-solid fa-users"></i> 인원수:</strong> <span id="evPeople">45명</span></li>
+                        <li><strong><i class="fa-solid fa-won-sign"></i> 예상매출액:</strong> <span id="evRevenue" class="highlight-revenue">2,250,000원</span></li>
+                        <li><strong><i class="fa-solid fa-list-check"></i> 준비사항:</strong> 
+                            <p id="evPrep" class="ev-desc">루프탑 사우나 단체입장 준비 요망, 수건 여유분 100장 추가 배치할 것.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeEventBtn">닫기</button>
+                <button class="btn-primary">수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Event Entry Modal -->
+    <div class="modal-overlay" id="newEventModal">
+        <div class="modal-content glassmorphism" style="width: 500px;">
+            <div class="modal-header">
+                <h2>새로운 영업 일정 등록</h2>
+                <button class="btn-close" id="closeNewEventModalHeader"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">선택된 일정 날짜</label>
+                        <input type="text" id="neDate" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--accent-blue); font-weight:700; outline:none; font-family:inherit;" readonly>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">일정 제목 (내용)</label>
+                        <input type="text" id="neTitle" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit; transition:var(--transition);" placeholder="예: 단체 관광객 45명 방문" onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.15)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">분류 태그</label>
+                        <select id="neTag" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit;">
+                            <option value="#10B981" style="background:#0F172A;">여행사 단체</option>
+                            <option value="#3B82F6" style="background:#0F172A;">시설 대관</option>
+                            <option value="#8B5CF6" style="background:#0F172A;">VIP</option>
+                            <option value="#F97316" style="background:#0F172A;">일반단체</option>
+                            <option value="#6B7280" style="background:#0F172A;">기타</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeNewEventBtn">취소</button>
+                <button class="btn-primary" id="saveNewEventBtn"><i class="fa-solid fa-plus"></i> 일정 추가</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Visitor Count Modal -->
+    <div class="modal-overlay" id="visitorEditModal">
+        <div class="modal-content glassmorphism" style="width: 450px;">
+            <div class="modal-header">
+                <h2>방문객수 기록 수정</h2>
+                <button class="btn-close" id="closeVisitorModalHeader"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 24px; line-height:1.5;">현재까지의 누적 방문객수를 직접 입력하여 테이블과 대시보드를 업데이트합니다.</p>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">정확한 금월 누적 방문객수 (명)</label>
+                    <div style="position:relative; display:flex; align-items:center;">
+                        <i class="fa-solid fa-users" style="position:absolute; left:16px; color:var(--text-secondary);"></i>
+                        <input type="number" id="visitorInput" style="background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); padding:14px 16px 14px 45px; border-radius:var(--radius-md); outline:none; font-family:inherit; font-size:1rem; width:100%; box-sizing:border-box; transition:var(--transition);" placeholder="예: 1450" onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.15)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeVisitorModal">취소</button>
+                <button class="btn-primary" id="saveVisitorBtn"><i class="fa-solid fa-check"></i> 저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom View logic -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="app.js?v=2"></script>
+    <script src="sales.js?v=2"></script>
+</body>
+</html>
+
+
+
+
+
+

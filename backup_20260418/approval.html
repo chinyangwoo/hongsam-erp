@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼스파 - 전자결재</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="approval.css?v=2">
+    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼스파 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item active">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>전자결재</h1>
+                <p>문서 기안 상신 및 승인/반려 시스템</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="approval-layout glassmorphism">
+            
+            <!-- Left LNB for E-Approval -->
+            <div class="ap-sidebar">
+                <button class="btn-primary btn-draft" id="btnNewDraft">
+                    <i class="fa-solid fa-pen-nib"></i> 새 결재 진행 (기안)
+                </button>
+
+                <div class="ap-menu-sec">
+                    <h4 class="sec-title">결재 수신함 (결재권자)</h4>
+                    <ul class="ap-nav-list">
+                        <li class="active">
+                            <i class="fa-solid fa-inbox"></i> 결재 할 문서
+                            <span class="badge-round">2</span>
+                        </li>
+                        <li><i class="fa-solid fa-check-double"></i> 결재 내역 (완료)</li>
+                    </ul>
+                </div>
+
+                <div class="ap-menu-sec">
+                    <h4 class="sec-title">기안 발신함 (기안자)</h4>
+                    <ul class="ap-nav-list">
+                        <li><i class="fa-regular fa-paper-plane"></i> 결재 진행 중 문서</li>
+                        <li><i class="fa-solid fa-rotate-left"></i> 반려 / 보류 문서</li>
+                        <li><i class="fa-solid fa-file-circle-check"></i> 결재 완료 문서</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Main Pane -->
+            <div class="ap-main-content">
+                
+                <!-- Action Bar -->
+                <div class="ap-toolbar">
+                    <div class="bread-title">
+                        <h2><i class="fa-solid fa-inbox"></i> 결재 할 문서 (대기함)</h2>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass" style="position:absolute; margin-left:14px; margin-top:10px; color:var(--text-secondary);"></i>
+                        <input type="text" placeholder="기안서 제목, 기안자 검색...">
+                    </div>
+                </div>
+
+                <!-- Document List -->
+                <div class="ap-doc-list">
+                    
+                    <div class="file-list-header ap-grid-header">
+                        <div class="c-date">기안일</div>
+                        <div class="c-form">양식</div>
+                        <div class="c-title">제목</div>
+                        <div class="c-author">기안자</div>
+                        <div class="c-status">결재 상태</div>
+                    </div>
+
+                    <div class="file-list-body">
+                        
+                        <!-- Doc Item 1 -->
+                        <div class="ap-item doc-actionable" data-doc-id="1">
+                            <div class="c-date">2026.04.17</div>
+                            <div class="c-form"><span class="tag-outline">비품발주서</span></div>
+                            <div class="c-title highlight">루프탑 수영장 어메니티 긴급 발주 요청건</div>
+                            <div class="c-author">김지원 (지원팀장)</div>
+                            <div class="c-status">
+                                <span class="status status-pending">내 결재 대기중</span>
+                            </div>
+                        </div>
+
+                        <!-- Doc Item 2 -->
+                        <div class="ap-item doc-actionable" data-doc-id="2">
+                            <div class="c-date">2026.04.16</div>
+                            <div class="c-form"><span class="tag-outline">지출결의서</span></div>
+                            <div class="c-title highlight">1층 카페 신규 디저트 초도 물량 매입 대금 결제</div>
+                            <div class="c-author">박영수 (식음료팀장)</div>
+                            <div class="c-status">
+                                <span class="status status-pending">내 결재 대기중</span>
+                            </div>
+                        </div>
+
+                        <!-- Add a spacer to visualize structure -->
+                        <div style="height: 20px;"></div>
+                        <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">
+                            결재가 필요한 다른 문서가 없습니다.
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Document Modal (Approval View) -->
+                <div class="doc-viewer-modal" id="docViewer" style="display: none;">
+                    <div class="dv-header">
+                        <div class="dv-title">
+                            <h3>문서번호: HS-20260417-001</h3>
+                            <h2>루프탑 수영장 어메니티 긴급 발주 요청건</h2>
+                        </div>
+                        <button class="btn-icon" id="btnCloseViewer"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <!-- Approval Action Header -->
+                    <div class="dv-action-bar">
+                        <p class="guide-text"><i class="fa-solid fa-bell" style="color:var(--accent-orange)"></i> 귀하의 결재가 필요한 문서입니다.</p>
+                        <div class="actions">
+                            <button class="btn-reject" onclick="alert('반려 되었습니다.')"><i class="fa-solid fa-ban"></i> 반려</button>
+                            <button class="btn-approve" onclick="alert('결재 승인 되었습니다. 영업 모듈(지출결의)로 이관됩니다.')"><i class="fa-solid fa-signature"></i> 결재 승인</button>
+                        </div>
+                    </div>
+
+                    <div class="dv-paper">
+                        <!-- Standard E-Approval Paper form -->
+                        <div class="paper-header">
+                            <h1>비 품 발 주 서</h1>
+                            <table class="approval-line-table">
+                                <tr>
+                                    <th rowspan="4">결<br>재<br>선</th>
+                                    <td>기 안</td>
+                                    <td>검 토</td>
+                                    <td>승 인</td>
+                                </tr>
+                                <tr>
+                                    <td>이영희(루프탑)</td>
+                                    <td>김지원(지원장)</td>
+                                    <td>진양우(대표)</td>
+                                </tr>
+                                <tr class="sign-row">
+                                    <td><img src="https://via.placeholder.com/60x40/000000/FFFFFF?text=SIGN" alt="sign" style="border-radius:20px; filter: invert(1);"></td>
+                                    <td><img src="https://via.placeholder.com/60x40/000000/FFFFFF?text=SIGN" alt="sign" style="border-radius:20px; filter: invert(1);"></td>
+                                    <td class="pending-sign">결재 대기</td>
+                                </tr>
+                                <tr>
+                                    <td>04/17</td>
+                                    <td>04/17</td>
+                                    <td>-</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <table class="paper-meta-table">
+                            <tr>
+                                <th>기안부서</th>
+                                <td>임시 / 루프탑 담당</td>
+                                <th>기안일자</th>
+                                <td>2026년 04월 17일</td>
+                            </tr>
+                            <tr>
+                                <th>보존연한</th>
+                                <td>5년</td>
+                                <th>합의부서</th>
+                                <td>재무/회계 관리부</td>
+                            </tr>
+                        </table>
+
+                        <div class="paper-content-area">
+                            <h3>1. 발주 목적</h3>
+                            <p>재고 관리 자동 알람에 의거, 루프탑 사우나 수건 및 대용량 바디워시 재고가 안전 임계치 미만으로 도달하여 주말 영업 대비 긴급 발주를 상신합니다.</p>
+                            
+                            <br>
+                            <h3>2. 발주 상세 내역</h3>
+                            <table class="item-table text-left">
+                                <tr>
+                                    <th>품목명</th>
+                                    <th>단가</th>
+                                    <th>수량</th>
+                                    <th>합계 금액</th>
+                                </tr>
+                                <tr>
+                                    <td>대형 비치타월 (호텔용 70수)</td>
+                                    <td>12,500원</td>
+                                    <td>100장</td>
+                                    <td>1,250,000원</td>
+                                </tr>
+                                <tr>
+                                    <td>대용량 허브 바디워시</td>
+                                    <td>35,000원</td>
+                                    <td>10말</td>
+                                    <td>350,000원</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" style="text-align: right;">총 청구 금액</th>
+                                    <td style="font-weight: 700; color: #1E293B;">1,600,000 원</td>
+                                </tr>
+                            </table>
+                            <p style="margin-top:20px; color: #666; font-size:0.9rem;">위와 같이 물품 대금 지출을 결의하오니 승인하여 주시기 바랍니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Draft Form Editor -->
+    <div class="modal-overlay" id="draftEditModal">
+        <div class="modal-content glassmorphism" style="width: 800px; max-height: 90vh;">
+            <div class="modal-header">
+                <h2>새 기안 상신</h2>
+                <button class="btn-close" id="closeDraftEditModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="modal-body" style="padding: 20px 30px;">
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <div style="flex:1;">
+                        <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">양식 선택</label>
+                        <select id="draftType" class="form-control" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.1); padding: 10px; color: var(--text-primary);">
+                            <option value="지출결의서">지출 결의서</option>
+                            <option value="수입결의서">수입 결의서</option>
+                            <option value="기안서(일반)">기안서 (일반)</option>
+                            <option value="휴가계">연차 및 휴가계 신청서</option>
+                        </select>
+                    </div>
+                    <div style="flex:2;">
+                        <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">문서 제목</label>
+                        <input type="text" id="draftSubject" class="form-control" placeholder="예: 2026년 4월 비품 매입 결의" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.1); padding: 10px; color: var(--text-primary);">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="flex:1;">
+                        <label style="display:block; font-size:0.85rem; color:var(--accent-orange); margin-bottom:6px; font-weight:600;"><i class="fa-solid fa-user-tag"></i> 기안자 직급 선택</label>
+                        <select id="drafterRole" class="form-control" style="width: 100%; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(0,0,0,0.2); padding: 8px; color: var(--text-primary);">
+                            <option value="crew">크루 (팀원)</option>
+                            <option value="curator">큐레이터 (팀장)</option>
+                            <option value="host">호스트 (지배인)</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">1차 결재자</label>
+                        <input type="text" id="approver1" readonly value="큐레이터 (팀장)" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); padding: 8px; color: var(--text-secondary); text-align: center;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">2차 결재자</label>
+                        <input type="text" id="approver2" readonly value="호스트 (지배인)" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); padding: 8px; color: var(--text-secondary); text-align: center;">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">문서 내용</label>
+                    <textarea class="form-control" style="width: 100%; height: 250px; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); padding: 15px; color: var(--text-primary); resize: none; font-family: inherit; line-height: 1.6;" placeholder="상세 내용을 입력하세요..."></textarea>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">첨부 파일 (선택)</label>
+                    <input type="file" style="color: var(--text-secondary); font-size: 0.9rem;">
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 20px 30px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-secondary" id="btnCancelDraftBtn" style="padding: 10px 20px; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border-color); cursor: pointer;">취소</button>
+                <button class="btn-primary" id="btnSubmitDraft" style="padding: 10px 24px; border-radius: 6px; background: var(--accent-blue); color: white; border: none; font-weight: 600; cursor: pointer;">결재 상신</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom View logic -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="app.js?v=2"></script>
+    <script src="approval.js"></script>
+</body>
+</html>
+
+
+
+
+
+
