@@ -6,13 +6,29 @@ if (localStorage.getItem('isLoggedIn') !== 'true') {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Update userName if saved
+    // Update userName and Avatar if saved
     const currentUser = localStorage.getItem('currentUser');
     const currentUserName = localStorage.getItem('currentUserName');
     if (currentUser) {
+        // Sync name
         const nameSpans = document.querySelectorAll('.user-info .name');
         nameSpans.forEach(span => {
             span.innerText = currentUserName ? `${currentUserName} (${currentUser})` : `사번: ${currentUser}`;
+        });
+
+        // Sync photo from HR DB (if exists)
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
+        const empRecord = employees.find(e => e.emp_id === currentUser);
+        
+        const avatars = document.querySelectorAll('.user-info .avatar');
+        avatars.forEach(img => {
+            if (empRecord && empRecord.photo) {
+                img.src = empRecord.photo;
+            } else if (currentUserName) {
+                // If no uploaded photo, show their name initial instead of "CE"
+                img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserName)}&background=0D8ABC&color=fff&rounded=true&bold=true`;
+            }
         });
     }
 
