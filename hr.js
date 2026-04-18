@@ -724,41 +724,82 @@ document.addEventListener('DOMContentLoaded', () => {
         showSaveToast(`"${empName}" 사원이 삭제되었습니다.`);
     };
 
-    // ─── 연차/휴가 수정 ───
+    // ─── 연차/휴가 관련 로직 ───
+    function renderVacationTable() {
+        const tbody = document.getElementById('vacationTableBody');
+        if (!tbody) return;
+        
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(_) {}
+        
+        if (employees.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px;">등록된 사원이 없습니다. 인사기록카드에서 사원을 등록해주세요.</td></tr>';
+            return;
+        }
+
+        // Sort by emp_id ascending
+        employees.sort((a, b) => parseInt(a.emp_id, 10) - parseInt(b.emp_id, 10));
+
+        tbody.innerHTML = '';
+        employees.forEach(emp => {
+            const total = parseInt(emp.total_vacation) || 15;
+            const used = parseInt(emp.used_vacation) || 0;
+            const remain = total - used;
+            const rate = total > 0 ? (used / total) * 100 : 0;
+            const rateFormatted = rate.toFixed(1);
+            
+            let remainClass = remain <= 3 ? 'late-stamp text-right' : 'highlight text-right';
+            let barColor = rate >= 80 ? 'var(--accent-red)' : rate >= 50 ? 'var(--accent-orange)' : 'var(--accent-blue)';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${emp.emp_id}</td>
+                <td>${emp.name}</td>
+                <td>${emp.department || '-'}</td>
+                <td>${total}일</td>
+                <td>${used}일</td>
+                <td class="${remainClass}">${remain}일</td>
+                <td class="progress-cell" style="padding-top:14px;">
+                    <div class="progress-bar-bg" style="margin:0;">
+                        <div class="progress-bar-fill" style="width: ${rate}%; background: ${barColor};"></div>
+                    </div>
+                    <div style="font-size:0.75rem; color:#94A3B8; text-align:right; margin-top:6px; font-weight:600;">사용률: ${rateFormatted}%</div>
+                </td>
+                <td>
+                    <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:6px; cursor:pointer; color:white;" onclick="editLeave('${emp.emp_id}','${emp.name}',${total},${used})"><i class="fa-solid fa-pen"></i> 수정</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
     window.editLeave = function(empId, empName, totalDays, usedDays) {
-        const newTotal = prompt(`${empName} (${empId}) - 총 연차배정일수를 입력하세요:`, totalDays);
+        const newTotal = prompt(`[${empName}] 사원의 총 연차 배정일수를 입력하세요:`, totalDays);
         if (newTotal === null) return;
-        const newUsed = prompt(`${empName} (${empId}) - 사용 연차일수를 입력하세요:`, usedDays);
+        const newUsed = prompt(`[${empName}] 사원의 사용 연차일수를 입력하세요:`, usedDays);
         if (newUsed === null) return;
         
         const total = parseInt(newTotal, 10);
         const used = parseInt(newUsed, 10);
-        if (isNaN(total) || isNaN(used)) {
-            alert('숫자를 입력해 주세요.');
+        if (isNaN(total) || isNaN(used) || total < 0 || used < 0) {
+            alert('유효한 숫자를 입력해 주세요.');
             return;
         }
+
+        const KEY = 'hongsam_employees';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(_) {}
+        
+        const idx = employees.findIndex(e => e.emp_id === empId);
+        if (idx !== -1) {
+            employees[idx].total_vacation = total;
+            employees[idx].used_vacation = used;
+            localStorage.setItem(KEY, JSON.stringify(employees));
+        }
+
+        renderVacationTable();
         const remain = total - used;
-        const pct = total > 0 ? Math.round((used / total) * 100) : 0;
-
-        // 테이블 행 업데이트
-        const rows = document.querySelectorAll('#tab-vacation .erp-table tbody tr');
-        rows.forEach(row => {
-            if (row.cells[0].textContent.trim() === empId) {
-                row.cells[3].textContent = `${total}일`;
-                row.cells[4].textContent = `${used}일`;
-                row.cells[5].textContent = `${remain}일`;
-                row.cells[5].className = remain <= 3 ? 'late-stamp text-right' : 'highlight text-right';
-                const bar = row.cells[6].querySelector('.progress-bar-fill');
-                if (bar) {
-                    bar.style.width = `${pct}%`;
-                    bar.style.background = pct >= 80 ? 'var(--accent-red)' : pct >= 50 ? 'var(--accent-orange)' : 'var(--accent-blue)';
-                }
-                const btn = row.cells[7]?.querySelector('.btn-edit-leave');
-                if (btn) btn.setAttribute('onclick', `editLeave('${empId}','${empName}',${total},${used})`);
-            }
-        });
-
-        showSaveToast(`${empName}의 연차 정보가 수정되었습니다. (배정:${total}일, 사용:${used}일, 잔여:${remain}일)`);
+        showSaveToast(`${empName} 사원의 연차 정보가 수정되었습니다. (배정:${total}일, 사용:${used}일, 잔여:${remain}일)`);
     };
 
     // ─── 페이지 로드 시 localStorage의 사원을 그리드에 렌더 ───
@@ -770,6 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
     }
     loadSavedEmployees();
+    renderVacationTable(); // 초기 연차현황 렌더링
 
     // ─── 정적 카드에도 수정/삭제 버튼 추가 ───
     document.querySelectorAll('.employee-card').forEach(card => {
