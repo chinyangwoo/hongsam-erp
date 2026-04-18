@@ -80,4 +80,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 5. Draft Form Editor Logic
+    window.openDraftEditor = function(type) {
+        // Hide the format selector modal
+        hideDraftModal();
+        
+        // Setup and Show Editor Modal
+        const draftEditModal = document.getElementById('draftEditModal');
+        const draftEditTitle = document.getElementById('draftEditTitle');
+        const draftSubject = document.getElementById('draftSubject');
+        
+        if (draftEditModal && draftEditTitle) {
+            draftEditTitle.innerText = type;
+            draftSubject.value = ''; // clear previous
+            draftEditModal.classList.add('show');
+        }
+    };
+
+    const closeDraftEditModal = document.getElementById('closeDraftEditModal');
+    const btnCancelDraftBtn = document.getElementById('btnCancelDraftBtn');
+    const btnSubmitDraft = document.getElementById('btnSubmitDraft');
+    const draftEditModal = document.getElementById('draftEditModal');
+
+    const hideDraftEdit = () => {
+        if (draftEditModal) draftEditModal.classList.remove('show');
+    };
+
+    if (closeDraftEditModal) closeDraftEditModal.addEventListener('click', hideDraftEdit);
+    if (btnCancelDraftBtn) btnCancelDraftBtn.addEventListener('click', hideDraftEdit);
+    
+    // Close on outside click
+    if (draftEditModal) {
+        draftEditModal.addEventListener('click', (e) => {
+            if (e.target === draftEditModal) {
+                hideDraftEdit();
+            }
+        });
+    }
+
+    if (btnSubmitDraft) {
+        btnSubmitDraft.addEventListener('click', () => {
+            const subject = document.getElementById('draftSubject').value;
+            if (!subject) {
+                alert('문서 제목을 입력해주세요.');
+                return;
+            }
+            alert(`[${document.getElementById('draftEditTitle').innerText}] "${subject}"\n기안이 성공적으로 상신되었습니다.\n결재 진행 현황은 '결재 한 문서'함에서 확인할 수 있습니다.`);
+            hideDraftEdit();
+        });
+    }
+
 });
