@@ -56,11 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!users[empIdStr]) {
+            // 실패 로그 기록
+            logLoginEvent(empIdStr, '알 수 없음', 'fail');
             alert('존재하지 않는 사원번호입니다. (인사기록 확인 요망)');
             return;
         }
 
         if (users[empIdStr].password !== pwdStr) {
+            // 실패 로그 기록
+            logLoginEvent(empIdStr, users[empIdStr].name, 'fail');
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
@@ -69,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLogin.disabled = true;
         btnLogin.querySelector('.btn-text').innerText = '인증 중...';
         btnLogin.querySelector('.spinner').style.display = 'inline-block';
+
+        // 성공 로그 기록
+        logLoginEvent(empIdStr, users[empIdStr].name, 'success');
 
         // Mock Loading Delay for UX
         setTimeout(() => {
@@ -89,6 +96,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }, 1500); 
     });
+
+    // 로그인 감사 로그 기록 함수
+    function logLoginEvent(empId, name, result) {
+        const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+        const device = isMobile ? 'Mobile' : 'Desktop';
+        
+        const logEntry = {
+            emp_id: empId,
+            name: name,
+            result: result,
+            timestamp: new Date().toISOString(),
+            device: device,
+            ip: '-' // 클라이언트에서는 IP 직접 확인 불가, 서버에서 추후 기록
+        };
+
+        const API_BASE = 'http://43.203.237.63:3001/api';
+        
+        // 기존 로그를 가져와서 새 항목 추가
+        fetch(`${API_BASE}/db/login_logs`)
+            .then(res => res.json())
+            .then(logs => {
+                if (!Array.isArray(logs)) logs = [];
+                logs.push(logEntry);
+                // 최근 500건만 보관
+                if (logs.length > 500) logs = logs.slice(-500);
+                return fetch(`${API_BASE}/db/login_logs`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(logs)
+                });
+            })
+            .catch(err => console.warn('[Audit] 로그 기록 실패:', err));
+    }
 
     // Mock Forgot Password
     const forgotLink = document.querySelector('.forgot-link');

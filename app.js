@@ -30,6 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserName)}&background=0D8ABC&color=fff&rounded=true&bold=true`;
             }
         });
+
+        // --- Admin-Only Navigation Control ---
+        // admin 계정 목록 (사번 기준)
+        const ADMIN_IDS = ['001']; // 대표이사만 admin
+        const isAdmin = ADMIN_IDS.includes(currentUser);
+        
+        // admin이 아닌 사용자에게는 보안 모듈 메뉴 숨기기
+        document.querySelectorAll('.nav-admin-only').forEach(el => {
+            el.style.display = isAdmin ? '' : 'none';
+        });
+        
+        // admin이 아닌 사용자가 security.html에 직접 접속 시도 시 차단
+        if (!isAdmin && window.location.pathname.includes('security.html')) {
+            alert('접근 권한이 없습니다. 관리자(대표이사)만 접근할 수 있는 메뉴입니다.');
+            window.location.replace('index.html');
+        }
     }
 
     // Inject Password Change Button & Modal dynamically
