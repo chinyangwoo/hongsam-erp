@@ -192,8 +192,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make openProfileModal globally accessible
     window.openProfileModal = function(employeeId) {
-        // In a real app, this would fetch data from /api/hr/employees/{id}
-        // Here we just show the static modal for prototype
+        let emp = null;
+        try {
+            const data = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
+            emp = data.find(e => e.emp_id === String(employeeId));
+        } catch(e) {}
+        
+        if (emp) {
+            document.getElementById('profName').innerText = emp.name || '-';
+            document.getElementById('profId').innerText = emp.emp_id || '-';
+            
+            const dept = emp.department || '';
+            const tDetail = emp.team_detail ? `(${emp.team_detail})` : '';
+            const rank = emp.rank || '사원';
+            document.getElementById('profJob').innerText = `부서: ${dept} ${tDetail} / 직급: ${rank}`;
+            
+            document.getElementById('profHireDate').innerText = emp.hire_date || '-';
+            document.getElementById('profPhone').innerText = emp.phone || '-';
+            document.getElementById('profBirthDate').innerText = emp.birth_date || '-';
+            
+            let sal = emp.base_salary || '-';
+            if (sal !== '-') sal = parseInt(sal.replace(/,/g, '')).toLocaleString('ko-KR') + ' 원';
+            document.getElementById('profBaseSalary').innerText = sal;
+            
+            let familyInfo = emp.family_info || '';
+            let notesInfo = emp.notes || '';
+            let combined = [familyInfo, notesInfo].filter(Boolean).join(' / ');
+            document.getElementById('profFamily').innerText = combined || '기록 없음';
+
+            const profImg = document.getElementById('profImg');
+            if (profImg) {
+                profImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random&size=150`;
+            }
+            
+            const profTags = document.getElementById('profTags');
+            if (profTags) {
+                const empTypeTag = emp.emp_type === '정규직' ? 'tag-important' : 'tag-hr';
+                profTags.innerHTML = `
+                    <span class="tag ${empTypeTag}">${emp.emp_type || '정규직'}</span>
+                    <span class="tag tag-general">${emp.department || '팀 정보 없음'}</span>
+                `;
+            }
+            // Clear timeline since it's mock
+            const tl = document.getElementById('profTimeline');
+            if(tl) {
+                tl.innerHTML = `<li><div class="t-date">${emp.hire_date || ''}</div><div class="t-event">신규 입사</div></li>`;
+            }
+        }
+        
         profileModal.classList.add('show');
     };
 

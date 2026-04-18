@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -413,9 +413,9 @@
                 <!-- Left: Photo & Basic Check -->
                 <div class="profile-left">
                     <div class="emp-photo-large">
-                        <img src="https://ui-avatars.com/api/?name=홍길동&background=random&size=150" alt="Profile">
+                        <img id="profImg" src="https://ui-avatars.com/api/?name=홍길동&background=random&size=150" alt="Profile">
                     </div>
-                    <div class="basic-tags">
+                    <div class="basic-tags" id="profTags">
                         <span class="tag tag-important">정규직</span>
                         <span class="tag tag-general">운영팀</span>
                     </div>
@@ -423,36 +423,36 @@
                 
                 <!-- Right: Tabs Details -->
                 <div class="profile-right">
-                    <h1 class="p-name">홍길동 <span class="p-id">사번: 105</span></h1>
-                    <p class="p-job">직무: 스파 2층 담당 / 직급: 팀원 (크루)</p>
+                    <h1 class="p-name"><span id="profName">홍길동</span> <span class="p-id">사번: <span id="profId">105</span></span></h1>
+                    <p class="p-job" id="profJob">직무: 스파 2층 담당 / 직급: 팀원 (크루)</p>
                     
                     <div class="p-info-grid">
                         <div class="info-item">
                             <span class="label">입사일</span>
-                            <span class="val">2025. 01. 15</span>
+                            <span class="val" id="profHireDate">2025. 01. 15</span>
                         </div>
                         <div class="info-item">
                             <span class="label">연락처</span>
-                            <span class="val">010-1234-5678</span>
+                            <span class="val" id="profPhone">010-1234-5678</span>
                         </div>
                         <div class="info-item">
                             <span class="label">생년월일</span>
-                            <span class="val">1990. 05. 21</span>
+                            <span class="val" id="profBirthDate">1990. 05. 21</span>
                         </div>
                         <div class="info-item restricted-info" title="읽기 권한자만 열람 가능">
-                            <span class="label">연봉(계약)</span>
-                            <span class="val blur-if-no-auth"><i class="fa-solid fa-lock"></i> 38,000,000</span>
+                            <span class="label">기본급</span>
+                            <span class="val blur-if-no-auth"><i class="fa-solid fa-lock"></i> <span id="profBaseSalary">38,000,000</span></span>
                         </div>
                     </div>
 
                     <div class="p-family">
-                        <h4>가족사항</h4>
-                        <p>기혼 (자녀 1명)</p>
+                        <h4>가족사항/메모</h4>
+                        <p id="profFamily">기혼 (자녀 1명)</p>
                     </div>
 
                     <div class="p-timeline-section">
                         <h4>근속/상벌 타임라인 이력</h4>
-                        <ul class="timeline">
+                        <ul class="timeline" id="profTimeline">
                             <li>
                                 <div class="t-date">2026.03.10</div>
                                 <div class="t-event">우수사원 표창 (본사)</div>
@@ -856,8 +856,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Custom View logic -->
     <script src="app.js?v=3"></script>
-    <script src="hr.js?v=100"></script>
-    <script src="hr_excel.js?v=2"></script>
+    <script src="hr.js?v=101"></script>
+    <script src="hr_excel.js?v=3"></script>
 </body>
 </html>
 
