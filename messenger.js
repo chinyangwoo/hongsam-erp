@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const photoSrc = emp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
             
             li.innerHTML = `
-                <div class="dm-avatar"><img src="${photoSrc}" alt="user" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="dm-avatar"><img src="${photoSrc}" alt="user"></div>
                 <div class="dm-info">
                     <span class="dm-name">${emp.name} (${dept})</span>
                     <span class="dm-status ${statusClass}">${statusText}</span>
