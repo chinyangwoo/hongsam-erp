@@ -208,6 +208,66 @@ document.addEventListener('DOMContentLoaded', () => {
             closeVendorModalFn();
         });
     }
+
+    // 8. Vendor Excel Upload
+    const vendorExcelUpload = document.getElementById('vendorExcelUpload');
+const vendorTableBody = document.getElementById('vendorTableBody');
+if (vendorExcelUpload && vendorTableBody) {
+    vendorExcelUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = window.XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = window.XLSX.utils.sheet_to_json(firstSheet, {defval: ''});
+                
+                if (rows.length === 0) {
+                    alert('데이터가 없습니다.');
+                    return;
+                }
+
+                // Data normalization
+                let vendors = rows.map(r => ({
+                    itemName: r['품목명'] || r['Item'] || '',
+                    supplierName: r['공급업체명'] || r['Supplier'] || '',
+                    managerName: r['담당자명'] || r['Manager'] || '-',
+                    contact: r['연락처'] || r['Contact'] || '-'
+                })).filter(v => v.itemName.trim() !== '' || v.supplierName.trim() !== '');
+
+                // Sorting: Supplier -> Item Name
+                vendors.sort((a, b) => {
+                    if (a.supplierName !== b.supplierName) return a.supplierName.localeCompare(b.supplierName);
+                    return a.itemName.localeCompare(b.itemName);
+                });
+
+                // Render table
+                vendorTableBody.innerHTML = '';
+                vendors.forEach(v => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${v.itemName}</strong></td>
+                        <td>${v.supplierName}</td>
+                        <td>${v.managerName}</td>
+                        <td>${v.contact}</td>
+                    `;
+                    vendorTableBody.appendChild(tr);
+                });
+
+                alert(`총 ${vendors.length}개의 거래처 정보가 공급업체명 기준으로 정렬되어 일괄 등록되었습니다.`);
+                vendorExcelUpload.value = '';
+
+            } catch (err) {
+                console.error(err);
+                alert('파일 파싱 중 오류가 발생했습니다: ' + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
 });
 
 // 7. Inventory Excel Upload
