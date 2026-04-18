@@ -265,6 +265,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 3.1 DB Export Action
+    const btnExportDB = document.getElementById('btnExportDB');
+    if (btnExportDB) {
+        btnExportDB.addEventListener('click', () => {
+            const dataStr = localStorage.getItem('hongsam_employees') || '[]';
+            const blob = new Blob([dataStr], {type: "application/json;charset=utf-8"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const dateStr = new Date().toISOString().split('T')[0];
+            a.download = `홍삼스파_인사데이터_로컬백업_${dateStr}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if (typeof showSaveToast === 'function') {
+                showSaveToast('로컬 저장소의 모든 인사 데이터가 파일로 영구 백업(다운로드) 되었습니다.');
+            } else {
+                alert('로컬 저장소의 모든 인사 데이터가 파일로 백업되었습니다.');
+            }
+        });
+    }
+
     // 4. Add New Employee Modal Logic
     const btnAddNewEmployee = document.getElementById('btnAddNewEmployee');
     const newEmpModal = document.getElementById('newEmpModal');
