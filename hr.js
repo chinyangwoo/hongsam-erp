@@ -1,5 +1,53 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- INIT EMPLOYEE DB ---
+    function initHREmployees() {
+        const KEY = 'hongsam_employees';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem(KEY)); } catch(_) {}
+        
+        if (!employees || employees.length === 0) {
+            employees = [
+                {
+                    emp_id: "105", name: "홍길동", login_id: "105", login_pw: "0000",
+                    department: "운영팀", team_detail: "2층 스파담당", rank: "크루", emp_type: "정규직", status: "재직",
+                    photo: "https://ui-avatars.com/api/?name=홍길동&background=random"
+                },
+                {
+                    emp_id: "021", name: "김지원", login_id: "021", login_pw: "0000",
+                    department: "지원팀", team_detail: "인사/총무", rank: "큐레이터", emp_type: "정규직", status: "휴가중",
+                    photo: "https://ui-avatars.com/api/?name=김지원&background=random"
+                },
+                {
+                    emp_id: "203", name: "박철수", login_id: "203", login_pw: "0000",
+                    department: "공무팀", team_detail: "시설/전기", rank: "크루", emp_type: "정규직", status: "재직",
+                    photo: "https://ui-avatars.com/api/?name=박철수&background=random"
+                },
+                {
+                    emp_id: "304", name: "이영희", login_id: "304", login_pw: "0000",
+                    department: "식음료팀", team_detail: "루프탑", rank: "알바", emp_type: "계약직", status: "재직",
+                    photo: "https://ui-avatars.com/api/?name=이영희&background=random"
+                }
+            ];
+            localStorage.setItem(KEY, JSON.stringify(employees));
+        }
+        return employees;
+    }
+
+    function renderAllEmployees() {
+        const grid = document.querySelector('.personnel-grid');
+        if (!grid) return;
+        grid.innerHTML = ''; // clear grid
+        
+        const employees = initHREmployees();
+        employees.forEach(emp => {
+            addEmployeeCard(emp);
+        });
+    }
+
+    // Call it immediately on load
+    renderAllEmployees();
+
     // 1. Tab Navigation Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
