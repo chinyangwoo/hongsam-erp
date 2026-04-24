@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="?띿궪?ㅽ뙆 ERP - ?듯빀 寃쎌쁺愿由??쒖뒪??>
-    <meta property="og:description" content="?띿궪?ㅽ뙆 ?듯빀 ERP ?쒖뒪??- HR/洹쇳깭, ?ш퀬, ?꾩옄寃곗옱, 硫붿떊?, ?쒖꽕紐⑤땲?곕쭅">
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>?띿궪?ㅽ뙆 - ?몄궗 諛?洹쇳깭</title>
+    <title>홍삼스파 - 인사 및 근태</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,44 +34,44 @@
         <div class="sidebar-header">
             <div class="logo">
                 <i class="fa-solid fa-spa"></i>
-                <span>?띿궪?ㅽ뙆 ERP</span>
+                <span>홍삼스파 ERP</span>
             </div>
         </div>
         
         <nav class="nav-menu">
             <div class="nav-section">MAIN</div>
             <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> ?듯빀 ??쒕낫??/a>
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
             <a href="traffic.html" class="nav-item">
-                <i class="fa-solid fa-video"></i> ?몃옒??紐⑤땲?곕쭅</a>
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
             <a href="hr.html" class="nav-item active">
-                <i class="fa-solid fa-users"></i> HR/洹쇳깭 愿由?/a>
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> ?곸뾽 諛?罹섎┛??/a>
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
             <a href="inventory.html" class="nav-item">
-                <i class="fa-solid fa-box-open"></i> ?ш퀬 諛?怨듬Т</a>
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
             
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item">
-                <i class="fa-regular fa-clipboard"></i> ?꾩궗 寃뚯떆??/a>
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
             <a href="messenger.html" class="nav-item badge-container">
-                <i class="fa-solid fa-comment-dots"></i> ?щ궡 硫붿떊? 
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
                 <span class="badge">3</span>
             </a>
             <a href="document.html" class="nav-item">
-                <i class="fa-regular fa-folder-open"></i> 臾몄꽌 愿由?/a>
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
             <a href="approval.html" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i> ?꾩옄寃곗옱</a>
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
             <a href="security.html" class="nav-item nav-admin-only">
-                <i class="fa-solid fa-shield-halved"></i> ?쒖뒪??蹂댁븞</a>
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
         </nav>
 
         <div class="sidebar-footer">
             <div class="user-info">
                 <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
                 <div class="details">
-                    <span class="name">吏꾩뼇??(001)</span>
-                    <span class="role">??쒖씠??(留덉뒪??</span>
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
                 </div>
             </div>
             <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -83,20 +83,21 @@
         <!-- Top Header section -->
         <header class="top-header">
             <div class="header-title">
-                <h1>HR 쨌 ?몄궗 쨌 洹쇳깭</h1>
-                <p>珥앹썝 50紐?/ ?ъ쭅 ?몃젰 愿由?/p>
+                <h1>HR · 인사 · 근태</h1>
+                <p>총원 50명 / 재직 인력 관리</p>
             </div>
             
             <div class="header-actions">
-                <button class="btn-secondary" id="btnExportDB" title="濡쒖뺄 ??μ냼??紐⑤뱺 ?곗씠?곕? ?곴뎄 諛깆뾽(?ㅼ슫濡쒕뱶)?⑸땲??" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3);">
-                    <i class="fa-solid fa-hard-drive"></i> 濡쒖뺄DB 諛깆뾽(?ㅼ슫濡쒕뱶)
+                <button class="btn-secondary" id="btnExportDB" title="로컬 저장소의 모든 데이터를 영구 백업(다운로드)합니다." style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <i class="fa-solid fa-hard-drive"></i> 로컬DB 백업(다운로드)
                 </button>
-                <button class="btn-excel" id="btnImportExcel" title="?묒? ?몄궗湲곕줉移대뱶 ?낅줈??>
-                    <i class="fa-solid fa-file-excel"></i> ?묒? ?쇨큵 ?낅줈??                </button>
+                <button class="btn-excel" id="btnImportExcel" title="엑셀 인사기록카드 업로드">
+                    <i class="fa-solid fa-file-excel"></i> 엑셀 일괄 업로드
+                </button>
                 <button class="btn-primary" id="btnAddNewEmployee">
-                    <i class="fa-solid fa-user-plus"></i> ?좉퇋 ?ъ썝 ?깅줉
+                    <i class="fa-solid fa-user-plus"></i> 신규 사원 등록
                 </button>
-                <button class="theme-toggle" id="themeToggle" title="?뚮쭏 蹂寃?>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
                 <div class="notification-bell">
@@ -112,38 +113,40 @@
             <div class="hr-tabs-container glassmorphism">
                 <ul class="hr-tabs">
                     <li class="tab-btn active" data-target="tab-personnel">
-                        <i class="fa-regular fa-id-card"></i> ?몄궗湲곕줉移대뱶
+                        <i class="fa-regular fa-id-card"></i> 인사기록카드
                     </li>
                     <li class="tab-btn" data-target="tab-payroll">
-                        <i class="fa-solid fa-money-check-dollar"></i> 湲됱뿬愿由?                    </li>
+                        <i class="fa-solid fa-money-check-dollar"></i> 급여관리
+                    </li>
                     <li class="tab-btn" data-target="tab-attendance">
-                        <i class="fa-solid fa-fingerprint"></i> 洹쇳깭愿由?                    </li>
+                        <i class="fa-solid fa-fingerprint"></i> 근태관리
+                    </li>
                     <li class="tab-btn" data-target="tab-vacation">
-                        <i class="fa-solid fa-plane-departure"></i> ?곗감/?닿? ?꾪솴
+                        <i class="fa-solid fa-plane-departure"></i> 연차/휴가 현황
                     </li>
                 </ul>
             </div>
 
-            <!-- TAB 1: ?몄궗湲곕줉移대뱶 紐⑸줉 -->
+            <!-- TAB 1: 인사기록카드 목록 -->
             <section id="tab-personnel" class="tab-content active">
                 <div class="action-bar glassmorphism">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="?щ쾲, ?대쫫, 遺??寃??..">
+                        <input type="text" placeholder="사번, 이름, 부서 검색...">
                     </div>
                     <div class="filter-box">
                         <select class="styled-select">
-                            <option value="all">遺???꾩껜</option>
-                            <option value="吏?먰?">吏?먰?</option>
-                            <option value="?댁쁺?">?댁쁺?</option>
-                            <option value="?앹쓬猷뚰?">?앹쓬猷뚰?</option>
-                            <option value="怨듬Т?">怨듬Т?</option>
+                            <option value="all">부서 전체</option>
+                            <option value="지원팀">지원팀</option>
+                            <option value="운영팀">운영팀</option>
+                            <option value="식음료팀">식음료팀</option>
+                            <option value="공무팀">공무팀</option>
                         </select>
                         <select class="styled-select">
-                            <option value="all">吏곴툒 ?꾩껜</option>
-                            <option value="?먮젅?댄꽣">???(?먮젅?댄꽣)</option>
-                            <option value="?щ（">???(?щ（)</option>
-                            <option value="?뚮컮">怨꾩빟吏?(?뚮컮)</option>
+                            <option value="all">직급 전체</option>
+                            <option value="큐레이터">팀장 (큐레이터)</option>
+                            <option value="크루">팀원 (크루)</option>
+                            <option value="알바">계약직 (알바)</option>
                         </select>
                     </div>
                 </div>
@@ -152,51 +155,51 @@
                 </div>
             </section>
 
-            <!-- TAB (NEW): 湲됱뿬愿由?-->
+            <!-- TAB (NEW): 급여관리 -->
             <section id="tab-payroll" class="tab-content" style="display: none;">
                 <div class="kpi-grid">
-                    <!-- ?蹂?湲됱뿬珥앹븸 移대뱶 -->
+                    <!-- 팀별 급여총액 카드 -->
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon indigo"><i class="fa-solid fa-people-group"></i></div>
                         <div class="kpi-details" style="width:100%;">
-                            <h3>?蹂?湲됱뿬吏湲됱킑??/h3>
+                            <h3>팀별 급여지급총액</h3>
                             <select id="teamSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
-                                <option value="?댁쁺?" data-amount="25000000" style="background:#0F172A;">?댁쁺?</option>
-                                <option value="?앹쓬猷뚰?" data-amount="18500000" style="background:#0F172A;">?앹쓬猷뚰?</option>
-                                <option value="寃쎌쁺吏?먰?" data-amount="12000000" style="background:#0F172A;">寃쎌쁺吏?먰?</option>
-                                <option value="怨듬Т?" data-amount="9900000" style="background:#0F172A;">怨듬Т?</option>
-                                <option value="留덉??낇?" data-amount="7800000" style="background:#0F172A;">留덉??낇?</option>
+                                <option value="운영팀" data-amount="25000000" style="background:#0F172A;">운영팀</option>
+                                <option value="식음료팀" data-amount="18500000" style="background:#0F172A;">식음료팀</option>
+                                <option value="경영지원팀" data-amount="12000000" style="background:#0F172A;">경영지원팀</option>
+                                <option value="공무팀" data-amount="9900000" style="background:#0F172A;">공무팀</option>
+                                <option value="마케팅팀" data-amount="7800000" style="background:#0F172A;">마케팅팀</option>
                             </select>
-                            <p class="amount" id="teamAmountDisplay">2,500留?/p>
+                            <p class="amount" id="teamAmountDisplay">2,500만</p>
                         </div>
                     </div>
-                    <!-- 吏곴툒蹂?湲됱뿬珥앹븸 移대뱶 -->
+                    <!-- 직급별 급여총액 카드 -->
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon blue"><i class="fa-solid fa-user-tie"></i></div>
                         <div class="kpi-details" style="width:100%;">
-                            <h3>吏곴툒蹂?湲됱뿬吏湲됱킑??/h3>
+                            <h3>직급별 급여지급총액</h3>
                             <select id="rankSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
-                                <option value="留덉뒪?? data-amount="65000000" style="background:#0F172A;">留덉뒪??(??쒖씠??</option>
-                                <option value="?몄뒪?? data-amount="34000000" style="background:#0F172A;">?몄뒪??(吏諛곗씤)</option>
-                                <option value="?먮젅?댄꽣" data-amount="25500000" style="background:#0F172A;">?먮젅?댄꽣 (???</option>
-                                <option value="?щ（" data-amount="18000000" style="background:#0F172A;">?щ（ (???</option>
-                                <option value="怨꾩빟吏? data-amount="12000000" style="background:#0F172A;">怨꾩빟吏?/option>
-                                <option value="?뚮컮" data-amount="8000000" style="background:#0F172A;">?뚮컮</option>
+                                <option value="마스터" data-amount="65000000" style="background:#0F172A;">마스터 (대표이사)</option>
+                                <option value="호스트" data-amount="34000000" style="background:#0F172A;">호스트 (지배인)</option>
+                                <option value="큐레이터" data-amount="25500000" style="background:#0F172A;">큐레이터 (팀장)</option>
+                                <option value="크루" data-amount="18000000" style="background:#0F172A;">크루 (팀원)</option>
+                                <option value="계약직" data-amount="12000000" style="background:#0F172A;">계약직</option>
+                                <option value="알바" data-amount="8000000" style="background:#0F172A;">알바</option>
                             </select>
-                            <p class="amount" id="rankAmountDisplay">1,800留?/p>
+                            <p class="amount" id="rankAmountDisplay">1,800만</p>
                         </div>
                     </div>
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon red"><i class="fa-solid fa-sack-dollar"></i></div>
                         <div class="kpi-details">
-                            <h3>?꾩궗??湲됱뿬吏湲됱킑??/h3>
+                            <h3>전사원 급여지급총액</h3>
                             <p class="amount">65,400,000</p>
                         </div>
                     </div>
                     <div class="kpi-card glassmorphism">
                         <div class="kpi-icon orange"><i class="fa-solid fa-chart-pie"></i></div>
                         <div class="kpi-details">
-                            <h3>??留ㅼ텧 ?鍮??멸굔鍮?鍮꾩쨷</h3>
+                            <h3>월 매출 대비 인건비 비중</h3>
                             <p class="amount">28.5%</p>
                             <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 28.5%;"></div></div>
                         </div>
@@ -205,34 +208,34 @@
 
                 <div class="table-container glassmorphism" style="margin-top: 20px;">
                     <div class="table-header">
-                        <h2>吏곸썝蹂?媛꾪렪 湲됱뿬 ?댁뿭 (?붿〈 ?묒떇 湲곗?)</h2>
+                        <h2>직원별 간편 급여 내역 (더존 양식 기준)</h2>
                         <div style="display:flex; gap:10px;">
-                            <label for="payrollExcelUpload" class="btn-primary" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-excel"></i> ?묒? 湲됱뿬?뺣낫 遺덈윭?ㅺ린</label>
+                            <label for="payrollExcelUpload" class="btn-primary" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-excel"></i> 엑셀 급여정보 불러오기</label>
                             <input type="file" id="payrollExcelUpload" accept=".xlsx, .xls" style="display:none;">
-                            <button class="btn-secondary" id="btnEditPayroll"><i class="fa-solid fa-pen"></i> 媛꾪렪 ?섏젙</button>
+                            <button class="btn-secondary" id="btnEditPayroll"><i class="fa-solid fa-pen"></i> 간편 수정</button>
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="erp-table">
                             <thead>
                                 <tr>
-                                    <th>?щ쾲</th>
-                                    <th>吏곴툒</th>
-                                    <th>?대쫫</th>
-                                    <th>湲곕낯湲?/th>
-                                    <th>?앸?</th>
-                                    <th>?곗옣/?쇨컙?섎떦</th>
-                                    <th>援???곌툑</th>
-                                    <th>嫄닿컯蹂댄뿕</th>
-                                    <th>怨좎슜蹂댄뿕</th>
-                                    <th>?뚮뱷??吏諛⑹냼?앹꽭</th>
-                                    <th>?ㅼ닔?뱀븸</th>
+                                    <th>사번</th>
+                                    <th>직급</th>
+                                    <th>이름</th>
+                                    <th>기본급</th>
+                                    <th>식대</th>
+                                    <th>연장/야간수당</th>
+                                    <th>국민연금</th>
+                                    <th>건강보험</th>
+                                    <th>고용보험</th>
+                                    <th>소득세/지방소득세</th>
+                                    <th>실수령액</th>
                                 </tr>
                             </thead>
                             <tbody id="payrollTableBody">
                                 <tr>
                                     <td colspan="11" style="text-align: center; padding: 30px;">
-                                        ?붿〈 ?묒떇???묒? 湲됱뿬??μ쓣 遺덈윭?ㅻ㈃ 湲됱뿬 ?뺣낫媛 ?쒓린?⑸땲??
+                                        더존 양식의 엑셀 급여대장을 불러오면 급여 정보가 표기됩니다.
                                     </td>
                                 </tr>
                             </tbody>
@@ -240,7 +243,7 @@
                     </div>
                 </div>
 
-                <!-- ?좉퇋: ?꾩썡留ㅼ텧 ?鍮?珥앷툒??鍮꾩쑉 & 1?몃떦 留ㅼ텧 3D 李⑦듃 -->
+                <!-- 신규: 전월매출 대비 총급여 비율 & 1인당 매출 3D 차트 -->
                 <div style="display:flex; gap:20px; margin-top:20px; margin-bottom:40px;">
                     <div class="glassmorphism" style="flex:1; padding:20px; border-radius:12px;">
                         <div id="payrollDonutChart" style="height: 350px;"></div>
@@ -252,81 +255,81 @@
 
             </section>
 
-            <!-- TAB 2: 洹쇳깭 湲곕줉 諛?異쒗눜洹?-->
+            <!-- TAB 2: 근태 기록 및 출퇴근 -->
             <section id="tab-attendance" class="tab-content" style="display: none;">
-                <!-- 異쒓껐 ?붿빟 移대뱶 -->
+                <!-- 출결 요약 카드 -->
                 <div class="attendance-summary">
                     <div class="att-card green">
-                        <div class="att-label">湲덉씪 異쒓렐</div>
+                        <div class="att-label">금일 출근</div>
                         <div class="att-value" id="attPresent">38</div>
-                        <div class="att-label">紐?/div>
+                        <div class="att-label">명</div>
                     </div>
                     <div class="att-card red">
-                        <div class="att-label">寃곌렐</div>
+                        <div class="att-label">결근</div>
                         <div class="att-value" id="attAbsent">2</div>
-                        <div class="att-label">紐?/div>
+                        <div class="att-label">명</div>
                     </div>
                     <div class="att-card orange">
-                        <div class="att-label">吏媛?/div>
+                        <div class="att-label">지각</div>
                         <div class="att-value" id="attLate">3</div>
-                        <div class="att-label">紐?/div>
+                        <div class="att-label">명</div>
                     </div>
                     <div class="att-card blue">
-                        <div class="att-label">?닿?/?댁쭅</div>
+                        <div class="att-label">휴가/휴직</div>
                         <div class="att-value" id="attVacation">7</div>
-                        <div class="att-label">紐?/div>
+                        <div class="att-label">명</div>
                     </div>
                 </div>
 
-                <!-- 洹몃옒???곸뿭 -->
+                <!-- 그래프 영역 -->
                 <div class="att-charts-row">
-                    <!-- 異쒓껐 ?꾨꽋 李⑦듃 -->
+                    <!-- 출결 도넛 차트 -->
                     <div class="att-chart-box">
-                        <h3><i class="fa-solid fa-chart-pie" style="color:#3B82F6; margin-right:8px;"></i>湲덉씪 異쒓껐 ?꾪솴</h3>
+                        <h3><i class="fa-solid fa-chart-pie" style="color:#3B82F6; margin-right:8px;"></i>금일 출결 현황</h3>
                         <div id="attDonutChart" class="donut-chart" style="background:conic-gradient(#10B981 0deg 273.6deg, #EF4444 273.6deg 288deg, #F59E0B 288deg 309.6deg, #6366F1 309.6deg 360deg);">
                             <div class="donut-center">
                                 <span class="dc-num">50</span>
-                                <span class="dc-label">?꾩껜?몄썝</span>
+                                <span class="dc-label">전체인원</span>
                             </div>
                         </div>
                         <div class="att-legend" style="justify-content:center; margin-top:16px;">
-                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 異쒓렐 38</div>
-                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 寃곌렐 2</div>
-                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 吏媛?3</div>
-                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> ?닿? 7</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 출근 38</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 결근 2</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 지각 3</div>
+                            <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> 휴가 7</div>
                         </div>
                     </div>
 
-                    <!-- 二쇨컙 異쒓렐??諛?李⑦듃 -->
+                    <!-- 주간 출근율 바 차트 -->
                     <div class="att-chart-box">
-                        <h3><i class="fa-solid fa-chart-bar" style="color:#10B981; margin-right:8px;"></i>?대쾲 二?異쒓렐??/h3>
+                        <h3><i class="fa-solid fa-chart-bar" style="color:#10B981; margin-right:8px;"></i>이번 주 출근율</h3>
                         <div style="display:flex; flex-direction:column; gap:14px; padding:10px 0;">
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">??/span>
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">월</span>
                                 <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
                                     <div style="width:96%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">96%</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">??/span>
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">화</span>
                                 <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
                                     <div style="width:92%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">92%</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">??/span>
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">수</span>
                                 <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
                                     <div style="width:88%; height:100%; background:linear-gradient(90deg,#F59E0B,#FBBF24); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">88%</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">紐?/span>
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">목</span>
                                 <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
                                     <div style="width:94%; height:100%; background:linear-gradient(90deg,#10B981,#34D399); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">94%</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">湲?(?ㅻ뒛)</span>
+                                <span style="width:40px; font-size:0.8rem; color:#94A3B8; text-align:right;">금 (오늘)</span>
                                 <div style="flex:1; height:22px; background:rgba(255,255,255,0.06); border-radius:6px; overflow:hidden;">
                                     <div style="width:82%; height:100%; background:linear-gradient(90deg,#3B82F6,#60A5FA); border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:0.72rem; font-weight:700; color:white;">82%</div>
                                 </div>
@@ -335,67 +338,67 @@
                     </div>
                 </div>
 
-                <!-- 媛쒖씤蹂??붽컙 異쒓껐 -->
+                <!-- 개인별 월간 출결 -->
                 <div class="table-container glassmorphism">
                     <div class="table-header">
-                        <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>媛쒖씤蹂??붽컙 異쒓껐 ?꾪솴 (蹂댁븞?낆껜 ?곕룞)</h2>
+                        <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>개인별 월간 출결 현황 (보안업체 연동)</h2>
                         <div style="display:flex; gap:10px;">
-                            <button class="btn-primary" id="btnSyncSecurity" style="background: linear-gradient(135deg, #10B981, #059669); border:none;"><i class="fa-solid fa-satellite-dish"></i> 罹≪뒪/?몄숴 ?쒕쾭 ?곕룞</button>
-                            <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV ?대낫?닿린</button>
+                            <button class="btn-primary" id="btnSyncSecurity" style="background: linear-gradient(135deg, #10B981, #059669); border:none;"><i class="fa-solid fa-satellite-dish"></i> 캡스/세콤 서버 연동</button>
+                            <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="emp-monthly-table">
                             <thead>
                                 <tr>
-                                    <th>?좎쭨/?쒓컙</th>
-                                    <th>?щ쾲</th>
-                                    <th>?대쫫</th>
-                                    <th>遺??/th>
-                                    <th>異쒓렐 (吏臾??쒓렇)</th>
-                                    <th>?닿렐</th>
-                                    <th>?곹깭</th>
+                                    <th>날짜/시간</th>
+                                    <th>사번</th>
+                                    <th>이름</th>
+                                    <th>부서</th>
+                                    <th>출근 (지문/태그)</th>
+                                    <th>퇴근</th>
+                                    <th>상태</th>
                                 </tr>
                             </thead>
                             <tbody id="attendanceTableBody">
                                 <tr>
                                     <td colspan="7" style="text-align: center; padding: 40px; color: #94A3B8;">
                                         <i class="fa-solid fa-server" style="font-size: 2rem; color: #64748B; margin-bottom: 15px;"></i><br>
-                                        ?묎렐?듭젣 蹂댁븞?낆껜(ADT罹≪뒪/?먯뒪???? ?곕룞 ?곗씠?곌? ?꾩쭅 ?숆린?붾릺吏 ?딆븯?듬땲??<br>
-                                        ?곗륫 ?곷떒??<strong>[罹≪뒪/?몄숴 ?쒕쾭 ?곕룞]</strong> 踰꾪듉???뚮윭 API瑜??몄텧??二쇱꽭??
+                                        접근통제 보안업체(ADT캡스/에스원 등) 연동 데이터가 아직 동기화되지 않았습니다.<br>
+                                        우측 상단의 <strong>[캡스/세콤 서버 연동]</strong> 버튼을 눌러 API를 호출해 주세요.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="att-legend" style="padding:12px 0 0;">
-                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 異쒓렐</div>
-                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 寃곌렐</div>
-                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 吏媛?/div>
-                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> ?닿?</div>
-                        <div class="att-legend-item"><div class="att-legend-dot" style="background:rgba(255,255,255,0.06);"></div> 二쇰쭚</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#10B981;"></div> 출근</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#EF4444;"></div> 결근</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#F59E0B;"></div> 지각</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:#6366F1;"></div> 휴가</div>
+                        <div class="att-legend-item"><div class="att-legend-dot" style="background:rgba(255,255,255,0.06);"></div> 주말</div>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB 3: ?곗감 諛??닿? ?꾪솴 -->
+            <!-- TAB 3: 연차 및 휴가 현황 -->
             <section id="tab-vacation" class="tab-content" style="display: none;">
                 <div class="table-container glassmorphism">
                     <div class="table-header">
-                        <h2>遺?쒕퀎 ?곗감 ?ъ슜 ?꾪솴 (2026??湲곗?)</h2>
+                        <h2>부서별 연차 사용 현황 (2026년 기준)</h2>
                     </div>
                     <div class="table-responsive">
                         <table class="erp-table">
                             <thead>
                                 <tr>
-                                    <th>?щ쾲</th>
-                                    <th>?대쫫</th>
-                                    <th>遺??/th>
-                                    <th>珥??곗감諛곗젙</th>
-                                    <th>?ъ슜 ?곗감</th>
-                                    <th>?붿뿬 ?곗감</th>
-                                    <th>?ъ슜瑜??꾪솴</th>
-                                    <th>愿由?/th>
+                                    <th>사번</th>
+                                    <th>이름</th>
+                                    <th>부서</th>
+                                    <th>총 연차배정</th>
+                                    <th>사용 연차</th>
+                                    <th>잔여 연차</th>
+                                    <th>사용률 현황</th>
+                                    <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody id="vacationTableBody">
@@ -412,9 +415,9 @@
     <div class="modal-overlay" id="profileModal">
         <div class="modal-content glassmorphism printable-section">
             <div class="modal-header">
-                <h2>?붿????몄궗湲곕줉移대뱶</h2>
+                <h2>디지털 인사기록카드</h2>
                 <div class="modal-actions">
-                    <button class="btn-pdf" title="?몄뇙?섍린" onclick="window.print()"><i class="fa-solid fa-print"></i></button>
+                    <button class="btn-pdf" title="인쇄하기" onclick="window.print()"><i class="fa-solid fa-print"></i></button>
                     <button class="btn-close" id="closeProfileModal"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
@@ -423,57 +426,57 @@
                 <!-- Left: Photo & Basic Check -->
                 <div class="profile-left">
                     <div class="emp-photo-large">
-                        <img id="profImg" src="https://ui-avatars.com/api/?name=?띻만??background=random&size=150" alt="Profile">
+                        <img id="profImg" src="https://ui-avatars.com/api/?name=홍길동&background=random&size=150" alt="Profile">
                     </div>
                     <div class="basic-tags" id="profTags">
-                        <span class="tag tag-important">?뺢퇋吏?/span>
-                        <span class="tag tag-general">?댁쁺?</span>
+                        <span class="tag tag-important">정규직</span>
+                        <span class="tag tag-general">운영팀</span>
                     </div>
                 </div>
                 
                 <!-- Right: Tabs Details -->
                 <div class="profile-right">
-                    <h1 class="p-name"><span id="profName">?띻만??/span> <span class="p-id">?щ쾲: <span id="profId">105</span></span></h1>
-                    <p class="p-job" id="profJob">吏곷Т: ?ㅽ뙆 2痢??대떦 / 吏곴툒: ???(?щ（)</p>
+                    <h1 class="p-name"><span id="profName">홍길동</span> <span class="p-id">사번: <span id="profId">105</span></span></h1>
+                    <p class="p-job" id="profJob">직무: 스파 2층 담당 / 직급: 팀원 (크루)</p>
                     
                     <div class="p-info-grid">
                         <div class="info-item">
-                            <span class="label">?낆궗??/span>
+                            <span class="label">입사일</span>
                             <span class="val" id="profHireDate">2025. 01. 15</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">?곕씫泥?/span>
+                            <span class="label">연락처</span>
                             <span class="val" id="profPhone">010-1234-5678</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">?앸뀈?붿씪</span>
+                            <span class="label">생년월일</span>
                             <span class="val" id="profBirthDate">1990. 05. 21</span>
                         </div>
-                        <div class="info-item restricted-info" title="?쎄린 沅뚰븳?먮쭔 ?대엺 媛??>
-                            <span class="label">湲곕낯湲?/span>
+                        <div class="info-item restricted-info" title="읽기 권한자만 열람 가능">
+                            <span class="label">기본급</span>
                             <span class="val blur-if-no-auth"><i class="fa-solid fa-lock"></i> <span id="profBaseSalary">38,000,000</span></span>
                         </div>
                     </div>
 
                     <div class="p-family">
-                        <h4>媛議깆궗??硫붾え</h4>
-                        <p id="profFamily">湲고샎 (?먮? 1紐?</p>
+                        <h4>가족사항/메모</h4>
+                        <p id="profFamily">기혼 (자녀 1명)</p>
                     </div>
 
                     <div class="p-timeline-section">
-                        <h4>洹쇱냽/?곷쾶 ??꾨씪???대젰</h4>
+                        <h4>근속/상벌 타임라인 이력</h4>
                         <ul class="timeline" id="profTimeline">
                             <li>
                                 <div class="t-date">2026.03.10</div>
-                                <div class="t-event">?곗닔?ъ썝 ?쒖갹 (蹂몄궗)</div>
+                                <div class="t-event">우수사원 표창 (본사)</div>
                             </li>
                             <li>
                                 <div class="t-date">2025.12.01</div>
-                                <div class="t-event">硫대떞?댁슜: 吏곷Т 留뚯”???믪쓬, ?ㅽ뙆 愿由ъ옄 援먯쑁 ?댁닔 ??</div>
+                                <div class="t-event">면담내용: 직무 만족도 높음, 스파 관리자 교육 이수 완.</div>
                             </li>
                             <li>
                                 <div class="t-date">2025.01.15</div>
-                                <div class="t-event">寃쎈젰吏??댁쁺? ?щ（) 理쒖쥌 ?낆궗</div>
+                                <div class="t-event">경력직(운영팀 크루) 최종 입사</div>
                             </li>
                         </ul>
                     </div>
@@ -482,8 +485,8 @@
             </div>
             
             <div class="modal-footer">
-                <button class="btn-secondary" id="closeProfileModalBtn">?リ린</button>
-                <button class="btn-primary"><i class="fa-solid fa-pen-to-square"></i> ?뺣낫?섏젙</button>
+                <button class="btn-secondary" id="closeProfileModalBtn">닫기</button>
+                <button class="btn-primary"><i class="fa-solid fa-pen-to-square"></i> 정보수정</button>
             </div>
         </div>
     </div>
@@ -492,7 +495,7 @@
     <div class="modal-overlay" id="newEmpModal">
         <div class="modal-content glassmorphism" style="width: 90vw; max-width: 1200px; max-height: 90vh; overflow-y: auto; overflow-x: hidden;">
             <div class="modal-header">
-                <h2>?좉퇋 ?ъ썝 ?깅줉 (?몄궗湲곕줉移대뱶)</h2>
+                <h2>신규 사원 등록 (인사기록카드)</h2>
                 <button class="btn-close" id="closeNewEmpModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="padding: 30px;">
@@ -504,207 +507,207 @@
                             <label for="empPhotoUpload" class="photo-upload-btn"><i class="fa-solid fa-camera"></i></label>
                             <input type="file" id="empPhotoUpload" accept="image/*">
                         </div>
-                        <p class="photo-guide">?깅줉???ъ썝 ?ъ쭊 ?낅줈??br><span>(沅뚯옣: ?뺣갑??300x300px)</span></p>
+                        <p class="photo-guide">등록할 사원 사진 업로드<br><span>(권장: 정방형 300x300px)</span></p>
                     </div>
                     
-                    <!-- ?щ쾲 / ?꾩씠???뱀뀡 -->
+                    <!-- 사번 / 아이디 섹션 -->
                     <div class="form-section-title" style="margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
                         <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-id-badge"></i> ?щ쾲 諛?怨꾩젙 ?뺣낫
+                            <i class="fa-solid fa-id-badge"></i> 사번 및 계정 정보
                         </h4>
-                        <p style="font-size:0.78rem; color:#64748B; margin:4px 0 0;">?щ쾲? ERP ?쒖뒪????怨좎쑀 ?앸퀎踰덊샇?낅땲??</p>
+                        <p style="font-size:0.78rem; color:#64748B; margin:4px 0 0;">사번은 ERP 시스템 내 고유 식별번호입니다.</p>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>?щ쾲 (Employee ID) <span style="color:#EF4444;">*</span></label>
-                            <input type="text" id="newEmpId" class="styled-input" placeholder="?? 106" required>
+                            <label>사번 (Employee ID) <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpId" class="styled-input" placeholder="예: 106" required>
                         </div>
                         <div class="form-group">
-                            <label>?깅챸 <span style="color:#EF4444;">*</span></label>
-                            <input type="text" id="newEmpName" class="styled-input" placeholder="?ъ썝 ?깅챸 ?낅젰" required>
+                            <label>성명 <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpName" class="styled-input" placeholder="사원 성명 입력" required>
                         </div>
                         <div class="form-group full-width">
-                            <label>怨꾩젙 ?뺣낫 (濡쒓렇??</label>
+                            <label>계정 정보 (로그인)</label>
                             <div style="display:flex; align-items:center; gap:8px; padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                                <span style="color:var(--text-primary); font-family:inherit; flex:1;">珥덇린 鍮꾨?踰덊샇: 0000 <span style="color:#64748B; font-size:0.85rem;">(濡쒓렇???꾩씠?붾뒗 蹂몄씤???щ쾲???ъ슜?⑸땲??</span></span>
-                                <span style="font-size:0.75rem; color:#EF4444; white-space:nowrap;"><i class="fa-solid fa-circle-exclamation"></i> 理쒖큹 濡쒓렇????鍮꾨?踰덊샇 蹂寃??꾩닔</span>
+                                <span style="color:var(--text-primary); font-family:inherit; flex:1;">초기 비밀번호: 0000 <span style="color:#64748B; font-size:0.85rem;">(로그인 아이디는 본인의 사번을 사용합니다)</span></span>
+                                <span style="font-size:0.75rem; color:#EF4444; white-space:nowrap;"><i class="fa-solid fa-circle-exclamation"></i> 최초 로그인 시 비밀번호 변경 필수</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ?몄쟻 ?ы빆 -->
+                    <!-- 인적 사항 -->
                     <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
                         <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-user"></i> 湲곕낯 ?몄쟻?ы빆
+                            <i class="fa-solid fa-user"></i> 기본 인적사항
                         </h4>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>?앸뀈?붿씪 <span style="color:#EF4444;">*</span></label>
+                            <label>생년월일 <span style="color:#EF4444;">*</span></label>
                             <input type="date" id="newEmpBirth" class="styled-input" required>
                         </div>
                         <div class="form-group">
-                            <label>?깅퀎</label>
+                            <label>성별</label>
                             <select id="newEmpGender" class="styled-input">
-                                <option value="??>??/option>
-                                <option value="??>??/option>
+                                <option value="남">남</option>
+                                <option value="여">여</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>二쇰??깅줉踰덊샇</label>
+                            <label>주민등록번호</label>
                             <div style="display:flex; align-items:center; gap:8px;">
-                                <input type="text" id="newEmpIdFront" class="styled-input" placeholder="??6?먮━" maxlength="6" style="flex:1; width:auto;">
+                                <input type="text" id="newEmpIdFront" class="styled-input" placeholder="앞 6자리" maxlength="6" style="flex:1; width:auto;">
                                 <span style="color:var(--text-secondary);">-</span>
-                                <input type="password" id="newEmpIdBack" class="styled-input" placeholder="??7?먮━" maxlength="7" style="flex:1; width:auto;">
+                                <input type="password" id="newEmpIdBack" class="styled-input" placeholder="뒤 7자리" maxlength="7" style="flex:1; width:auto;">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>?곕씫泥?<span style="color:#EF4444;">*</span></label>
+                            <label>연락처 <span style="color:#EF4444;">*</span></label>
                             <input type="text" id="newEmpPhone" class="styled-input" placeholder="010-0000-0000" required>
                         </div>
                         <div class="form-group">
-                            <label>鍮꾩긽?곕씫泥?/label>
+                            <label>비상연락처</label>
                             <input type="text" id="newEmpEmergPhone" class="styled-input" placeholder="010-0000-0000">
                         </div>
                         <div class="form-group">
-                            <label>?대찓??/label>
+                            <label>이메일</label>
                             <input type="email" id="newEmpEmail" class="styled-input" placeholder="example@email.com">
                         </div>
                         <div class="form-group full-width">
-                            <label>嫄곗＜吏 二쇱냼 <span style="color:#EF4444;">*</span></label>
-                            <input type="text" id="newEmpAddr" class="styled-input" placeholder="?꾨줈紐?吏踰?二쇱냼 諛??곸꽭二쇱냼" required>
+                            <label>거주지 주소 <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="newEmpAddr" class="styled-input" placeholder="도로명/지번 주소 및 상세주소" required>
                         </div>
                     </div>
 
-                    <!-- 諛쒕졊 ?뺣낫 -->
+                    <!-- 발령 정보 -->
                     <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
                         <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-building"></i> 諛쒕졊 / ?ъ쭅 ?뺣낫
+                            <i class="fa-solid fa-building"></i> 발령 / 재직 정보
                         </h4>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>?낆궗??<span style="color:#EF4444;">*</span></label>
+                            <label>입사일 <span style="color:#EF4444;">*</span></label>
                             <input type="date" id="newEmpHireDate" class="styled-input" required>
                         </div>
                         <div class="form-group">
-                            <label>遺??<span style="color:#EF4444;">*</span></label>
+                            <label>부서 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpDept" class="styled-input" required>
-                                <option value="">遺???좏깮</option>
-                                <option value="吏?먰?">吏?먰?</option>
-                                <option value="?댁쁺?">?댁쁺?</option>
-                                <option value="?앹쓬猷뚰?">?앹쓬猷뚰?</option>
-                                <option value="怨듬Т?">怨듬Т?</option>
-                                <option value="留덉??낇?">留덉??낇?</option>
+                                <option value="">부서 선택</option>
+                                <option value="지원팀">지원팀</option>
+                                <option value="운영팀">운영팀</option>
+                                <option value="식음료팀">식음료팀</option>
+                                <option value="공무팀">공무팀</option>
+                                <option value="마케팅팀">마케팅팀</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>?몃??(?대떦)</label>
-                            <input type="text" id="newEmpTeamDetail" class="styled-input" placeholder="?? 2痢??ㅽ뙆?대떦">
+                            <label>세부팀(담당)</label>
+                            <input type="text" id="newEmpTeamDetail" class="styled-input" placeholder="예: 2층 스파담당">
                         </div>
                         <div class="form-group">
-                            <label>吏곴툒 <span style="color:#EF4444;">*</span></label>
+                            <label>직급 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpRank" class="styled-input" required>
-                                <option value="">吏곴툒 ?좏깮</option>
-                                <option value="怨꾩빟吏?>怨꾩빟吏?/option>
-                                <option value="?щ（">?щ（(???</option>
-                                <option value="?먮젅?댄꽣">?먮젅?댄꽣(???</option>
-                                <option value="?몄뒪??>?몄뒪??吏諛곗씤)</option>
-                                <option value="?꾩썝">?꾩썝</option>
-                                <option value="留덉뒪??>留덉뒪????쒖씠??</option>
+                                <option value="">직급 선택</option>
+                                <option value="계약직">계약직</option>
+                                <option value="크루">크루(팀원)</option>
+                                <option value="큐레이터">큐레이터(팀장)</option>
+                                <option value="호스트">호스트(지배인)</option>
+                                <option value="임원">임원</option>
+                                <option value="마스터">마스터(대표이사)</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>怨좎슜?뺥깭 <span style="color:#EF4444;">*</span></label>
+                            <label>고용형태 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpType" class="styled-input" required>
-                                <option value="?뺢퇋吏?>?뺢퇋吏?/option>
-                                <option value="怨꾩빟吏?>怨꾩빟吏?/option>
-                                <option value="?꾨Ⅴ諛붿씠??>?꾨Ⅴ諛붿씠??/option>
-                                <option value="?명꽩">?명꽩</option>
+                                <option value="정규직">정규직</option>
+                                <option value="계약직">계약직</option>
+                                <option value="아르바이트">아르바이트</option>
+                                <option value="인턴">인턴</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>怨꾩빟留뚮즺??/label>
-                            <input type="date" id="newEmpContractEnd" class="styled-input" placeholder="怨꾩빟吏곷쭔 ?낅젰">
+                            <label>계약만료일</label>
+                            <input type="date" id="newEmpContractEnd" class="styled-input" placeholder="계약직만 입력">
                         </div>
                     </div>
 
-                    <!-- 湲됱뿬 ?뺣낫 -->
+                    <!-- 급여 정보 -->
                     <div class="form-section-title" style="margin:24px 0 16px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
                         <h4 style="font-size:0.92rem; font-weight:700; color:#60A5FA; margin:0; display:flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-sack-dollar"></i> 湲됱뿬 / 怨꾩빟 ?뺣낫
+                            <i class="fa-solid fa-sack-dollar"></i> 급여 / 계약 정보
                         </h4>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>怨꾩빟 ?곕큺</label>
+                            <label>계약 연봉</label>
                             <div class="input-with-icon">
                                 <i class="fa-solid fa-won-sign"></i>
-                                <input type="number" id="newEmpAnnualSalary" class="styled-input with-icon" placeholder="?⑥쐞: ??>
+                                <input type="number" id="newEmpAnnualSalary" class="styled-input with-icon" placeholder="단위: 원">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>湲곕낯湲?(??</label>
+                            <label>기본급 (월)</label>
                             <div class="input-with-icon">
                                 <i class="fa-solid fa-won-sign"></i>
-                                <input type="number" id="newEmpBaseSalary" class="styled-input with-icon" placeholder="??湲곕낯湲?>
+                                <input type="number" id="newEmpBaseSalary" class="styled-input with-icon" placeholder="월 기본급">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>媛議깆궗??/label>
-                            <input type="text" id="newEmpFamily" class="styled-input" placeholder="湲고샎/誘명샎 諛??먮? ??>
+                            <label>가족사항</label>
+                            <input type="text" id="newEmpFamily" class="styled-input" placeholder="기혼/미혼 및 자녀 등">
                         </div>
                         <div class="form-group">
-                            <label>?뱀씠?ы빆</label>
-                            <input type="text" id="newEmpNotes" class="styled-input" placeholder="?낆궗 ???뱀씠?ы빆 ??>
+                            <label>특이사항</label>
+                            <input type="text" id="newEmpNotes" class="styled-input" placeholder="입사 시 특이사항 등">
                         </div>
                     </div>
 
                     <!-- Permissions Grid -->
                     <div class="permissions-section">
-                        <h3><i class="fa-solid fa-shield-halved"></i> ?쒖뒪???묎렐 沅뚰븳 ?명똿</h3>
-                        <p class="section-desc">?대떦 ?ъ썝?먭쾶 遺?ы븷 ?쒖뒪???묎렐 諛??섏젙 沅뚰븳??紐⑤뱢蹂꾨줈 ?곸꽭??吏?뺥빀?덈떎.</p>
+                        <h3><i class="fa-solid fa-shield-halved"></i> 시스템 접근 권한 세팅</h3>
+                        <p class="section-desc">해당 사원에게 부여할 시스템 접근 및 수정 권한을 모듈별로 상세히 지정합니다.</p>
                         <table class="erp-table perm-table">
                             <thead>
                                 <tr>
-                                    <th>硫붾돱 紐⑤뱢</th>
-                                    <th class="text-center">?대엺</th>
-                                    <th class="text-center">?앹꽦/?섏젙</th>
+                                    <th>메뉴 모듈</th>
+                                    <th class="text-center">열람</th>
+                                    <th class="text-center">생성/수정</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>1. ?듯빀 ??쒕낫??/td>
+                                    <td>1. 통합 대시보드</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox" checked></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>2. HR/洹쇳깭 愿由?(?몄궗湲곕줉/湲됱뿬)</td>
+                                    <td>2. HR/근태 관리 (인사기록/급여)</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox" checked></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>3. ?곸뾽 諛?罹섎┛??/td>
+                                    <td>3. 영업 및 캘린더</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>4. ?ш퀬 諛?怨듬Т</td>
+                                    <td>4. 재고 및 공무</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>5. ?몃옒??紐⑤땲?곕쭅</td>
+                                    <td>5. 트래픽 모니터링</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>6. 臾몄꽌 愿由?/td>
+                                    <td>6. 문서 관리</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
                                 <tr>
-                                    <td>7. ?꾩옄寃곗옱</td>
+                                    <td>7. 전자결재</td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox" checked></td>
                                     <td class="text-center"><input type="checkbox" class="styled-checkbox"></td>
                                 </tr>
@@ -712,8 +715,8 @@
                         </table>
                         <div style="margin-top: 16px; padding: 14px 18px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <span style="font-weight: 700; color: #60A5FA;"><i class="fa-solid fa-user-shield"></i> Admin (理쒓퀬 愿由ъ옄)</span>
-                                <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 4px;">泥댄겕 ???쒖뒪????紐⑤뱺 紐⑤뱢怨?硫붾돱??????대엺 諛??섏젙 沅뚰븳??遺?щ컺?듬땲??</p>
+                                <span style="font-weight: 700; color: #60A5FA;"><i class="fa-solid fa-user-shield"></i> Admin (최고 관리자)</span>
+                                <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 4px;">체크 시 시스템 내 모든 모듈과 메뉴에 대한 열람 및 수정 권한을 부여받습니다.</p>
                             </div>
                             <input type="checkbox" id="newEmpAdmin" class="styled-checkbox" style="width: 20px; height: 20px;">
                         </div>
@@ -721,8 +724,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="closeNewEmpModalBtn">痍⑥냼</button>
-                <button class="btn-primary" id="saveNewEmpBtn">?ъ썝 ?깅줉 ???/button>
+                <button class="btn-secondary" id="closeNewEmpModalBtn">취소</button>
+                <button class="btn-primary" id="saveNewEmpBtn">사원 등록 저장</button>
             </div>
         </div>
     </div>
@@ -732,63 +735,63 @@
         <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:640px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
             <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:rgba(15,23,42,0.97); z-index:1;">
                 <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-pen" style="color:#3B82F6;"></i> 湲됱뿬 媛꾪렪 ?낅젰/?섏젙
+                    <i class="fa-solid fa-pen" style="color:#3B82F6;"></i> 급여 간편 입력/수정
                 </h2>
                 <button id="closePayrollModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div style="padding:28px; display:flex; flex-direction:column; gap:20px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?щ쾲</label>
-                        <input id="pEmpId" type="text" placeholder="?? 105" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">사번</label>
+                        <input id="pEmpId" type="text" placeholder="예: 105" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?대쫫</label>
-                        <input id="pName" type="text" placeholder="?? ?띻만?? style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">이름</label>
+                        <input id="pName" type="text" placeholder="예: 홍길동" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                 </div>
-                <p style="font-size:0.8rem; color:#94A3B8; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px; margin:0;">?꾩닔 ??ぉ ??吏湲됲빆</p>
+                <p style="font-size:0.8rem; color:#94A3B8; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px; margin:0;">필수 항목 — 지급항</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">湲곕낯湲?(??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">기본급 (원)</label>
                         <input id="pBase" type="number" placeholder="3000000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?앸? (??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">식대 (원)</label>
                         <input id="pMeal" type="number" placeholder="200000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?곗옣/?쇨컙 (??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">연장/야간 (원)</label>
                         <input id="pOT" type="number" placeholder="450000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                 </div>
-                <p style="font-size:0.8rem; color:#94A3B8; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px; margin:0;">怨듭젣 ??ぉ ???뚯닔(?먮룞 泥섎━)</p>
+                <p style="font-size:0.8rem; color:#94A3B8; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px; margin:0;">공제 항목 — 음수(자동 처리)</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">援???곌툑 (??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">국민연금 (원)</label>
                         <input id="pNP" type="number" placeholder="135000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">嫄닿컯蹂댄뿕 (??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">건강보험 (원)</label>
                         <input id="pHI" type="number" placeholder="106350" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">怨좎슜蹂댄뿕 (??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">고용보험 (원)</label>
                         <input id="pEI" type="number" placeholder="27000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">媛묎렐??二쇰???(??</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">갑근세/주민세 (원)</label>
                         <input id="pTax" type="number" placeholder="98000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                 </div>
                 <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25); border-radius:10px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.9rem; color:#94A3B8; font-weight:600;">?ㅼ닔?뱀븸 (?먮룞怨꾩궛)</span>
-                    <span id="pNetDisplay" style="font-size:1.3rem; font-weight:800; color:#60A5FA;">0 ??/span>
+                    <span style="font-size:0.9rem; color:#94A3B8; font-weight:600;">실수령액 (자동계산)</span>
+                    <span id="pNetDisplay" style="font-size:1.3rem; font-weight:800; color:#60A5FA;">0 원</span>
                 </div>
             </div>
             <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px; position:sticky; bottom:0; background:rgba(15,23,42,0.97);">
-                <button id="cancelPayrollModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">痍⑥냼</button>
-                <button id="savePayrollBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 湲됱뿬 ???/button>
+                <button id="cancelPayrollModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
+                <button id="savePayrollBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 급여 저장</button>
             </div>
         </div>
     </div>
@@ -804,13 +807,13 @@
                         <i class="fa-solid fa-file-excel" style="color:white; font-size:1.2rem;"></i>
                     </div>
                     <div>
-                        <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; margin:0;">?몄궗湲곕줉移대뱶 ?묒? ?쇨큵 ?낅줈??/h2>
-                        <p style="font-size:0.8rem; color:#64748B; margin:4px 0 0;">Sheet 2 ?뚯씪愿꾨벑濡앫??쒗듃 湲곗??쇰줈 ?쎌뒿?덈떎</p>
+                        <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; margin:0;">인사기록카드 엑셀 일괄 업로드</h2>
+                        <p style="font-size:0.8rem; color:#64748B; margin:4px 0 0;">Sheet 2 「일괄등록」 시트 기준으로 읽습니다</p>
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <a id="btnDownloadTemplate" href="?띿궪?ㅽ뙆_?몄궗湲곕줉移대뱶_?묒떇.xlsx" download style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); padding:8px 16px; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; display:flex; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-download"></i> ?묒떇 ?ㅼ슫濡쒕뱶
+                    <a id="btnDownloadTemplate" href="홍삼스파_인사기록카드_양식.xlsx" download style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); padding:8px 16px; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:none; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-download"></i> 양식 다운로드
                     </a>
                     <button id="closeExcelModal" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#94A3B8; width:36px; height:36px; border-radius:10px; cursor:pointer; font-size:1rem;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
@@ -820,8 +823,8 @@
             <div style="padding:24px 32px; border-bottom:1px solid rgba(255,255,255,0.06);">
                 <div id="excelDropZone" style="border:2px dashed rgba(59,130,246,0.4); border-radius:16px; padding:32px; text-align:center; cursor:pointer; transition:all 0.3s; background:rgba(59,130,246,0.04);" onclick="document.getElementById('excelFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='#3B82F6';this.style.background='rgba(59,130,246,0.1)'" ondragleave="this.style.borderColor='rgba(59,130,246,0.4)';this.style.background='rgba(59,130,246,0.04)'" ondrop="handleExcelDrop(event)">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size:2.5rem; color:#3B82F6; opacity:0.7;"></i>
-                    <p style="color:#94A3B8; margin:12px 0 4px; font-size:1rem; font-weight:600;">?대┃?섍굅???뚯씪???쒕옒洹명븯???낅줈??/p>
-                    <p style="color:#64748B; font-size:0.82rem; margin:0;">?띿궪?ㅽ뙆_?몄궗湲곕줉移대뱶_?묒떇.xlsx  쨌  Sheet 2 (?쇨큵?깅줉) 湲곗?</p>
+                    <p style="color:#94A3B8; margin:12px 0 4px; font-size:1rem; font-weight:600;">클릭하거나 파일을 드래그하여 업로드</p>
+                    <p style="color:#64748B; font-size:0.82rem; margin:0;">홍삼스파_인사기록카드_양식.xlsx  ·  Sheet 2 (일괄등록) 기준</p>
                     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleExcelFile(this.files[0])">
                 </div>
                 <div id="excelFileInfo" style="display:none; margin-top:12px; padding:12px 16px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:10px; display:flex; align-items:center; gap:12px;">
@@ -835,11 +838,11 @@
             <div style="flex:1; overflow:auto; padding:20px 32px;">
                 <div id="excelPreviewEmpty" style="text-align:center; padding:40px; color:#475569;">
                     <i class="fa-regular fa-table" style="font-size:3rem; opacity:0.3;"></i>
-                    <p style="margin:12px 0 0; font-size:0.9rem;">?뚯씪???낅줈?쒗븯硫?誘몃━蹂닿린媛 ?쒖떆?⑸땲??/p>
+                    <p style="margin:12px 0 0; font-size:0.9rem;">파일을 업로드하면 미리보기가 표시됩니다</p>
                 </div>
                 <div id="excelPreviewWrap" style="display:none;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin:0;">?곗씠??誘몃━蹂닿린</h3>
+                        <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin:0;">데이터 미리보기</h3>
                         <div style="display:flex; gap:8px; align-items:center;">
                             <span id="previewStats" style="font-size:0.8rem; color:#64748B;"></span>
                             <span id="previewErrBadge" style="display:none; background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid rgba(239,68,68,0.3); padding:3px 10px; border-radius:20px; font-size:0.78rem; font-weight:600;"></span>
@@ -853,16 +856,16 @@
 
             <!-- Footer Actions -->
             <div style="padding:16px 32px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:rgba(15,23,42,0.98);">
-                <p style="font-size:0.8rem; color:#64748B; margin:0;"><i class="fa-solid fa-circle-info" style="color:#3B82F6;"></i>  ?깅줉 ???몄궗湲곕줉移대뱶 紐⑸줉?먯꽌 利됱떆 ?뺤씤 媛?ν빀?덈떎.</p>
+                <p style="font-size:0.8rem; color:#64748B; margin:0;"><i class="fa-solid fa-circle-info" style="color:#3B82F6;"></i>  등록 후 인사기록카드 목록에서 즉시 확인 가능합니다.</p>
                 <div style="display:flex; gap:12px;">
-                    <button id="cancelExcelUpload" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">痍⑥냼</button>
-                    <button id="confirmExcelUpload" disabled style="background:linear-gradient(135deg,#10B981,#3B82F6); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; opacity:0.4; transition:opacity 0.3s;"><i class="fa-solid fa-database"></i> ERP?????/button>
+                    <button id="cancelExcelUpload" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
+                    <button id="confirmExcelUpload" disabled style="background:linear-gradient(135deg,#10B981,#3B82F6); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; opacity:0.4; transition:opacity 0.3s;"><i class="fa-solid fa-database"></i> ERP에 저장</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SheetJS (Excel ?뚯떛) -->
+    <!-- SheetJS (Excel 파싱) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Custom View logic -->
     <script src="cloud_sync.js?v=1"></script>

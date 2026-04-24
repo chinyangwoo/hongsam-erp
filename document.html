@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="?띿궪?ㅽ뙆 ERP - ?듯빀 寃쎌쁺愿由??쒖뒪??>
-    <meta property="og:description" content="?띿궪?ㅽ뙆 ?듯빀 ERP ?쒖뒪??- HR/洹쇳깭, ?ш퀬, ?꾩옄寃곗옱, 硫붿떊?, ?쒖꽕紐⑤땲?곕쭅">
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>?띿궪?ㅽ뙆 - 臾몄꽌 愿由?/title>
+    <title>홍삼스파 - 문서 관리</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,44 +30,44 @@
         <div class="sidebar-header">
             <div class="logo">
                 <i class="fa-solid fa-spa"></i>
-                <span>?띿궪?ㅽ뙆 ERP</span>
+                <span>홍삼스파 ERP</span>
             </div>
         </div>
         
         <nav class="nav-menu">
             <div class="nav-section">MAIN</div>
             <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> ?듯빀 ??쒕낫??/a>
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
             <a href="traffic.html" class="nav-item">
-                <i class="fa-solid fa-video"></i> ?몃옒??紐⑤땲?곕쭅</a>
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
             <a href="hr.html" class="nav-item">
-                <i class="fa-solid fa-users"></i> HR/洹쇳깭 愿由?/a>
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> ?곸뾽 諛?罹섎┛??/a>
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
             <a href="inventory.html" class="nav-item">
-                <i class="fa-solid fa-box-open"></i> ?ш퀬 諛?怨듬Т</a>
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
             
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item">
-                <i class="fa-regular fa-clipboard"></i> ?꾩궗 寃뚯떆??/a>
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
             <a href="messenger.html" class="nav-item badge-container">
-                <i class="fa-solid fa-comment-dots"></i> ?щ궡 硫붿떊? 
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
                 <span class="badge">3</span>
             </a>
             <a href="document.html" class="nav-item active">
-                <i class="fa-regular fa-folder-open"></i> 臾몄꽌 愿由?/a>
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
             <a href="approval.html" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i> ?꾩옄寃곗옱</a>
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
             <a href="security.html" class="nav-item nav-admin-only">
-                <i class="fa-solid fa-shield-halved"></i> ?쒖뒪??蹂댁븞</a>
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
         </nav>
 
         <div class="sidebar-footer">
             <div class="user-info">
                 <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
                 <div class="details">
-                    <span class="name">吏꾩뼇??(001)</span>
-                    <span class="role">??쒖씠??(留덉뒪??</span>
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
                 </div>
             </div>
             <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -79,13 +79,13 @@
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-title">
-                <h1>臾몄꽌 愿由??쒖뒪??/h1>
-                <p>?щ궡 二쇱슂 洹쒖젙, 留ㅻ돱??諛??묒떇 蹂닿???/p>
+                <h1>문서 관리 시스템</h1>
+                <p>사내 주요 규정, 매뉴얼 및 양식 보관소</p>
             </div>
             
             <div class="header-actions">
-                <button class="btn-primary" id="btnUploadDoc"><i class="fa-solid fa-cloud-arrow-up"></i> ??臾몄꽌 ?낅줈??/button>
-                <button class="theme-toggle" id="themeToggle" title="?뚮쭏 蹂寃?>
+                <button class="btn-primary" id="btnUploadDoc"><i class="fa-solid fa-cloud-arrow-up"></i> 새 문서 업로드</button>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
             </div>
@@ -96,17 +96,17 @@
             <!-- Left Pane: Folder Tree -->
             <div class="doc-sidebar">
                 <div class="folder-header">
-                    <h3>移댄뀒怨좊━ ?대뜑</h3>
-                    <button class="btn-icon-small" title="???대뜑"><i class="fa-solid fa-folder-plus"></i></button>
+                    <h3>카테고리 폴더</h3>
+                    <button class="btn-icon-small" title="새 폴더"><i class="fa-solid fa-folder-plus"></i></button>
                 </div>
                 
                 <ul class="folder-list">
-                    <!-- JS?먯꽌 ?숈쟻 ?앹꽦 -->
+                    <!-- JS에서 동적 생성 -->
                 </ul>
                 
                 <div class="storage-info">
                     <div class="s-text">
-                        <span>?ㅽ넗由ъ? ?ъ슜??/span>
+                        <span>스토리지 사용량</span>
                         <span>4.2 GB / 50 GB</span>
                     </div>
                     <div class="progress-bar-bg" style="height: 6px; margin:0;">
@@ -120,29 +120,29 @@
                 <div class="explorer-toolbar">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="臾몄꽌 ?대쫫?대굹 ?뺤옣??寃??..">
+                        <input type="text" placeholder="문서 이름이나 확장자 검색...">
                     </div>
                     <div class="view-toggles">
-                        <button class="btn-icon active" title="由ъ뒪??蹂닿린"><i class="fa-solid fa-list"></i></button>
-                        <button class="btn-icon" title="?щ꽕??蹂닿린"><i class="fa-solid fa-border-all"></i></button>
+                        <button class="btn-icon active" title="리스트 보기"><i class="fa-solid fa-list"></i></button>
+                        <button class="btn-icon" title="섬네일 보기"><i class="fa-solid fa-border-all"></i></button>
                     </div>
                 </div>
 
                 <!-- Breadcrumb -->
                 <div class="breadcrumb">
-                    <span>?띿궪?ㅽ뙆 ERP</span> <i class="fa-solid fa-chevron-right"></i> <span class="active">?꾩껜 臾몄꽌 (理쒓렐 ??ぉ)</span>
+                    <span>홍삼스파 ERP</span> <i class="fa-solid fa-chevron-right"></i> <span class="active">전체 문서 (최근 항목)</span>
                 </div>
 
                 <div class="file-list-header">
-                    <div class="col-name">?뚯씪紐?/div>
-                    <div class="col-date">?깅줉??/div>
-                    <div class="col-user">?깅줉??/div>
-                    <div class="col-size text-right">?ш린</div>
-                    <div class="col-actions text-right">愿由?/div>
+                    <div class="col-name">파일명</div>
+                    <div class="col-date">등록일</div>
+                    <div class="col-user">등록자</div>
+                    <div class="col-size text-right">크기</div>
+                    <div class="col-actions text-right">관리</div>
                 </div>
 
                 <div class="file-list-body">
-                    <!-- JS?먯꽌 ?숈쟻 ?뚮뜑留?-->
+                    <!-- JS에서 동적 렌더링 -->
                 </div>
             </div>
         </div>
@@ -152,20 +152,20 @@
     <div class="modal-overlay" id="hwpAlertModal">
         <div class="modal-content glassmorphism" style="width: 400px; text-align: center;">
             <div class="modal-header" style="justify-content: center; border-bottom: none;">
-                <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-orange); font-size: 2rem; margin-bottom: 10px; display: block;"></i> ?쒖뒪???뚮┝</h2>
+                <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-orange); font-size: 2rem; margin-bottom: 10px; display: block;"></i> 시스템 알림</h2>
             </div>
             <div class="modal-body" style="padding-top: 0;">
                 <p style="color: var(--text-secondary); line-height: 1.6;">
-                    ?좏깮?섏떊 ?뚯씪? <strong>?꾨옒?쒓?(HWP)</strong> ?щ㎎?낅땲??<br>
-                    蹂댁븞 諛??대씪?곕뱶 ?명솚???뺤콉????釉뚮씪?곗? ?먯껜 酉곗뼱?먯꽌??HWP 臾몄꽌瑜??쒖떆?????놁뒿?덈떎.
+                    선택하신 파일은 <strong>아래한글(HWP)</strong> 포맷입니다.<br>
+                    보안 및 클라우드 호환성 정책상 웹 브라우저 자체 뷰어에서는 HWP 문서를 표시할 수 없습니다.
                 </p>
                 <p style="margin-top: 15px; font-weight: 500; color: var(--text-primary);">
-                    臾몄꽌瑜?PC濡??ㅼ슫濡쒕뱶?섏뿬 ?쒖뺨?ㅽ뵾???먮뒗 ?대씪由ъ뒪 ?ㅽ뵾???깆쓣 ?ъ슜???대엺??二쇱떆湲?諛붾엻?덈떎.
+                    문서를 PC로 다운로드하여 한컴오피스 또는 폴라리스 오피스 등을 사용해 열람해 주시기 바랍니다.
                 </p>
             </div>
             <div class="modal-footer" style="justify-content: center; border-top: none;">
-                <button class="btn-secondary" id="closeHwpAlert">痍⑥냼</button>
-                <button class="btn-primary" id="btnHwpDownload"><i class="fa-solid fa-download"></i> 諛붾줈 ?ㅼ슫濡쒕뱶</button>
+                <button class="btn-secondary" id="closeHwpAlert">취소</button>
+                <button class="btn-primary" id="btnHwpDownload"><i class="fa-solid fa-download"></i> 바로 다운로드</button>
             </div>
         </div>
     </div>
@@ -189,7 +189,7 @@
     <script src="cloud_sync.js?v=1"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=5"></script>
     <script src="document_data.js"></script>
     <script src="document.js"></script>
 </body>

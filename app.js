@@ -99,8 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     // URL 직접 접속 차단
                     if (window.location.pathname.includes(mapping.url)) {
                         alert(`[${mapping.name}] 접근 권한이 없습니다.`);
-                        // 메인화면 접근 권한도 없으면 로그인 페이지로, 아니면 메인화면으로 튕겨냄
+                        // 메인화면 접근 권한도 없으면 로그아웃 처리 후 로그인 페이지로 튕겨냄
                         if (mapping.url === 'index.html') {
+                            localStorage.removeItem('isLoggedIn');
+                            localStorage.removeItem('currentUser');
                             window.location.replace('login.html');
                         } else {
                             window.location.replace('index.html');
