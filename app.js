@@ -31,6 +31,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // --- 직급 표시 동적 업데이트 ---
+        // 하드코딩된 "대표이사 (마스터)" 대신 로그인한 사원의 실제 직급/부서 표시
+        const roleSpans = document.querySelectorAll('.user-info .role');
+        if (roleSpans.length > 0) {
+            const rankLabelMap = {
+                '마스터': '대표이사 (마스터)',
+                '임원': '임원',
+                '호스트': '지배인 (호스트)',
+                '큐레이터': '팀장 (큐레이터)',
+                '크루': '팀원 (크루)',
+                '알바': '아르바이트',
+                '계약직': '계약직'
+            };
+            let roleText = '사원'; // 기본값
+            if (empRecord) {
+                const rankLabel = rankLabelMap[empRecord.rank] || empRecord.rank || '사원';
+                const deptLabel = empRecord.department || '';
+                roleText = deptLabel ? `${deptLabel} / ${rankLabel}` : rankLabel;
+            }
+            roleSpans.forEach(span => {
+                span.innerText = roleText;
+            });
+        }
+
         // --- Admin-Only Navigation Control ---
         // admin 계정 목록 (사번 기준)
         const ADMIN_IDS = ['001']; // 대표이사만 admin
