@@ -8,18 +8,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update userName and Avatar if saved
     const currentUser = localStorage.getItem('currentUser');
-    const currentUserName = localStorage.getItem('currentUserName');
+    let currentUserName = localStorage.getItem('currentUserName');
     if (currentUser) {
+        // HR DB에서 최신 사원 이름 확인 및 보정
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
+        const empRecord = employees.find(e => e.emp_id === currentUser);
+        if (empRecord && empRecord.name && currentUserName !== empRecord.name) {
+            currentUserName = empRecord.name;
+            localStorage.setItem('currentUserName', currentUserName);
+        }
+
         // Sync name
         const nameSpans = document.querySelectorAll('.user-info .name');
         nameSpans.forEach(span => {
             span.innerText = currentUserName ? `${currentUserName} (${currentUser})` : `사번: ${currentUser}`;
         });
 
-        // Sync photo from HR DB (if exists)
-        let employees = [];
-        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
-        const empRecord = employees.find(e => e.emp_id === currentUser);
+        // Sync photo from HR DB (if exists - empRecord already loaded above)
         
         const avatars = document.querySelectorAll('.user-info .avatar');
         avatars.forEach(img => {
