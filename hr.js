@@ -777,6 +777,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('newEmpAdmin')) {
                 document.getElementById('newEmpAdmin').checked = !!emp.is_admin;
             }
+
+            // 모듈별 세부 권한 설정 복원
+            if (emp.permissions && Array.isArray(emp.permissions)) {
+                const permRows = document.querySelectorAll('#newEmpForm .perm-table tbody tr');
+                permRows.forEach((row, idx) => {
+                    const mappedPerm = emp.permissions[idx];
+                    if (mappedPerm) {
+                        const cells = row.querySelectorAll('input[type="checkbox"]');
+                        if (cells[0]) cells[0].checked = !!mappedPerm.read;
+                        if (cells[1]) cells[1].checked = !!mappedPerm.write;
+                    }
+                });
+            }
+
             if (emp.photo && photoPreview) photoPreview.src = emp.photo;
         }, 100);
     };
