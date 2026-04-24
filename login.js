@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- 보안: 이미 로그인된 상태이면 중복 로그인 방지 ---
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+        alert('이미 로그인되어 있습니다. 다른 아이디로 접속하려면 먼저 로그아웃 해주세요.');
+        window.location.replace('index.html');
+        return; // 즉시 종료
+    }
+
     // --- Mock DB Initialization ---
     // User IDs 001 to 099, initial password "0000"
     function initMockDB() {
