@@ -76,6 +76,39 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('접근 권한이 없습니다. 관리자(대표이사)만 접근할 수 있는 메뉴입니다.');
             window.location.replace('index.html');
         }
+
+        // --- 세부 모듈별 열람 권한 제어 ---
+        if (empRecord && !isAdmin && empRecord.permissions && Array.isArray(empRecord.permissions)) {
+            const menuMapping = [
+                { url: 'index.html', permIndex: 0, name: '통합 대시보드' },
+                { url: 'hr.html', permIndex: 1, name: 'HR/근태 관리' },
+                { url: 'sales.html', permIndex: 2, name: '영업 및 캘린더' },
+                { url: 'inventory.html', permIndex: 3, name: '재고 및 공무' },
+                { url: 'traffic.html', permIndex: 4, name: '트래픽 모니터링' },
+                { url: 'document.html', permIndex: 5, name: '문서 관리' },
+                { url: 'approval.html', permIndex: 6, name: '전자결재' }
+            ];
+
+            menuMapping.forEach(mapping => {
+                const perm = empRecord.permissions[mapping.permIndex];
+                if (perm && perm.read === false) {
+                    // 메뉴 숨기기
+                    const navItem = document.querySelector(`.nav-item[href="${mapping.url}"]`);
+                    if (navItem) navItem.style.display = 'none';
+
+                    // URL 직접 접속 차단
+                    if (window.location.pathname.includes(mapping.url)) {
+                        alert(`[${mapping.name}] 접근 권한이 없습니다.`);
+                        // 메인화면 접근 권한도 없으면 로그인 페이지로, 아니면 메인화면으로 튕겨냄
+                        if (mapping.url === 'index.html') {
+                            window.location.replace('login.html');
+                        } else {
+                            window.location.replace('index.html');
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // Inject Password Change Button & Modal dynamically

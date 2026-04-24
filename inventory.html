@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
-    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:title" content="?띿궪?ㅽ뙆 ERP - ?듯빀 寃쎌쁺愿由??쒖뒪??>
+    <meta property="og:description" content="?띿궪?ㅽ뙆 ?듯빀 ERP ?쒖뒪??- HR/洹쇳깭, ?ш퀬, ?꾩옄寃곗옱, 硫붿떊?, ?쒖꽕紐⑤땲?곕쭅">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>홍삼스파 - 재고관리</title>
+    <title>?띿궪?ㅽ뙆 - ?ш퀬愿由?/title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,44 +30,44 @@
         <div class="sidebar-header">
             <div class="logo">
                 <i class="fa-solid fa-spa"></i>
-                <span>홍삼스파 ERP</span>
+                <span>?띿궪?ㅽ뙆 ERP</span>
             </div>
         </div>
         
         <nav class="nav-menu">
             <div class="nav-section">MAIN</div>
             <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+                <i class="fa-solid fa-chart-pie"></i> ?듯빀 ??쒕낫??/a>
             <a href="traffic.html" class="nav-item">
-                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+                <i class="fa-solid fa-video"></i> ?몃옒??紐⑤땲?곕쭅</a>
             <a href="hr.html" class="nav-item">
-                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+                <i class="fa-solid fa-users"></i> HR/洹쇳깭 愿由?/a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+                <i class="fa-regular fa-calendar-check"></i> ?곸뾽愿由?/a>
             <a href="inventory.html" class="nav-item active">
-                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+                <i class="fa-solid fa-box-open"></i> ?ш퀬愿由?/a>
             
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item">
-                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+                <i class="fa-regular fa-clipboard"></i> ?꾩궗 寃뚯떆??/a>
             <a href="messenger.html" class="nav-item badge-container">
-                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <i class="fa-solid fa-comment-dots"></i> ?щ궡 硫붿떊? 
                 <span class="badge">3</span>
             </a>
             <a href="document.html" class="nav-item">
-                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+                <i class="fa-regular fa-folder-open"></i> 臾몄꽌 愿由?/a>
             <a href="approval.html" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+                <i class="fa-solid fa-file-signature"></i> ?꾩옄寃곗옱</a>
             <a href="security.html" class="nav-item nav-admin-only">
-                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+                <i class="fa-solid fa-shield-halved"></i> ?쒖뒪??蹂댁븞</a>
         </nav>
 
         <div class="sidebar-footer">
             <div class="user-info">
                 <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
                 <div class="details">
-                    <span class="name">진양우 (001)</span>
-                    <span class="role">대표이사 (마스터)</span>
+                    <span class="name">吏꾩뼇??(001)</span>
+                    <span class="role">??쒖씠??(留덉뒪??</span>
                 </div>
             </div>
             <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -79,12 +79,12 @@
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-title">
-                <h1>재고관리</h1>
-                <p>구역별 재고 현황 및 시설물 유지보수 기록</p>
+                <h1>?ш퀬愿由?/h1>
+                <p>援ъ뿭蹂??ш퀬 ?꾪솴 諛??쒖꽕臾??좎?蹂댁닔 湲곕줉</p>
             </div>
             
             <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                <button class="theme-toggle" id="themeToggle" title="?뚮쭏 蹂寃?>
                     <i class="fa-solid fa-sun"></i>
                 </button>
             </div>
@@ -92,15 +92,15 @@
 
         <div class="dashboard-container">
             
-            <!-- 안전재고 미달 품목 경보 배너 -->
+            <!-- ?덉쟾?ш퀬 誘몃떖 ?덈ぉ 寃쎈낫 諛곕꼫 -->
             <div id="stockAlertBanner" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 16px;">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #EF4444; font-size: 1.4rem; flex-shrink:0;"></i>
                 <div>
-                    <strong style="color: #EF4444; font-size: 1rem;">⚠ 안전재고 미달 품목 발생!</strong>
+                    <strong style="color: #EF4444; font-size: 1rem;">???덉쟾?ш퀬 誘몃떖 ?덈ぉ 諛쒖깮!</strong>
                     <p style="margin-top: 4px; font-size: 0.88rem; color: #FCA5A5; line-height: 1.5;">
-                        <span style="font-weight:700;">대형 비치타월 (루프탑)</span> — 현재 <b>35장</b> / 안전기준 100장 &nbsp;|&nbsp;
-                        <span style="font-weight:700;">바디 워시 대용량 (2층 스파)</span> — 현재 <b>2말</b> / 안전기준 5말<br>
-                        즉시 발주 또는 입고 처리가 필요합니다.
+                        <span style="font-weight:700;">???鍮꾩튂???(猷⑦봽??</span> ???꾩옱 <b>35??/b> / ?덉쟾湲곗? 100??&nbsp;|&nbsp;
+                        <span style="font-weight:700;">諛붾뵒 ?뚯떆 ??⑸웾 (2痢??ㅽ뙆)</span> ???꾩옱 <b>2留?/b> / ?덉쟾湲곗? 5留?br>
+                        利됱떆 諛쒖＜ ?먮뒗 ?낃퀬 泥섎━媛 ?꾩슂?⑸땲??
                     </p>
                 </div>
                 <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:#94A3B8;cursor:pointer;margin-left:auto;font-size:1.1rem;"><i class="fa-solid fa-xmark"></i></button>
@@ -110,16 +110,16 @@
             <div class="inv-tabs-container">
                 <ul class="inv-tabs">
                     <li class="tab-btn active" data-target="tab-inventory">
-                        <i class="fa-solid fa-boxes-stacked"></i> 재고 현황
+                        <i class="fa-solid fa-boxes-stacked"></i> ?ш퀬 ?꾪솴
                     </li>
                     <li class="tab-btn" data-target="tab-maintenance">
-                        <i class="fa-solid fa-screwdriver-wrench"></i> 시설 현황
+                        <i class="fa-solid fa-screwdriver-wrench"></i> ?쒖꽕 ?꾪솴
                     </li>
                     <li class="tab-btn" data-target="tab-item-register">
-                        <i class="fa-solid fa-clipboard-list"></i> 품목 등록
+                        <i class="fa-solid fa-clipboard-list"></i> ?덈ぉ ?깅줉
                     </li>
                     <li class="tab-btn" data-target="tab-vendors">
-                        <i class="fa-solid fa-handshake"></i> 거래체 현황
+                        <i class="fa-solid fa-handshake"></i> 嫄곕옒泥??꾪솴
                     </li>
                 </ul>
             </div>
@@ -129,20 +129,20 @@
                 <div class="action-bar glassmorphism">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="품목명, 카테고리 검색...">
+                        <input type="text" placeholder="?덈ぉ紐? 移댄뀒怨좊━ 寃??..">
                     </div>
                     <div class="filter-box">
                         <select class="styled-select">
-                            <option value="all">전체 구역</option>
-                            <option value="1f">1층 (프런트/카페)</option>
-                            <option value="2f">2층 (스파/대온천탕)</option>
-                            <option value="rooftop">루프탑 (인피니티풀/사우나)</option>
-                            <option value="common">공통 창고</option>
+                            <option value="all">?꾩껜 援ъ뿭</option>
+                            <option value="1f">1痢?(?꾨윴??移댄럹)</option>
+                            <option value="2f">2痢?(?ㅽ뙆/??⑥쿇??</option>
+                            <option value="rooftop">猷⑦봽??(?명뵾?덊떚?/?ъ슦??</option>
+                            <option value="common">怨듯넻 李쎄퀬</option>
                         </select>
                         <select class="styled-select">
-                            <option value="all">상태 전체</option>
-                            <option value="warning">재고 부족 (안전치 미달)</option>
-                            <option value="normal">정상</option>
+                            <option value="all">?곹깭 ?꾩껜</option>
+                            <option value="warning">?ш퀬 遺議?(?덉쟾移?誘몃떖)</option>
+                            <option value="normal">?뺤긽</option>
                         </select>
                     </div>
                 </div>
@@ -152,62 +152,62 @@
                         <table class="erp-table">
                             <thead>
                                 <tr>
-                                    <th>품목명</th>
-                                    <th>구역</th>
-                                    <th>카테고리</th>
-                                    <th class="text-right">현재 재고</th>
-                                    <th class="text-right">안전 재고 기준</th>
-                                    <th>상태 (Status)</th>
-                                    <th>재고수량</th>
+                                    <th>?덈ぉ紐?/th>
+                                    <th>援ъ뿭</th>
+                                    <th>移댄뀒怨좊━</th>
+                                    <th class="text-right">?꾩옱 ?ш퀬</th>
+                                    <th class="text-right">?덉쟾 ?ш퀬 湲곗?</th>
+                                    <th>?곹깭 (Status)</th>
+                                    <th>?ш퀬?섎웾</th>
                                 </tr>
                             </thead>
                             <tbody id="inventoryTableBody">
                                 <tr class="stock-critical">
-                                    <td><strong>대형 비치타월</strong></td>
-                                    <td>루프탑</td>
-                                    <td>비품/린넨</td>
-                                    <td class="text-right qty-critical">35 장</td>
-                                    <td class="text-right">100 장</td>
-                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span></td>
+                                    <td><strong>???鍮꾩튂???/strong></td>
+                                    <td>猷⑦봽??/td>
+                                    <td>鍮꾪뭹/由곕꽙</td>
+                                    <td class="text-right qty-critical">35 ??/td>
+                                    <td class="text-right">100 ??/td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 利됱떆 諛쒖＜ ?붾쭩</span></td>
                                     <td>
-                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
-                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="btn-icon" title="?낃퀬(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="異쒓퀬(-)"><i class="fa-solid fa-minus"></i></button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><strong>고급 원두 (에스프레소)</strong></td>
-                                    <td>1층</td>
-                                    <td>식자재</td>
+                                    <td><strong>怨좉툒 ?먮몢 (?먯뒪?꾨젅??</strong></td>
+                                    <td>1痢?/td>
+                                    <td>?앹옄??/td>
                                     <td class="text-right">12 Kg</td>
                                     <td class="text-right">5 Kg</td>
-                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> ?뺤긽</span></td>
                                     <td>
-                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
-                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="btn-icon" title="?낃퀬(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="異쒓퀬(-)"><i class="fa-solid fa-minus"></i></button>
                                     </td>
                                 </tr>
                                 <tr class="stock-critical">
-                                    <td><strong>바디 워시 (대용량)</strong></td>
-                                    <td>2층 스파</td>
-                                    <td>어메니티</td>
-                                    <td class="text-right qty-critical">2 말</td>
-                                    <td class="text-right">5 말</td>
-                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 발주 필요</span></td>
+                                    <td><strong>諛붾뵒 ?뚯떆 (??⑸웾)</strong></td>
+                                    <td>2痢??ㅽ뙆</td>
+                                    <td>?대찓?덊떚</td>
+                                    <td class="text-right qty-critical">2 留?/td>
+                                    <td class="text-right">5 留?/td>
+                                    <td><span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 諛쒖＜ ?꾩슂</span></td>
                                     <td>
-                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
-                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="btn-icon" title="?낃퀬(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="異쒓퀬(-)"><i class="fa-solid fa-minus"></i></button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><strong>A4 복사용지 (상자)</strong></td>
-                                    <td>공통 창고</td>
-                                    <td>사무용품</td>
-                                    <td class="text-right">14 박스</td>
-                                    <td class="text-right">5 박스</td>
-                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span></td>
+                                    <td><strong>A4 蹂듭궗?⑹? (?곸옄)</strong></td>
+                                    <td>怨듯넻 李쎄퀬</td>
+                                    <td>?щТ?⑺뭹</td>
+                                    <td class="text-right">14 諛뺤뒪</td>
+                                    <td class="text-right">5 諛뺤뒪</td>
+                                    <td><span class="badge-normal"><i class="fa-solid fa-check"></i> ?뺤긽</span></td>
                                     <td>
-                                        <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
-                                        <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="btn-icon" title="?낃퀬(+)"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="btn-icon" title="異쒓퀬(-)"><i class="fa-solid fa-minus"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -223,87 +223,87 @@
                     <!-- LEFT: Facility Sensor Monitor -->
                     <div class="maint-panel glassmorphism">
                         <div class="panel-header" style="justify-content: space-between;">
-                            <h2><i class="fa-solid fa-satellite-dish"></i> 실시간 시설 현황 모니터링</h2>
-                            <span class="badge" style="background:rgba(16,185,129,0.2); color:#10B981; border:1px solid rgba(16,185,129,0.4);"><i class="fa-solid fa-wifi"></i> 센서 연동 중</span>
+                            <h2><i class="fa-solid fa-satellite-dish"></i> ?ㅼ떆媛??쒖꽕 ?꾪솴 紐⑤땲?곕쭅</h2>
+                            <span class="badge" style="background:rgba(16,185,129,0.2); color:#10B981; border:1px solid rgba(16,185,129,0.4);"><i class="fa-solid fa-wifi"></i> ?쇱꽌 ?곕룞 以?/span>
                         </div>
                         <div class="panel-body" style="display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
                             
-                            <!-- 1. 보일러실 -->
+                            <!-- 1. 蹂댁씪?ъ떎 -->
                             <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
-                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-fire-burner" style="color:#EF4444;"></i> 보일러실</h3>
+                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-fire-burner" style="color:#EF4444;"></i> 蹂댁씪?ъ떎</h3>
                                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
                                     <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
-                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">센서 온도</div>
-                                        <div style="font-size:1.15rem; font-weight:700; color:#F8FAFC;" id="snsBoilerTemp">85.4 <small style="font-size:0.7rem;font-weight:400;">℃</small></div>
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">?쇱꽌 ?⑤룄</div>
+                                        <div style="font-size:1.15rem; font-weight:700; color:#F8FAFC;" id="snsBoilerTemp">85.4 <small style="font-size:0.7rem;font-weight:400;">??/small></div>
                                     </div>
                                     <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
-                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">LPG 사용량/h</div>
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">LPG ?ъ슜??h</div>
                                         <div style="font-size:1.15rem; font-weight:700; color:#F8FAFC;" id="snsBoilerLpg">12.5 <small style="font-size:0.7rem;font-weight:400;">kg</small></div>
                                     </div>
                                     <div style="background:rgba(16,185,129,0.1); padding:12px 10px; border-radius:8px; border:1px solid rgba(16,185,129,0.2);">
-                                        <div style="font-size:0.75rem; color:#10B981; margin-bottom:4px;">가스 유출</div>
-                                        <div style="font-size:1rem; font-weight:700; color:#10B981;" id="snsBoilerLeak"><i class="fa-solid fa-check"></i> 정상</div>
+                                        <div style="font-size:0.75rem; color:#10B981; margin-bottom:4px;">媛???좎텧</div>
+                                        <div style="font-size:1rem; font-weight:700; color:#10B981;" id="snsBoilerLeak"><i class="fa-solid fa-check"></i> ?뺤긽</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 2 & 3. 전기실 & 실시간 사용량 -->
+                            <!-- 2 & 3. ?꾧린??& ?ㅼ떆媛??ъ슜??-->
                             <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
                                 <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                                    <span><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> 전력 사용량 모니터링</span>
-                                    <span style="font-size:0.8rem; color:#94A3B8; font-weight:400;">당일 누적: <strong style="color:#F8FAFC;" id="snsTotalKwh">1,245</strong> kWh</span>
+                                    <span><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> ?꾨젰 ?ъ슜??紐⑤땲?곕쭅</span>
+                                    <span style="font-size:0.8rem; color:#94A3B8; font-weight:400;">?뱀씪 ?꾩쟻: <strong style="color:#F8FAFC;" id="snsTotalKwh">1,245</strong> kWh</span>
                                 </h3>
                                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; text-align:center;">
                                     <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
-                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">1층 전기망</div>
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">1痢??꾧린留?/div>
                                         <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElec1F">42.1 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
                                     </div>
                                     <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
-                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">2층 전기망</div>
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">2痢??꾧린留?/div>
                                         <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElec2F">88.3 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
                                     </div>
                                     <div style="background:rgba(255,255,255,0.03); padding:12px 10px; border-radius:8px;">
-                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">루프탑 전기망</div>
+                                        <div style="font-size:0.75rem; color:#94A3B8; margin-bottom:4px;">猷⑦봽???꾧린留?/div>
                                         <div style="font-size:1.15rem; font-weight:700; color:#3B82F6;" id="snsElecRF">56.7 <small style="font-size:0.7rem;font-weight:400;">kW</small></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- 4 ~ 6. 스파/풀 온도 -->
+                            <!-- 4 ~ 6. ?ㅽ뙆/? ?⑤룄 -->
                             <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px;">
-                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-water" style="color:#0EA5E9;"></i> 스파 및 풀장 적정 온도</h3>
+                                <h3 style="font-size:0.95rem; font-weight:700; color:#F8FAFC; margin-bottom:12px;"><i class="fa-solid fa-water" style="color:#0EA5E9;"></i> ?ㅽ뙆 諛?????곸젙 ?⑤룄</h3>
                                 <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:12px;">
                                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
-                                        <span style="font-size:0.8rem; color:#94A3B8;">2F 대온천탕</span>
-                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa1">40.5 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                        <span style="font-size:0.8rem; color:#94A3B8;">2F ??⑥쿇??/span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa1">40.5 <small style="font-size:0.7rem;font-weight:400;">??/small></span>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
-                                        <span style="font-size:0.8rem; color:#94A3B8;">2F 이벤트탕</span>
-                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa2">38.2 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                        <span style="font-size:0.8rem; color:#94A3B8;">2F ?대깽?명깢</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsSpa2">38.2 <small style="font-size:0.7rem;font-weight:400;">??/small></span>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
-                                        <span style="font-size:0.8rem; color:#94A3B8;">루프탑 풀</span>
-                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsPool">32.8 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                        <span style="font-size:0.8rem; color:#94A3B8;">猷⑦봽???</span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#F8FAFC;" id="snsPool">32.8 <small style="font-size:0.7rem;font-weight:400;">??/small></span>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px;">
-                                        <span style="font-size:0.8rem; color:#94A3B8;">루프탑 사우나</span>
-                                        <span style="font-size:1.05rem; font-weight:700; color:#EF4444;" id="snsSauna">82.1 <small style="font-size:0.7rem;font-weight:400;">℃</small></span>
+                                        <span style="font-size:0.8rem; color:#94A3B8;">猷⑦봽???ъ슦??/span>
+                                        <span style="font-size:1.05rem; font-weight:700; color:#EF4444;" id="snsSauna">82.1 <small style="font-size:0.7rem;font-weight:400;">??/small></span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- 화재 및 연동 가이드 -->
+                            <!-- ?붿옱 諛??곕룞 媛?대뱶 -->
                             <div style="display:flex; gap:12px;">
                                 <div style="flex:1; background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); padding:12px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
                                     <div style="display:flex; align-items:center; gap:10px;">
                                         <i class="fa-solid fa-shield-halved" style="color:#10B981; font-size:1.2rem;"></i>
                                         <div>
-                                            <div style="font-size:0.85rem; font-weight:700; color:#10B981;">전 구역 감지기 정상</div>
+                                            <div style="font-size:0.85rem; font-weight:700; color:#10B981;">??援ъ뿭 媛먯?湲??뺤긽</div>
                                         </div>
                                     </div>
                                 </div>
                                 <button onclick="document.getElementById('iotGuideModal').style.display='flex'" style="background:linear-gradient(135deg, #1E293B, #0F172A); border:1px solid rgba(255,255,255,0.1); color:#94A3B8; padding:10px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:600; font-family:inherit; transition:color 0.2s;" onmouseover="this.style.color='#F8FAFC'" onmouseout="this.style.color='#94A3B8'">
-                                    <i class="fa-solid fa-circle-info"></i> 센서 데이터 연동 가이드
+                                    <i class="fa-solid fa-circle-info"></i> ?쇱꽌 ?곗씠???곕룞 媛?대뱶
                                 </button>
                             </div>
 
@@ -313,46 +313,46 @@
                     <!-- RIGHT: Fault & Repair Ledger -->
                     <div class="maint-panel glassmorphism">
                         <div class="panel-header">
-                            <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
-                            <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
+                            <h2><i class="fa-solid fa-list-ul"></i> 怨좎옣 諛??좎?蹂댁닔 ???/h2>
+                            <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> ?좉퇋 ?깅줉</button>
                         </div>
                         <div class="panel-body ledger-list-container">
                             <div class="ledger-item critical">
                                 <div class="ledger-meta">
-                                    <span class="tag tag-important">수리중</span>
-                                    <span class="l-date">접수: 2026.04.16</span>
+                                    <span class="tag tag-important">?섎━以?/span>
+                                    <span class="l-date">?묒닔: 2026.04.16</span>
                                 </div>
-                                <h4>루프탑 인피니티풀 순환 모터 소음 불량</h4>
-                                <p>모터 베어링 파손 의심. 현재 외부 수리업체(한일모터스) 방문 대기 중. 예비 모터 가동 중.</p>
+                                <h4>猷⑦봽???명뵾?덊떚? ?쒗솚 紐⑦꽣 ?뚯쓬 遺덈웾</h4>
+                                <p>紐⑦꽣 踰좎뼱留??뚯넀 ?섏떖. ?꾩옱 ?몃? ?섎━?낆껜(?쒖씪紐⑦꽣?? 諛⑸Ц ?湲?以? ?덈퉬 紐⑦꽣 媛??以?</p>
                                 <div class="l-footer">
-                                    <span>담당: 공무팀 박철수</span>
-                                    <span>비용 예상: 450,000원</span>
+                                    <span>?대떦: 怨듬Т? 諛뺤쿋??/span>
+                                    <span>鍮꾩슜 ?덉긽: 450,000??/span>
                                 </div>
                             </div>
 
                             <div class="ledger-item resolved">
                                 <div class="ledger-meta">
-                                    <span class="tag tag-general">수리완료</span>
-                                    <span class="l-date">접수: 2026.04.14</span>
+                                    <span class="tag tag-general">?섎━?꾨즺</span>
+                                    <span class="l-date">?묒닔: 2026.04.14</span>
                                 </div>
-                                <h4>2층 남탕 샤워기 3번 수압 약함</h4>
-                                <p>샤워기 헤드 내부 스케일 제거 및 고무패킹 교체 완료.</p>
+                                <h4>2痢??⑦깢 ?ㅼ썙湲?3踰??섏븬 ?쏀븿</h4>
+                                <p>?ㅼ썙湲??ㅻ뱶 ?대? ?ㅼ????쒓굅 諛?怨좊Т?⑦궧 援먯껜 ?꾨즺.</p>
                                 <div class="l-footer">
-                                    <span>담당: 공무팀 김민규</span>
-                                    <span>완료: 2026.04.15</span>
+                                    <span>?대떦: 怨듬Т? 源誘쇨퇋</span>
+                                    <span>?꾨즺: 2026.04.15</span>
                                 </div>
                             </div>
                             
                             <div class="ledger-item pending">
                                 <div class="ledger-meta">
-                                    <span class="tag tag-hr">접수대기</span>
-                                    <span class="l-date">접수: 2026.04.17</span>
+                                    <span class="tag tag-hr">?묒닔?湲?/span>
+                                    <span class="l-date">?묒닔: 2026.04.17</span>
                                 </div>
-                                <h4>1층 프런트 우측 조명 램프 1개 나감</h4>
-                                <p>LED 다운라이트(주백색) 교체 요망.</p>
+                                <h4>1痢??꾨윴???곗륫 議곕챸 ?⑦봽 1媛??섍컧</h4>
+                                <p>LED ?ㅼ슫?쇱씠??二쇰갚?? 援먯껜 ?붾쭩.</p>
                                 <div class="l-footer">
-                                    <span>보고자: 운영팀 프런트</span>
-                                    <span>배정 요망</span>
+                                    <span>蹂닿퀬?? ?댁쁺? ?꾨윴??/span>
+                                    <span>諛곗젙 ?붾쭩</span>
                                 </div>
                             </div>
                         </div>
@@ -366,53 +366,52 @@
                     <div style="margin-bottom: 28px; display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
                             <h2 style="font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:10px;">
-                                <i class="fa-solid fa-clipboard-list" style="color:var(--accent-blue);"></i> 품목 등록
+                                <i class="fa-solid fa-clipboard-list" style="color:var(--accent-blue);"></i> ?덈ぉ ?깅줉
                             </h2>
-                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:6px;">신규 품목을 등록하거나 엑셀을 업로드하여 일괄 자동 등록합니다.</p>
+                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:6px;">?좉퇋 ?덈ぉ???깅줉?섍굅???묒????낅줈?쒗븯???쇨큵 ?먮룞 ?깅줉?⑸땲??</p>
                         </div>
                         <div>
                             <input type="file" id="itemExcelUpload" accept=".xlsx, .xls, .csv" style="display:none;" />
                             <button onclick="document.getElementById('itemExcelUpload').click()" style="background: rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); padding:9px 18px; border-radius:8px; font-weight:600; cursor:pointer; font-family:inherit; font-size:0.85rem; transition: background 0.2s;">
-                                <i class="fa-solid fa-file-excel"></i> 엑셀 일괄 업로드
-                            </button>
+                                <i class="fa-solid fa-file-excel"></i> ?묒? ?쇨큵 ?낅줈??                            </button>
                         </div>
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                         <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">카테고리</label>
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">移댄뀒怨좊━</label>
                             <select class="styled-select" id="itemCategory" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none;">
-                                <option value="" style="background:#0F172A;">카테고리 선택</option>
-                                <option style="background:#0F172A;">비품/린넌</option>
-                                <option style="background:#0F172A;">염니티</option>
-                                <option style="background:#0F172A;">식자재</option>
-                                <option style="background:#0F172A;">사무용품</option>
-                                <option style="background:#0F172A;">청소용품</option>
-                                <option style="background:#0F172A;">시설/부품</option>
-                                <option style="background:#0F172A;">기타</option>
+                                <option value="" style="background:#0F172A;">移댄뀒怨좊━ ?좏깮</option>
+                                <option style="background:#0F172A;">鍮꾪뭹/由곕꼳</option>
+                                <option style="background:#0F172A;">?쇰땲??/option>
+                                <option style="background:#0F172A;">?앹옄??/option>
+                                <option style="background:#0F172A;">?щТ?⑺뭹</option>
+                                <option style="background:#0F172A;">泥?냼?⑺뭹</option>
+                                <option style="background:#0F172A;">?쒖꽕/遺??/option>
+                                <option style="background:#0F172A;">湲고?</option>
                             </select>
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">품목명</label>
-                            <input type="text" id="itemName" placeholder="예: 대형 비치타월" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">?덈ぉ紐?/label>
+                            <input type="text" id="itemName" placeholder="?? ???鍮꾩튂??? style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">공급업체명</label>
-                            <input type="text" id="itemSupplier" placeholder="예: (주)한국린렌" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">怨듦툒?낆껜紐?/label>
+                            <input type="text" id="itemSupplier" placeholder="?? (二??쒓뎅由곕젋" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">단가 (원)</label>
-                            <input type="number" id="itemPrice" placeholder="예: 5000" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">?④? (??</label>
+                            <input type="number" id="itemPrice" placeholder="?? 5000" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px; grid-column: 1 / -1;">
-                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">안전재고 기준수량</label>
-                            <input type="number" id="itemSafeQty" placeholder="예: 100 (이 수량 이하로 떨어지면 경보)" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">?덉쟾?ш퀬 湲곗??섎웾</label>
+                            <input type="number" id="itemSafeQty" placeholder="?? 100 (???섎웾 ?댄븯濡??⑥뼱吏硫?寃쎈낫)" style="width:100%; padding:12px 14px; border-radius:var(--radius-md); background:rgba(0,0,0,0.25); border:1px solid var(--border-color); color:var(--text-primary); font-family:inherit; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-blue)'" onblur="this.style.borderColor='var(--border-color)'">
                         </div>
                     </div>
 
                     <div style="margin-top:28px; display:flex; justify-content:flex-end; gap:12px;">
-                        <button onclick="document.getElementById('itemCategory').value=''; ['itemName','itemSupplier','itemPrice','itemSafeQty'].forEach(id => document.getElementById(id).value='')" style="background:rgba(255,255,255,0.07); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">전체 지우기</button>
-                        <button onclick="alert('품목이 등록되었습니다. (DB 연동 전 프로토타입)')" style="background: linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; font-size:0.9rem;"><i class="fa-solid fa-plus"></i> 품목 저장</button>
+                        <button onclick="document.getElementById('itemCategory').value=''; ['itemName','itemSupplier','itemPrice','itemSafeQty'].forEach(id => document.getElementById(id).value='')" style="background:rgba(255,255,255,0.07); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 24px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">?꾩껜 吏?곌린</button>
+                        <button onclick="alert('?덈ぉ???깅줉?섏뿀?듬땲?? (DB ?곕룞 ???꾨줈?좏???')" style="background: linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 28px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; font-size:0.9rem;"><i class="fa-solid fa-plus"></i> ?덈ぉ ???/button>
                     </div>
                 </div>
             </div>
@@ -423,17 +422,16 @@
                     <div style="padding:20px 24px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <h2 style="font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:10px;">
-                                <i class="fa-solid fa-handshake" style="color:var(--accent-blue);"></i> 거래체 현황
+                                <i class="fa-solid fa-handshake" style="color:var(--accent-blue);"></i> 嫄곕옒泥??꾪솴
                             </h2>
-                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">등록된 공급 거래체 목록 및 담당자 연락처 정보입니다.</p>
+                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">?깅줉??怨듦툒 嫄곕옒泥?紐⑸줉 諛??대떦???곕씫泥??뺣낫?낅땲??</p>
                         </div>
                         <div style="display:flex; gap:10px;">
                             <input type="file" id="vendorExcelUpload" accept=".xlsx, .xls, .csv" style="display:none;" />
                             <button onclick="document.getElementById('vendorExcelUpload').click()" style="background: rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); padding:9px 16px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit; font-size:0.85rem; transition: background 0.2s;">
-                                <i class="fa-solid fa-file-excel"></i> 엑셀 일괄 업로드
-                            </button>
+                                <i class="fa-solid fa-file-excel"></i> ?묒? ?쇨큵 ?낅줈??                            </button>
                             <button id="btnAddVendor" style="background: linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:9px 20px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit; font-size:0.88rem;">
-                                <i class="fa-solid fa-plus"></i> 거래체 추가
+                                <i class="fa-solid fa-plus"></i> 嫄곕옒泥?異붽?
                             </button>
                         </div>
                     </div>
@@ -441,35 +439,35 @@
                         <table class="erp-table">
                             <thead>
                                 <tr>
-                                    <th>품목명</th>
-                                    <th>공급업체명</th>
-                                    <th>담당자명</th>
-                                    <th>연락처</th>
+                                    <th>?덈ぉ紐?/th>
+                                    <th>怨듦툒?낆껜紐?/th>
+                                    <th>?대떦?먮챸</th>
+                                    <th>?곕씫泥?/th>
                                 </tr>
                             </thead>
                             <tbody id="vendorTableBody">
                                 <tr>
-                                    <td><strong>대형 비치타월</strong></td>
-                                    <td>(주)한국린넌</td>
-                                    <td>김대혁 차장</td>
+                                    <td><strong>???鍮꾩튂???/strong></td>
+                                    <td>(二??쒓뎅由곕꼳</td>
+                                    <td>源???李⑥옣</td>
                                     <td>010-3322-5544</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>바디 워시 대용량</strong></td>
-                                    <td>서울코스모 업실링</td>
-                                    <td>이진수 과장</td>
+                                    <td><strong>諛붾뵒 ?뚯떆 ??⑸웾</strong></td>
+                                    <td>?쒖슱肄붿뒪紐??낆떎留?/td>
+                                    <td>?댁쭊??怨쇱옣</td>
                                     <td>02-1234-5678</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>고급 원두 (에스프레소)</strong></td>
-                                    <td>코투 cafe공급</td>
-                                    <td>박재형 대표</td>
+                                    <td><strong>怨좉툒 ?먮몢 (?먯뒪?꾨젅??</strong></td>
+                                    <td>肄뷀닾 cafe怨듦툒</td>
+                                    <td>諛뺤옱?????/td>
                                     <td>010-9988-2211</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>A4 복사용지</strong></td>
-                                    <td>(주)오피스디포</td>
-                                    <td>앞 영업팀</td>
+                                    <td><strong>A4 蹂듭궗?⑹?</strong></td>
+                                    <td>(二??ㅽ뵾?ㅻ뵒??/td>
+                                    <td>???곸뾽?</td>
                                     <td>1588-0072</td>
                                 </tr>
                             </tbody>
@@ -486,41 +484,41 @@
         <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:520px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
             <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-screwdriver-wrench" style="color:#F59E0B;"></i> 고장/유지보수 신규 등록
+                    <i class="fa-solid fa-screwdriver-wrench" style="color:#F59E0B;"></i> 怨좎옣/?좎?蹂댁닔 ?좉퇋 ?깅줉
                 </h2>
                 <button id="closeLedgerModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상태</label>
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?곹깭</label>
                         <select id="lStatus" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%;">
-                            <option style="background:#0F172A;" value="접수대기">접수대기</option>
-                            <option style="background:#0F172A;" value="수리중">수리중</option>
-                            <option style="background:#0F172A;" value="수리완료">수리완료</option>
+                            <option style="background:#0F172A;" value="?묒닔?湲?>?묒닔?湲?/option>
+                            <option style="background:#0F172A;" value="?섎━以?>?섎━以?/option>
+                            <option style="background:#0F172A;" value="?섎━?꾨즺">?섎━?꾨즺</option>
                         </select>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">담당자</label>
-                        <input id="lManager" type="text" placeholder="예: 공무팀 김철수" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?대떦??/label>
+                        <input id="lManager" type="text" placeholder="?? 怨듬Т? 源泥좎닔" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">고장 내용 (제목)</label>
-                    <input id="lTitle" type="text" placeholder="예: 루프탑 순환 모터 소음" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">怨좎옣 ?댁슜 (?쒕ぉ)</label>
+                    <input id="lTitle" type="text" placeholder="?? 猷⑦봽???쒗솚 紐⑦꽣 ?뚯쓬" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">상세 내용</label>
-                    <textarea id="lDesc" rows="3" placeholder="고장 원인 및 조치사항..." style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box; resize:vertical;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?곸꽭 ?댁슜</label>
+                    <textarea id="lDesc" rows="3" placeholder="怨좎옣 ?먯씤 諛?議곗튂?ы빆..." style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box; resize:vertical;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">예상 비용 (원)</label>
-                    <input id="lCost" type="text" placeholder="예: 450,000원 (없으면 미정)" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?덉긽 鍮꾩슜 (??</label>
+                    <input id="lCost" type="text" placeholder="?? 450,000??(?놁쑝硫?誘몄젙)" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#F59E0B'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
             </div>
             <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
-                <button id="cancelLedgerModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
-                <button id="saveLedgerBtn" style="background:linear-gradient(135deg,#F59E0B,#EF4444); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 등록하기</button>
+                <button id="cancelLedgerModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">痍⑥냼</button>
+                <button id="saveLedgerBtn" style="background:linear-gradient(135deg,#F59E0B,#EF4444); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> ?깅줉?섍린</button>
             </div>
         </div>
     </div>
@@ -530,31 +528,31 @@
         <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:480px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
             <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="font-size:1.15rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-handshake" style="color:#3B82F6;"></i> 거래체 신규 등록
+                    <i class="fa-solid fa-handshake" style="color:#3B82F6;"></i> 嫄곕옒泥??좉퇋 ?깅줉
                 </h2>
                 <button id="closeVendorModal" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">품목명</label>
-                    <input id="vItemName" type="text" placeholder="예: 대형 비치타월" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?덈ぉ紐?/label>
+                    <input id="vItemName" type="text" placeholder="?? ???鍮꾩튂??? style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">공급업체명</label>
-                    <input id="vSupplierName" type="text" placeholder="예: (주)한국린넌" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">怨듦툒?낆껜紐?/label>
+                    <input id="vSupplierName" type="text" placeholder="?? (二??쒓뎅由곕꼳" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">담당자명</label>
-                    <input id="vManagerName" type="text" placeholder="예: 김대혁 차장" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?대떦?먮챸</label>
+                    <input id="vManagerName" type="text" placeholder="?? 源???李⑥옣" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">연락처</label>
-                    <input id="vContact" type="text" placeholder="예: 010-1234-5678" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                    <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">?곕씫泥?/label>
+                    <input id="vContact" type="text" placeholder="?? 010-1234-5678" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; transition:border-color 0.2s; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                 </div>
             </div>
             <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end; gap:12px;">
-                <button id="cancelVendorModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">취소</button>
-                <button id="saveVendorBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> 저장하기</button>
+                <button id="cancelVendorModal" style="background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.1); padding:10px 22px; border-radius:10px; font-weight:600; cursor:pointer; font-family:inherit;">痍⑥냼</button>
+                <button id="saveVendorBtn" style="background:linear-gradient(135deg,#3B82F6,#6366F1); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;"><i class="fa-solid fa-check"></i> ??ν븯湲?/button>
             </div>
         </div>
     </div>
@@ -564,38 +562,38 @@
         <div style="background:rgba(15,23,42,0.97); border:1px solid rgba(16,185,129,0.3); border-radius:16px; width:540px; max-width:95vw; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
             <div style="padding:22px 28px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="font-size:1.15rem; font-weight:700; color:#10B981; display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-satellite-dish"></i> 센서 데이터 ERP 연동 안내
+                    <i class="fa-solid fa-satellite-dish"></i> ?쇱꽌 ?곗씠??ERP ?곕룞 ?덈궡
                 </h2>
                 <button onclick="document.getElementById('iotGuideModal').style.display='none'" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div style="padding:28px; display:flex; flex-direction:column; gap:18px;">
                 <p style="font-size:0.9rem; color:#E2E8F0; line-height:1.6;">
-                    향후 시설에 설치된 실제 하드웨어 센서 정보를 이 ERP 시스템으로 자동 연동하기 위한 아키텍처입니다.
+                    ?ν썑 ?쒖꽕???ㅼ튂???ㅼ젣 ?섎뱶?⑥뼱 ?쇱꽌 ?뺣낫瑜???ERP ?쒖뒪?쒖쑝濡??먮룞 ?곕룞?섍린 ?꾪븳 ?꾪궎?띿쿂?낅땲??
                 </p>
                 <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:16px; margin-top:4px;">
                     <ol style="font-size:0.85rem; color:#94A3B8; padding-left:18px; display:flex; flex-direction:column; gap:10px; margin:0;">
-                        <li><strong>에지 디바이스 (Sensor Edge):</strong> 보일러실, 전기실, 스파 등에 설치된 계측기(IoT 장비, ESP32, PLC)가 MQTT 프로토콜 또는 HTTP POST 통신으로 내부 로컬 망 또는 클라우드 API 게이트웨이로 데이터를 송출합니다.</li>
-                        <li><strong>백엔드 서버 (Backend/DB):</strong> 수집 서버에서 초단위 또는 분단위로 전송된 데이터를 정제하여 시계열 속성 데이터베이스(예: PostgreSQL, InfluxDB, AWS Timestream)에 축적합니다.</li>
-                        <li><strong>ERP 프론트 (현재 화면):</strong> 브라우저에서 WebSocket이나 SSE(Server-Sent Events) 기술을 사용하여 백엔드와 연결을 유지, 상태가 변동될 때마다 이 화면의 인터랙티브 대시보드가 실시간 업데이트됩니다.</li>
+                        <li><strong>?먯? ?붾컮?댁뒪 (Sensor Edge):</strong> 蹂댁씪?ъ떎, ?꾧린?? ?ㅽ뙆 ?깆뿉 ?ㅼ튂??怨꾩륫湲?IoT ?λ퉬, ESP32, PLC)媛 MQTT ?꾨줈?좎퐳 ?먮뒗 HTTP POST ?듭떊?쇰줈 ?대? 濡쒖뺄 留??먮뒗 ?대씪?곕뱶 API 寃뚯씠?몄썾?대줈 ?곗씠?곕? ?≪텧?⑸땲??</li>
+                        <li><strong>諛깆뿏???쒕쾭 (Backend/DB):</strong> ?섏쭛 ?쒕쾭?먯꽌 珥덈떒???먮뒗 遺꾨떒?꾨줈 ?꾩넚???곗씠?곕? ?뺤젣?섏뿬 ?쒓퀎???띿꽦 ?곗씠?곕쿋?댁뒪(?? PostgreSQL, InfluxDB, AWS Timestream)??異뺤쟻?⑸땲??</li>
+                        <li><strong>ERP ?꾨줎??(?꾩옱 ?붾㈃):</strong> 釉뚮씪?곗??먯꽌 WebSocket?대굹 SSE(Server-Sent Events) 湲곗닠???ъ슜?섏뿬 諛깆뿏?쒖? ?곌껐???좎?, ?곹깭媛 蹂?숇맆 ?뚮쭏?????붾㈃???명꽣?숉떚釉???쒕낫?쒓? ?ㅼ떆媛??낅뜲?댄듃?⑸땲??</li>
                     </ol>
                 </div>
                 <p style="font-size:0.85rem; color:#F59E0B; background:rgba(245,158,11,0.1); padding:12px; border-radius:8px; margin-top:4px; line-height:1.4;">
-                    <i class="fa-solid fa-circle-info"></i> 현재는 프로토타입 디자인이 적용되어 있으며, 자바스크립트 시뮬레이터를 통해 3~5초 단위로 수치가 라이브로 변동하도록 구성되어 있습니다.
+                    <i class="fa-solid fa-circle-info"></i> ?꾩옱???꾨줈?좏????붿옄?몄씠 ?곸슜?섏뼱 ?덉쑝硫? ?먮컮?ㅽ겕由쏀듃 ?쒕??덉씠?곕? ?듯빐 3~5珥??⑥쐞濡??섏튂媛 ?쇱씠釉뚮줈 蹂?숉븯?꾨줉 援ъ꽦?섏뼱 ?덉뒿?덈떎.
                 </p>
             </div>
             <div style="padding:16px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:flex-end;">
-                <button onclick="document.getElementById('iotGuideModal').style.display='none'" style="background:linear-gradient(135deg,#10B981,#059669); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;">확인했습니다</button>
+                <button onclick="document.getElementById('iotGuideModal').style.display='none'" style="background:linear-gradient(135deg,#10B981,#059669); color:white; border:none; padding:10px 26px; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit;">?뺤씤?덉뒿?덈떎</button>
             </div>
         </div>
     </div>
 
-    <!-- SheetJS (Excel 파싱) -->
+    <!-- SheetJS (Excel ?뚯떛) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Custom View logic -->
     <script src="cloud_sync.js?v=1"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=6"></script>
     <script src="inventory.js?v=100"></script>
 </body>
 </html>
