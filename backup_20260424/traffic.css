@@ -1,0 +1,262 @@
+/* Traffic Monitoring Module Specific Styles */
+
+/* ---------------- Crowd Tracking Grid ---------------- */
+.crowd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+    .crowd-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+.crowd-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-top: 4px solid var(--border-color); /* To be overridden by js or classes */
+}
+
+/* Base congestion colors */
+.zone-green {
+    border-top-color: var(--accent-green);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+}
+.zone-yellow {
+    border-top-color: var(--accent-orange);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+.zone-red {
+    border-top-color: var(--accent-red);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+    animation: criticalPulse 2s infinite;
+}
+
+@keyframes criticalPulse {
+    0% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1); }
+    50% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4); }
+    100% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1); }
+}
+
+.crowd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.crowd-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.zone-green .status-badge { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+.zone-yellow .status-badge { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+.zone-red .status-badge { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+.crowd-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.btn-count {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.btn-count.minus { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
+.btn-count.minus:hover { background: rgba(255, 255, 255, 0.2); }
+.btn-count.plus { background: var(--accent-blue); }
+.btn-count.plus:hover { background: #2563EB; }
+
+.count-val {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    width: 100px;
+}
+.zone-green .count-val { color: var(--accent-green); }
+.zone-yellow .count-val { color: var(--accent-orange); }
+.zone-red .count-val { color: var(--accent-red); }
+
+
+.crowd-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.limit-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.zone-green .progress-bar-fill { background: var(--accent-green); }
+.zone-yellow .progress-bar-fill { background: var(--accent-orange); }
+.zone-red .progress-bar-fill { background: var(--accent-red); }
+
+
+/* ---------------- Bottom Layout ---------------- */
+.traffic-bottom-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 1400px) {
+    .traffic-bottom-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------------- CCTV Wall ---------------- */
+.cctv-wall {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cctv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cctv-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.pulse-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-red);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent-red);
+    border-radius: 50%;
+    animation: recPulse 1s infinite alternate;
+}
+
+@keyframes recPulse {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
+}
+
+.cctv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(180px, auto);
+    gap: 16px;
+    flex: 1;
+}
+/* Make the first component take full width at the top just for layout variation */
+.cctv-grid .cctv-frame:first-child {
+    grid-column: span 2;
+    min-height: 250px;
+}
+
+.cctv-frame {
+    background: #000;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cctv-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 10;
+}
+
+.cctv-placeholder {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.cctv-placeholder i {
+    font-size: 2rem;
+}
+
+/* Privacy Blur Example for Spa */
+.blurred-cam .cctv-placeholder {
+    color: rgba(255,255,255,0.1);
+    filter: blur(2px);
+}
+.blurred-cam {
+    background: #111;
+}
+
+/* ---------------- Line Chart container ---------------- */
+.traffic-chart {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.chart-body {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}

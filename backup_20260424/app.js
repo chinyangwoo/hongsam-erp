@@ -215,14 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Check if user is in erp_users_db natively
             let originalDb = dbStr ? JSON.parse(dbStr) : {};
-            if (!originalDb[currentUser]) {
-                originalDb[currentUser] = { password: newPwd, name: users[currentUser].name };
-            } else {
+            if (originalDb[currentUser]) {
                 originalDb[currentUser].password = newPwd;
+                localStorage.setItem('erp_users_db', JSON.stringify(originalDb));
             }
-            localStorage.setItem('erp_users_db', JSON.stringify(originalDb));
             
-            // Check if user is in hrEmployees and update them locally too for consistency
+            // Check if user is in hrEmployees
             let foundInHr = false;
             hrEmployees.forEach(emp => {
                 if (emp.emp_id === currentUser) {
@@ -233,16 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (foundInHr) {
                 localStorage.setItem('hongsam_employees', JSON.stringify(hrEmployees));
             }
-
-            // --- 서버에 저장하여 변경된 비밀번호 유지 ---
-            const API_BASE = 'http://43.203.237.63:3001/api';
-            const updatedDb = JSON.parse(localStorage.getItem('erp_users_db') || '{}');
-            fetch(`${API_BASE}/db/erp_users_db`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedDb)
-            }).then(() => console.log('비밀번호 서버 동기화 완료'))
-              .catch(err => console.warn('서버 저장 실패:', err));
+            
+            if (!originalDb[currentUser] && !foundInHr) {
+                // edge case
+                originalDb[currentUser] = { password: newPwd, name: users[currentUser].name };
+                localStorage.setItem('erp_users_db', JSON.stringify(originalDb));
+            }
 
             alert('비밀번호가 성공적으로 변경되었습니다.\n다음에 로그인할 때 새 비밀번호를 사용하세요.');
             pwdModal.style.display = 'none';
@@ -251,23 +245,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Logout Logic (Event Delegation to guarantee it works dynamically and perfectly)
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.logout-btn');
-        if (btn) {
-            e.preventDefault();
-            // confirm() 제거: 일부 앱 환경이나 브라우저에서 대화상자 차단을 선택했을 때, 
-            // 리턴값이 먹통이 되거나 에러가 발생해 로그아웃이 진행되지 않는 것을 구조적으로 방지함.
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('currentUser');
-            
-            // Remove socket login state if exists
-            if (window.erpSocket) {
-                try { window.erpSocket.disconnect(); } catch(e) {}
+    // Logout Logic
+    const logoutBtns = document.querySelectorAll('.logout-btn');
+    logoutBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(confirm('안전하게 로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                window.location.replace('login.html');
             }
-            
-            window.location.href = 'login.html';
-        }
+        });
     });
     // Theme Toggle
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -296,81 +283,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Chart.js Default styling (Safeguard for non-dashboard pages)
-    if (typeof Chart !== 'undefined') {
-        Chart.defaults.color = body.classList.contains('dark-theme') ? '#94A3B8' : '#6B7280';
-        Chart.defaults.font.family = "'Inter', sans-serif";
-    }
+    // Chart.js Default styling
+    Chart.defaults.color = body.classList.contains('dark-theme') ? '#94A3B8' : '#6B7280';
+    Chart.defaults.font.family = "'Inter', sans-serif";
     
     // 1. Revenue Bar Chart
-    const revCanvas = document.getElementById('revenueChart');
-    let revenueChart = null;
-    if (revCanvas && typeof Chart !== 'undefined') {
-        revenueChart = new Chart(revCanvas.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['04.11', '04.12', '04.13', '04.14', '04.15', '04.16', '오늘'],
-                datasets: [{
-                    label: '일일 매출 (천원)',
-                    data: [3200, 4500, 5200, 1800, 2100, 3100, 1250],
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                    borderRadius: 4,
-                    barPercentage: 0.6
-                }]
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctxRevenue, {
+        type: 'bar',
+        data: {
+            labels: ['04.11', '04.12', '04.13', '04.14', '04.15', '04.16', '오늘'],
+            datasets: [{
+                label: '일일 매출 (천원)',
+                data: [3200, 4500, 5200, 1800, 2100, 3100, 1250],
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderRadius: 4,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
+                x: {
+                    grid: { display: false }
                 }
             }
-        });
-    }
+        }
+    });
 
     // 2. Expense Doughnut Chart
-    const expCanvas = document.getElementById('expenseChart');
-    let expenseChart = null;
-    if (expCanvas && typeof Chart !== 'undefined') {
-        expenseChart = new Chart(expCanvas.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['인건비', '식음료/자재', '공과금', '마케팅', '기타'],
-                datasets: [{
-                    data: [45, 25, 15, 10, 5],
-                    backgroundColor: [
-                        '#3B82F6', // Blue
-                        '#10B981', // Green
-                        '#F59E0B', // Orange
-                        '#8B5CF6', // Purple
-                        '#EF4444'  // Red
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { padding: 20, usePointStyle: true }
-                    }
+    const ctxExpense = document.getElementById('expenseChart').getContext('2d');
+    const expenseChart = new Chart(ctxExpense, {
+        type: 'doughnut',
+        data: {
+            labels: ['인건비', '식음료/자재', '공과금', '마케팅', '기타'],
+            datasets: [{
+                data: [45, 25, 15, 10, 5],
+                backgroundColor: [
+                    '#3B82F6', // Blue
+                    '#10B981', // Green
+                    '#F59E0B', // Orange
+                    '#8B5CF6', // Purple
+                    '#EF4444'  // Red
+                ],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 20, usePointStyle: true }
                 }
             }
-        });
-    }
+        }
+    });
 
     // 3. Infrastructure Charts (Elec, Gas, Water)
     const chartOptions = {
@@ -384,42 +363,32 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const labels = ['04.11', '04.12', '04.13', '04.14', '04.15', '04.16', '오늘'];
 
-    let elecChart, gasChart, waterChart;
-    const elecCanvas = document.getElementById('elecChart');
-    if (elecCanvas && typeof Chart !== 'undefined') {
-        elecChart = new Chart(elecCanvas.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{ label: '전기 (kWh)', data: [420, 450, 480, 410, 400, 430, 415], borderColor: '#F59E0B', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
-            },
-            options: chartOptions
-        });
-    }
+    const elecChart = new Chart(document.getElementById('elecChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: '전기 (kWh)', data: [420, 450, 480, 410, 400, 430, 415], borderColor: '#F59E0B', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
+        },
+        options: chartOptions
+    });
 
-    const gasCanvas = document.getElementById('gasChart');
-    if (gasCanvas && typeof Chart !== 'undefined') {
-        gasChart = new Chart(gasCanvas.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{ label: '가스 (m3)', data: [150, 160, 180, 140, 135, 145, 140], borderColor: '#EF4444', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
-            },
-            options: chartOptions
-        });
-    }
+    const gasChart = new Chart(document.getElementById('gasChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: '가스 (m3)', data: [150, 160, 180, 140, 135, 145, 140], borderColor: '#EF4444', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
+        },
+        options: chartOptions
+    });
 
-    const waterCanvas = document.getElementById('waterChart');
-    if (waterCanvas && typeof Chart !== 'undefined') {
-        waterChart = new Chart(waterCanvas.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{ label: '수도 (ton)', data: [200, 220, 250, 190, 180, 195, 185], borderColor: '#3B82F6', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
-            },
-            options: chartOptions
-        });
-    }
+    const waterChart = new Chart(document.getElementById('waterChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: '수도 (ton)', data: [200, 220, 250, 190, 180, 195, 185], borderColor: '#3B82F6', tension: 0.4, borderWidth: 2, pointRadius: 2 }]
+        },
+        options: chartOptions
+    });
 
     // POS & Accounting Logic Mock Update
     function updateKPIs() {
@@ -444,15 +413,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateKPIs();
 
     function updateChartsTheme() {
-        if (typeof Chart === 'undefined') return;
         const textColor = body.classList.contains('dark-theme') ? '#94A3B8' : '#6B7280';
         const gridColor = body.classList.contains('dark-theme') ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
         
         [revenueChart, expenseChart, elecChart, gasChart, waterChart].forEach(chart => {
-            if(chart && chart.options && chart.options.scales && chart.options.scales.y) {
+            if(chart.options.scales && chart.options.scales.y) {
                 chart.options.scales.y.grid.color = gridColor;
-                chart.update();
             }
+            chart.update();
         });
         Chart.defaults.color = textColor;
     }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼스파 ERP - 로그인</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-glass-card">
+            
+            <div class="login-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-spa"></i>
+                </div>
+                <h2>홍삼스파 ERP</h2>
+                <p>JINAN HONGSAM SPA & VILL</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <label for="empId">사원번호 (Employee ID)</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <input type="text" id="empId" placeholder="예: 105" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">비밀번호 (Password)</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        사번 저장
+                    </label>
+                    <a href="#" class="forgot-link">비밀번호 찾기</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnLogin">
+                    <span class="btn-text">로그인</span>
+                    <i class="fa-solid fa-circle-notch fa-spin spinner" style="display: none;"></i>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>본 시스템은 홍삼스파 임직원 전용망입니다.<br>무단 접근 시 관련 법규에 의해 처벌받을 수 있습니다.</p>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Login JS -->
+    <script src="login.js?v=2"></script>
+</body>
+</html>
+
+

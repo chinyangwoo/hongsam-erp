@@ -7,8 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // 즉시 종료
     }
 
-    const API_BASE = 'http://43.203.237.63:3001/api';
-
     // --- Mock DB Initialization ---
     // User IDs 001 to 099, initial password "0000"
     function initMockDB() {
@@ -19,46 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 let idStr = i.toString().padStart(3, '0');
                 users[idStr] = { password: '0000', name: '사원 ' + idStr };
             }
-            // Master account (대표이사)
-            users['001'] = { password: '0724', name: '진양우 (대표이사)' };
+            // Master account override for the demo
+            users['001'] = { password: '0000', name: '진양우 (대표이사)' };
             
             localStorage.setItem('erp_users_db', JSON.stringify(users));
         }
     }
     initMockDB();
-
-    // --- 서버 DB에서 비밀번호 동기화 ---
-    // localStorage가 초기화되어도 서버에 저장된 비밀번호는 유지됨
-    function syncPasswordsFromServer() {
-        // 1. erp_users_db 동기화
-        fetch(`${API_BASE}/db/erp_users_db`)
-            .then(res => res.json())
-            .then(serverUsers => {
-                if (serverUsers && typeof serverUsers === 'object' && Object.keys(serverUsers).length > 0) {
-                    let localUsers = JSON.parse(localStorage.getItem('erp_users_db') || '{}');
-                    Object.keys(serverUsers).forEach(empId => {
-                        if (serverUsers[empId] && serverUsers[empId].password) {
-                            localUsers[empId] = { ...localUsers[empId], ...serverUsers[empId] };
-                        }
-                    });
-                    localStorage.setItem('erp_users_db', JSON.stringify(localUsers));
-                }
-            })
-            .catch(err => console.warn('[Sync] 서버 비밀번호 동기화 실패 (오프라인 모드):', err));
-
-        // 2. hongsam_employees 동기화 (인사모듈에서 추가/변경된 사원 정보 및 비밀번호 동기화)
-        return fetch(`${API_BASE}/db/hongsam_employees`)
-            .then(res => res.json())
-            .then(serverEmployees => {
-                if (serverEmployees && Array.isArray(serverEmployees) && serverEmployees.length > 0) {
-                    localStorage.setItem('hongsam_employees', JSON.stringify(serverEmployees));
-                }
-            })
-            .catch(err => console.warn('[Sync] 인사데이터 동기화 실패 (오프라인 모드):', err));
-    }
-
-    // 서버에서 비밀번호 동기화 시도 (비동기 - 실패해도 로컬 DB로 진행)
-    syncPasswordsFromServer();
 
     const loginForm = document.getElementById('loginForm');
     const btnLogin = document.getElementById('btnLogin');
@@ -84,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- DB Verification ---
+        // --- Mock DB Verification ---
         const dbStr = localStorage.getItem('erp_users_db');
         const users = JSON.parse(dbStr || '{}');
 
@@ -94,13 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try { hrEmployees = JSON.parse(hrEmployeesStr || '[]'); } catch (_) {}
         
         hrEmployees.forEach(emp => {
-            // If the user already exists in erp_users_db with a changed password, keep that password.
-            // Otherwise, use the HR module's password.
-            if (users[emp.emp_id] && users[emp.emp_id].password !== '0000') {
-                users[emp.emp_id].name = emp.name;
-            } else {
-                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
-            }
+            users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
         });
 
         if (!users[empIdStr]) {
@@ -124,14 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 성공 로그 기록
         logLoginEvent(empIdStr, users[empIdStr].name, 'success');
-
-        // 비밀번호 데이터를 서버에도 저장 (다른 기기/세션에서도 유지)
-        const currentUsers = JSON.parse(localStorage.getItem('erp_users_db') || '{}');
-        fetch(`${API_BASE}/db/erp_users_db`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(currentUsers)
-        }).catch(err => console.warn('[Sync] 서버 저장 실패:', err));
 
         // Mock Loading Delay for UX
         setTimeout(() => {
