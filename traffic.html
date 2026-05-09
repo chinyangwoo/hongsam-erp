@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -16,13 +16,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css?v=11">
-    <link rel="stylesheet" href="traffic.css">
+    <link rel="stylesheet" href="traffic.css?v=2">
     <!-- Mobile Responsive Override -->
     <link rel="stylesheet" href="mobile.css?v=1">
 </head>
@@ -53,7 +51,7 @@
                 <i class="fa-solid fa-building"></i> 시설현황</a>
             <a href="simulation.html" class="nav-item">
                 <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>            
-            <div class="nav-section">MONITORING & COMM</div>
+            <div class="nav-section">MONITORING &amp; COMM</div>
             <a href="board.html" class="nav-item">
                 <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
             <a href="messenger.html" class="nav-item badge-container">
@@ -86,12 +84,11 @@
         <header class="top-header">
             <div class="header-title">
                 <h1>공간 트래픽 모니터링</h1>
-                <p>구역별 실시간 혼잡도 파악 및 CCTV 모니터링</p>
+                <p>AI 인원 분석 · CCTV 20개소 실시간 모니터링</p>
             </div>
             
             <div class="header-actions">
-                <!-- Mobile-friendly big counter access button -->
-                <button class="btn-primary" onclick="alert('모바일 카운팅 전용 팝업이 뜹니다.')"><i class="fa-solid fa-mobile-screen"></i> 모바일 카운터</button>
+                <button class="btn-primary" id="btnAiAnalysis"><i class="fa-solid fa-robot"></i> AI 분석 실행</button>
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
@@ -99,6 +96,25 @@
         </header>
 
         <div class="dashboard-container">
+
+            <!-- ═══════════════════════════════════════
+                 AI 인원 분석 상태 배너
+                 ═══════════════════════════════════════ -->
+            <div class="ai-status-banner glassmorphism" id="aiBanner">
+                <div class="ai-status-left">
+                    <div class="ai-icon-wrap">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div class="ai-info">
+                        <h3>AI 영상 분석 (YOLOv8 · Person Detection)</h3>
+                        <p>CCTV 스냅샷을 5분 간격으로 캡처 → AI가 인원수 자동 분석 → 층별 밀집도 업데이트</p>
+                    </div>
+                </div>
+                <div class="ai-status-right">
+                    <span class="ai-last-update" id="aiLastUpdate">마지막 분석: --:--:--</span>
+                    <span class="ai-cycle"><i class="fa-solid fa-clock"></i> 5분 주기</span>
+                </div>
+            </div>
             
             <!-- Crowd Tracking Grid (1F, 2F, Rooftop) -->
             <section class="crowd-grid">
@@ -106,7 +122,7 @@
                 <!-- Zone 1: 1층 -->
                 <div class="crowd-card glassmorphism zone-green" id="card-1f">
                     <div class="crowd-header">
-                        <h2>1층 (로비 및 정원)</h2>
+                        <h2>1층 (로비 · 정원 · 카페)</h2>
                         <span class="status-badge" id="badge-1f">쾌적</span>
                     </div>
                     <div class="crowd-display">
@@ -114,6 +130,7 @@
                         <div class="count-val" id="count-1f">24</div>
                         <button class="btn-count plus" data-target="count-1f">+</button>
                     </div>
+                    <div class="ai-source-tag"><i class="fa-solid fa-robot"></i> AI 분석 기반 · CAM 1~5 합산</div>
                     <div class="crowd-footer">
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" id="prog-1f" style="width: 24%;"></div>
@@ -125,7 +142,7 @@
                 <!-- Zone 2: 2층 -->
                 <div class="crowd-card glassmorphism zone-yellow" id="card-2f">
                     <div class="crowd-header">
-                        <h2>2층 (대온천탕)</h2>
+                        <h2>2층 (대온천탕 · 탈의실)</h2>
                         <span class="status-badge" id="badge-2f">보통</span>
                     </div>
                     <div class="crowd-display">
@@ -133,6 +150,7 @@
                         <div class="count-val" id="count-2f">58</div>
                         <button class="btn-count plus" data-target="count-2f">+</button>
                     </div>
+                    <div class="ai-source-tag"><i class="fa-solid fa-robot"></i> AI 분석 기반 · CAM 6~9 합산</div>
                     <div class="crowd-footer">
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" id="prog-2f" style="width: 58%;"></div>
@@ -144,7 +162,7 @@
                 <!-- Zone 3: Rooftop -->
                 <div class="crowd-card glassmorphism zone-red" id="card-rf">
                     <div class="crowd-header">
-                        <h2>루프탑 (수영장 및 사우나)</h2>
+                        <h2>루프탑 (수영장 · 사우나)</h2>
                         <span class="status-badge" id="badge-rf">혼잡 (입장제어)</span>
                     </div>
                     <div class="crowd-display">
@@ -152,6 +170,7 @@
                         <div class="count-val" id="count-rf">85</div>
                         <button class="btn-count plus" data-target="count-rf">+</button>
                     </div>
+                    <div class="ai-source-tag"><i class="fa-solid fa-robot"></i> AI 분석 기반 · CAM 10~12 합산</div>
                     <div class="crowd-footer">
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" id="prog-rf" style="width: 85%;"></div>
@@ -161,53 +180,140 @@
                 </div>
             </section>
 
-            <!-- CCTV Wall & Chart Section -->
-            <div class="traffic-bottom-layout">
-                
-                <!-- CCTV Iframes Grid -->
-                <section class="cctv-wall glassmorphism">
-                    <div class="cctv-header">
-                        <h2><i class="fa-solid fa-video"></i> 실시간 CCTV 프레임 (향후 RTSP 연동)</h2>
+            <!-- ═══════════════════════════════════════
+                 CCTV 20개소 실시간 모니터링
+                 ═══════════════════════════════════════ -->
+            <section class="cctv-section glassmorphism">
+                <div class="cctv-header">
+                    <h2><i class="fa-solid fa-video"></i> 실시간 CCTV 모니터링 (20개소)</h2>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div class="cctv-filter-tabs">
+                            <button class="cctv-tab active" data-filter="all">전체</button>
+                            <button class="cctv-tab" data-filter="spa">홍삼스파</button>
+                            <button class="cctv-tab" data-filter="hotel">홍삼빌호텔</button>
+                        </div>
                         <div class="pulse-indicator">
                             <div class="pulse-dot"></div> Live
                         </div>
                     </div>
-                    <div class="cctv-grid">
-                        <div class="cctv-frame">
-                            <div class="cctv-label">CAM 1: 1층 로비</div>
-                            <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
-                        </div>
-                        <div class="cctv-frame">
-                            <div class="cctv-label">CAM 2: 1층 일본식정원</div>
-                            <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
-                        </div>
-                        <div class="cctv-frame blurred-cam">
-                            <div class="cctv-label">CAM 3: 2층 대온천탕 (프라이버시 필터링 적용예정)</div>
-                            <div class="cctv-placeholder"><i class="fa-solid fa-eye-slash"></i> 흐림 처리 적용 프레임</div>
-                        </div>
-                        <div class="cctv-frame">
-                            <div class="cctv-label">CAM 4: 루프탑 인피니티풀</div>
-                            <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
-                        </div>
-                        <div class="cctv-frame">
-                            <div class="cctv-label">CAM 5: 루프탑 건식사우나</div>
-                            <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
-                        </div>
+                </div>
+                <div class="cctv-grid-20" id="cctvGrid">
+                    <!-- 홍삼스파 12곳 -->
+                    <div class="cctv-frame" data-site="spa" data-cam="1">
+                        <div class="cctv-label">CAM 01 · 1층 로비</div>
+                        <div class="cctv-ai-count" id="aiCam1">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
                     </div>
-                </section>
+                    <div class="cctv-frame" data-site="spa" data-cam="2">
+                        <div class="cctv-label">CAM 02 · 1층 일본식정원</div>
+                        <div class="cctv-ai-count" id="aiCam2">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="3">
+                        <div class="cctv-label">CAM 03 · 1층 카페</div>
+                        <div class="cctv-ai-count" id="aiCam3">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="4">
+                        <div class="cctv-label">CAM 04 · 1층 주차장</div>
+                        <div class="cctv-ai-count" id="aiCam4">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="5">
+                        <div class="cctv-label">CAM 05 · 1층 외부출입구</div>
+                        <div class="cctv-ai-count" id="aiCam5">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame blurred-cam" data-site="spa" data-cam="6">
+                        <div class="cctv-label">CAM 06 · 2층 대온천탕 <span class="privacy-tag">프라이버시</span></div>
+                        <div class="cctv-ai-count" id="aiCam6">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-eye-slash"></i> 흐림 처리 적용</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="7">
+                        <div class="cctv-label">CAM 07 · 2층 이벤트탕</div>
+                        <div class="cctv-ai-count" id="aiCam7">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="8">
+                        <div class="cctv-label">CAM 08 · 2층 탈의실복도</div>
+                        <div class="cctv-ai-count" id="aiCam8">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="9">
+                        <div class="cctv-label">CAM 09 · 2층 휴게실</div>
+                        <div class="cctv-ai-count" id="aiCam9">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="10">
+                        <div class="cctv-label">CAM 10 · 루프탑 인피니티풀</div>
+                        <div class="cctv-ai-count" id="aiCam10">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="11">
+                        <div class="cctv-label">CAM 11 · 루프탑 건식사우나</div>
+                        <div class="cctv-ai-count" id="aiCam11">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="spa" data-cam="12">
+                        <div class="cctv-label">CAM 12 · 루프탑 바(Bar)</div>
+                        <div class="cctv-ai-count" id="aiCam12">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
 
-                <!-- Hourly Traffic Line Chart -->
-                <section class="traffic-chart glassmorphism">
-                    <div class="chart-header">
-                        <h2><i class="fa-solid fa-chart-area"></i> 시간대별 트래픽 그래프</h2>
-                        <button class="btn-text" title="데이터 새로고침"><i class="fa-solid fa-rotate-right"></i></button>
+                    <!-- 홍삼빌호텔 8곳 -->
+                    <div class="cctv-frame" data-site="hotel" data-cam="13">
+                        <div class="cctv-label">CAM 13 · 호텔 로비</div>
+                        <div class="cctv-ai-count" id="aiCam13">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
                     </div>
-                    <div class="chart-body" style="height: 350px;">
-                        <canvas id="trafficLineChart"></canvas>
+                    <div class="cctv-frame" data-site="hotel" data-cam="14">
+                        <div class="cctv-label">CAM 14 · 호텔 프런트</div>
+                        <div class="cctv-ai-count" id="aiCam14">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
                     </div>
-                </section>
+                    <div class="cctv-frame" data-site="hotel" data-cam="15">
+                        <div class="cctv-label">CAM 15 · 호텔 주차장</div>
+                        <div class="cctv-ai-count" id="aiCam15">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="hotel" data-cam="16">
+                        <div class="cctv-label">CAM 16 · 호텔 2층 복도</div>
+                        <div class="cctv-ai-count" id="aiCam16">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="hotel" data-cam="17">
+                        <div class="cctv-label">CAM 17 · 호텔 3층 복도</div>
+                        <div class="cctv-ai-count" id="aiCam17">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="hotel" data-cam="18">
+                        <div class="cctv-label">CAM 18 · 호텔 식당</div>
+                        <div class="cctv-ai-count" id="aiCam18">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="hotel" data-cam="19">
+                        <div class="cctv-label">CAM 19 · 호텔 뒤편 통로</div>
+                        <div class="cctv-ai-count" id="aiCam19">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                    <div class="cctv-frame" data-site="hotel" data-cam="20">
+                        <div class="cctv-label">CAM 20 · 호텔 외부 전경</div>
+                        <div class="cctv-ai-count" id="aiCam20">--</div>
+                        <div class="cctv-placeholder"><i class="fa-solid fa-camera-retro"></i> 신호 대기중...</div>
+                    </div>
+                </div>
+            </section>
 
-            </div>
+            <!-- Hourly Traffic Line Chart -->
+            <section class="traffic-chart glassmorphism">
+                <div class="chart-header">
+                    <h2><i class="fa-solid fa-chart-area"></i> 시간대별 트래픽 그래프 (AI 분석 추이)</h2>
+                    <button class="btn-text" title="데이터 새로고침"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+                <div class="chart-body" style="height: 350px;">
+                    <canvas id="trafficLineChart"></canvas>
+                </div>
+            </section>
 
         </div>
     </main>
@@ -217,12 +323,6 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=7"></script>
-    <script src="traffic.js"></script>
+    <script src="traffic.js?v=2"></script>
 </body>
 </html>
-
-
-
-
-
-
