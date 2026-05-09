@@ -295,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeNewEmpModalBtn = document.getElementById('closeNewEmpModalBtn');
     const saveNewEmpBtn = document.getElementById('saveNewEmpBtn');
     
+    let isEditingEmp = false;
+    
     // Photo preview
     const empPhotoUpload = document.getElementById('empPhotoUpload');
     const photoPreview = document.getElementById('photoPreview');
@@ -323,6 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(btnAddNewEmployee) {
         btnAddNewEmployee.addEventListener('click', () => {
+            isEditingEmp = false;
+            const titleEl = document.getElementById('newEmpModalTitle');
+            if (titleEl) titleEl.innerText = '신규 사원 등록 (인사기록카드)';
+            const idInput = document.getElementById('newEmpId');
+            if (idInput) idInput.readOnly = false;
+            
             if (newEmpModal) newEmpModal.classList.add('show');
         });
     }
@@ -417,7 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // 중복 사번 검사
             const dupIdx = employees.findIndex(e => e.emp_id === empId);
             if (dupIdx >= 0) {
-                if (!confirm(`사번 ${empId}이(가) 이미 등록되어 있습니다. 덮어쓰시겠습니까?`)) return;
+                if (!isEditingEmp) {
+                    if (!confirm(`사번 ${empId}이(가) 이미 등록되어 있습니다. 덮어쓰시겠습니까?`)) return;
+                }
                 employees[dupIdx] = { ...employees[dupIdx], ...empData };
             } else {
                 employees.push(empData);
@@ -428,7 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
             addEmployeeCard(empData);
 
             closeNewModal();
-            showSaveToast(`사원 등록 완료: ${empName} (${empId})`);
+            if (isEditingEmp) {
+                showSaveToast(`사원 정보 수정 완료: ${empName} (${empId})`);
+            } else {
+                showSaveToast(`사원 등록 완료: ${empName} (${empId})`);
+            }
         });
     }
 
@@ -750,6 +764,12 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`사번 ${empId}의 데이터를 찾을 수 없습니다.\n(localStorage에 저장된 사원만 수정 가능)`);
             return;
         }
+
+        isEditingEmp = true;
+        const titleEl = document.getElementById('newEmpModalTitle');
+        if (titleEl) titleEl.innerText = '사원 정보 수정 (인사기록카드)';
+        const idInput = document.getElementById('newEmpId');
+        if (idInput) idInput.readOnly = true;
 
         // 신규 사원 등록 모달을 열고 기존 데이터 채우기
         if (newEmpModal) newEmpModal.classList.add('show');
