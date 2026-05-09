@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -215,6 +215,92 @@
                 </div>
             </section>
 
+            <!-- ═══════════════════════════════════════════
+                 AI Daily 경영분석 리포트
+                 ═══════════════════════════════════════════ -->
+            <section class="ai-report-section glassmorphism" id="aiReportSection">
+                <div class="ai-report-header">
+                    <div class="ai-report-title-area">
+                        <div class="ai-logo-badge">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <h2>AI Daily 경영분석 리포트</h2>
+                            <p>Claude AI가 금일 경영 데이터를 종합 분석하여 인사이트를 제공합니다</p>
+                        </div>
+                    </div>
+                    <div class="ai-report-actions">
+                        <span class="ai-report-timestamp" id="aiReportTime">--</span>
+                        <button class="btn-ai-analyze" id="btnRunAiReport">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석 실행
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI 분석 로딩 -->
+                <div class="ai-loading" id="aiLoading" style="display:none;">
+                    <div class="ai-loading-spinner"></div>
+                    <p>Claude AI가 경영 데이터를 분석하고 있습니다...</p>
+                    <span class="ai-loading-sub">매출추이 · 현금흐름 · 비용구조 · 위험요소 · 개선방안</span>
+                </div>
+
+                <!-- AI 분석 결과 -->
+                <div class="ai-report-body" id="aiReportBody" style="display:none;">
+
+                    <!-- 종합 요약 -->
+                    <div class="ai-summary-card" id="aiSummaryCard">
+                        <div class="ai-summary-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                        <div class="ai-summary-text" id="aiSummaryText"></div>
+                    </div>
+
+                    <!-- 분석 카드 그리드 -->
+                    <div class="ai-cards-grid">
+                        <!-- 매출 분석 -->
+                        <div class="ai-card">
+                            <div class="ai-card-header revenue">
+                                <i class="fa-solid fa-chart-line"></i>
+                                <h3>매출 추이 분석</h3>
+                            </div>
+                            <div class="ai-card-body" id="aiRevAnalysis"></div>
+                        </div>
+
+                        <!-- 현금흐름 -->
+                        <div class="ai-card">
+                            <div class="ai-card-header cashflow">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                                <h3>현금흐름 분석</h3>
+                            </div>
+                            <div class="ai-card-body" id="aiCashAnalysis"></div>
+                        </div>
+
+                        <!-- 비용 구조 -->
+                        <div class="ai-card">
+                            <div class="ai-card-header cost">
+                                <i class="fa-solid fa-receipt"></i>
+                                <h3>비용 구조 진단</h3>
+                            </div>
+                            <div class="ai-card-body" id="aiCostAnalysis"></div>
+                        </div>
+
+                        <!-- 위험 요소 -->
+                        <div class="ai-card">
+                            <div class="ai-card-header risk">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <h3>위험 요소 및 경고</h3>
+                            </div>
+                            <div class="ai-card-body" id="aiRiskAnalysis"></div>
+                        </div>
+                    </div>
+
+                    <!-- CEO 액션 아이템 -->
+                    <div class="ai-action-section">
+                        <h3><i class="fa-solid fa-bullseye"></i> CEO 액션 아이템 (AI 추천)</h3>
+                        <div class="ai-action-list" id="aiActionList"></div>
+                    </div>
+
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -223,6 +309,6 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=8"></script>
-    <script src="simulation.js?v=1"></script>
+    <script src="simulation.js?v=2"></script>
 </body>
 </html>
