@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="?�삼?�방?�??ERP - ?�합 경영관�??�스??>
-    <meta property="og:description" content="?�삼?�방?�???�합 ERP ?�스??- HR/근태, ?�고, ?�자결재, 메신?�, ?�설모니?�링">
+    <meta property="og:title" content="홍삼한방타운 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼한방타운 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>?�삼?�방?�??- ?�사 게시??/title>
+    <title>홍삼한방타운 - 전사 게시판</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,47 +30,47 @@
         <div class="sidebar-header">
             <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
                 <i class="fa-solid fa-spa"></i>
-                <span>?�삼?�방?�??ERP</span>
+                <span>홍삼한방타운 ERP</span>
             </a>
         </div>
         
         <nav class="nav-menu">
             <div class="nav-section">MAIN</div>
             <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> ?�합 ?�?�보??/a>
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
             <a href="traffic.html" class="nav-item">
-                <i class="fa-solid fa-video"></i> ?�래??모니?�링</a>
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
             <a href="hr.html" class="nav-item">
-                <i class="fa-solid fa-users"></i> HR/근태 관�?/a>
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> ?�업관�?/a>
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
             <a href="inventory.html" class="nav-item">
-                <i class="fa-solid fa-box-open"></i> ?�고관�?/a>
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
             <a href="facility.html" class="nav-item">
-                <i class="fa-solid fa-building"></i> ?�설?�황</a>
+                <i class="fa-solid fa-building"></i> 시설현황</a>
             <a href="simulation.html" class="nav-item">
-                <i class="fa-solid fa-chart-bar"></i> 경영?��??�이??/a>            
+                <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>            
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item active">
-                <i class="fa-regular fa-clipboard"></i> ?�사 게시??/a>
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
             <a href="messenger.html" class="nav-item badge-container">
-                <i class="fa-solid fa-comment-dots"></i> ?�내 메신?� 
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
                 <span class="badge">3</span>
             </a>
             <a href="document.html" class="nav-item">
-                <i class="fa-regular fa-folder-open"></i> 문서 관�?/a>
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
             <a href="approval.html" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i> ?�자결재</a>
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
             <a href="security.html" class="nav-item nav-admin-only">
-                <i class="fa-solid fa-shield-halved"></i> ?�스??보안</a>
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
         </nav>
 
         <div class="sidebar-footer">
             <div class="user-info">
                 <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
                 <div class="details">
-                    <span class="name">진양??(001)</span>
-                    <span class="role">?�?�이??(마스??</span>
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
                 </div>
             </div>
             <button class="logout-btn" onclick="localStorage.removeItem('isLoggedIn'); localStorage.removeItem('currentUser'); window.location.href='login.html';"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -82,11 +82,11 @@
         <!-- Top Header Minimal -->
         <header class="top-header">
             <div class="header-title">
-                <h1>?�사 ?�용 게시??/h1>
-                <p>공�??�항, ?�무?�료, ?�유게시?????�사 ?�통 공간</p>
+                <h1>전사 통용 게시판</h1>
+                <p>공지사항, 업무자료, 자유게시판 등 전사 소통 공간</p>
             </div>
             <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" title="?�마 변�?>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
             </div>
@@ -99,18 +99,18 @@
                 <!-- Board Toolbar -->
                 <div class="board-toolbar">
                     <div class="b-categories">
-                        <button class="b-cat-btn active" data-cat="?�체">?�체 글</button>
-                        <button class="b-cat-btn" data-cat="공�??�항">공�??�항</button>
-                        <button class="b-cat-btn" data-cat="?�무?�료">?�무?�료</button>
-                        <button class="b-cat-btn" data-cat="?�유게시??>?�유게시??/button>
+                        <button class="b-cat-btn active" data-cat="전체">전체 글</button>
+                        <button class="b-cat-btn" data-cat="공지사항">공지사항</button>
+                        <button class="b-cat-btn" data-cat="업무자료">업무자료</button>
+                        <button class="b-cat-btn" data-cat="자유게시판">자유게시판</button>
                     </div>
 
                     <div class="b-actions">
                         <div class="search-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="boardSearchInput" placeholder="?�목 + ?�용 검??>
+                            <input type="text" id="boardSearchInput" placeholder="제목 + 내용 검색">
                         </div>
-                        <button class="btn-primary" id="btnWritePost"><i class="fa-solid fa-pen"></i> ??글 ?�기</button>
+                        <button class="btn-primary" id="btnWritePost"><i class="fa-solid fa-pen"></i> 새 글 쓰기</button>
                     </div>
                 </div>
 
@@ -121,21 +121,21 @@
                             <tr>
                                 <th width="80" class="text-center">번호</th>
                                 <th width="120" class="text-center">분류</th>
-                                <th>?�목</th>
-                                <th width="150" class="text-center">?�성??/th>
-                                <th width="120" class="text-center">?�록??/th>
-                                <th width="80" class="text-center">조회??/th>
+                                <th>제목</th>
+                                <th width="150" class="text-center">작성자</th>
+                                <th width="120" class="text-center">등록일</th>
+                                <th width="80" class="text-center">조회수</th>
                             </tr>
                         </thead>
                         <tbody id="boardTableBody">
-                            <!-- JS?�서 ?�적 ?�더�?-->
+                            <!-- JS에서 동적 렌더링 -->
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Paging -->
                 <div class="b-pagination" id="boardPagination">
-                    <!-- JS?�서 ?�적 ?�성 -->
+                    <!-- JS에서 동적 생성 -->
                 </div>
 
             </div>
@@ -146,7 +146,7 @@
     <div class="modal-overlay" id="writeModal">
         <div class="modal-content glassmorphism" style="width: 760px; max-width: 95%; max-height: 92vh;">
             <div class="modal-header">
-                <h2 id="writeModalTitle"><i class="fa-solid fa-pen-nib"></i> ??글 ?�기</h2>
+                <h2 id="writeModalTitle"><i class="fa-solid fa-pen-nib"></i> 새 글 쓰기</h2>
                 <button class="btn-close" id="closeWriteModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="padding: 24px 30px;">
@@ -154,31 +154,31 @@
                     <div style="flex:1;">
                         <label class="form-label">분류</label>
                         <select id="writeCategory" class="board-form-control">
-                            <option value="공�??�항">공�??�항</option>
-                            <option value="?�무?�료">?�무?�료</option>
-                            <option value="?�유게시?? selected>?�유게시??/option>
+                            <option value="공지사항">공지사항</option>
+                            <option value="업무자료">업무자료</option>
+                            <option value="자유게시판" selected>자유게시판</option>
                         </select>
                     </div>
                     <div style="flex:1;">
-                        <label class="form-label">?�단 고정</label>
+                        <label class="form-label">상단 고정</label>
                         <select id="writePinned" class="board-form-control">
-                            <option value="false">?�반 글</option>
-                            <option value="true">?�단 고정 ?��</option>
+                            <option value="false">일반 글</option>
+                            <option value="true">상단 고정 📌</option>
                         </select>
                     </div>
                 </div>
                 <div style="margin-bottom:20px;">
-                    <label class="form-label">?�목</label>
-                    <input type="text" id="writeTitle" class="board-form-control" placeholder="?�목???�력?�세??>
+                    <label class="form-label">제목</label>
+                    <input type="text" id="writeTitle" class="board-form-control" placeholder="제목을 입력하세요">
                 </div>
                 <div style="margin-bottom:20px;">
-                    <label class="form-label">?�용</label>
-                    <textarea id="writeContent" class="board-form-control" rows="12" placeholder="?�용???�력?�세?? 줄바꿈�? ?�동?�로 ?�용?�니??" style="resize:vertical; min-height:200px;"></textarea>
+                    <label class="form-label">내용</label>
+                    <textarea id="writeContent" class="board-form-control" rows="12" placeholder="내용을 입력하세요. 줄바꿈은 자동으로 적용됩니다." style="resize:vertical; min-height:200px;"></textarea>
                 </div>
             </div>
             <div class="modal-footer" style="padding:16px 30px; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:10px;">
                 <button class="btn-secondary" id="cancelWriteBtn">취소</button>
-                <button class="btn-primary" id="submitWriteBtn"><i class="fa-solid fa-paper-plane"></i> ?�록</button>
+                <button class="btn-primary" id="submitWriteBtn"><i class="fa-solid fa-paper-plane"></i> 등록</button>
             </div>
         </div>
     </div>
@@ -187,10 +187,10 @@
     <div class="modal-overlay" id="postModal">
         <div class="modal-content glassmorphism" style="width: 800px; max-width: 95%; max-height: 92vh;">
             <div class="modal-header">
-                <h2 id="postModalCategory">게시글 ?�세</h2>
+                <h2 id="postModalCategory">게시글 상세</h2>
                 <div style="display:flex; gap:8px; align-items:center;">
-                    <button class="btn-edit-post" id="btnEditPost" style="display:none;" title="?�정"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="btn-delete-post" id="btnDeletePost" style="display:none;" title="??��"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="btn-edit-post" id="btnEditPost" style="display:none;" title="수정"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button class="btn-delete-post" id="btnDeletePost" style="display:none;" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
                     <button class="btn-close" id="closePostModal"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
@@ -207,11 +207,11 @@
                 <div class="post-content" id="postViewContent"></div>
 
                 <div class="post-comments">
-                    <h4 id="commentCount">?��? (0)</h4>
+                    <h4 id="commentCount">댓글 (0)</h4>
                     <div id="commentList" class="comment-list-area"></div>
                     <div class="comment-input-area">
-                        <input type="text" id="commentInput" placeholder="?��????�겨보세?? (?�?�을 존중?�는 ?�내 문화�?만듭?�다)">
-                        <button class="btn-secondary" id="btnAddComment">?�록</button>
+                        <input type="text" id="commentInput" placeholder="댓글을 남겨보세요. (타인을 존중하는 사내 문화를 만듭시다)">
+                        <button class="btn-secondary" id="btnAddComment">등록</button>
                     </div>
                 </div>
             </div>
