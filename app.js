@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 { url: 'inventory.html', permIndex: 3, name: '재고 및 공무' },
                 { url: 'traffic.html', permIndex: 4, name: '트래픽 모니터링' },
                 { url: 'document.html', permIndex: 5, name: '문서 관리' },
-                { url: 'approval.html', permIndex: 6, name: '전자결재' }
+                { url: 'approval.html', permIndex: 6, name: '전자결재' },
+                { url: 'facility.html', permIndex: 7, name: '시설현황' },
+                { url: 'simulation.html', permIndex: 8, name: '경영시뮬레이션' }
             ];
 
             menuMapping.forEach(mapping => {

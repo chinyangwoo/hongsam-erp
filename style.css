@@ -46,6 +46,32 @@ body {
     transition: var(--transition);
 }
 
+/* Custom Scrollbar for Premium UI */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main); 
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3); 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.6); 
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-container, .main-content > header {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
 /* Glassmorphism Utilities */
 .glassmorphism {
     background: var(--bg-surface);
@@ -291,6 +317,12 @@ select option {
     padding: 16px 20px;
     border-radius: var(--radius-md);
     gap: 16px;
+    animation: slideDown 0.4s ease-out forwards;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .alert-icon {
@@ -657,4 +689,144 @@ select option {
     .hr-stats-pill {
         display: none;
     }
+}
+
+/* ============================================
+ * Dual-Site KPI Section (통합 대시보드)
+ * ============================================ */
+.dual-kpi-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 1200px) {
+    .dual-kpi-section { grid-template-columns: 1fr; }
+}
+
+.site-kpi-block {
+    padding: 20px 24px;
+}
+
+.site-kpi-header {
+    margin-bottom: 16px;
+}
+
+.site-kpi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.site-kpi-badge.spa {
+    background: rgba(139, 92, 246, 0.15);
+    color: #A78BFA;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+.site-kpi-badge.hotel {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.site-kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.kpi-card.mini {
+    padding: 16px;
+    background: rgba(0,0,0,0.15);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: transform 0.2s;
+}
+.kpi-card.mini:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.1);
+}
+.kpi-card.mini .kpi-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.kpi-card.mini .kpi-details h3 {
+    font-size: 0.75rem;
+}
+.kpi-card.mini .kpi-details .amount {
+    font-size: 1.25rem;
+    margin: 4px 0;
+}
+.kpi-card.mini .kpi-details .trend {
+    font-size: 0.72rem;
+}
+
+.kpi-icon.purple { background: rgba(139, 92, 246, 0.15); color: #8B5CF6; }
+.kpi-icon.green { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+
+/* Integrated Summary Bar */
+.integrated-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 18px 28px;
+    gap: 0;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.summary-value {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+.summary-value.accent { color: #3B82F6; }
+.summary-value.negative { color: #EF4444; }
+.summary-value.profit { color: #10B981; }
+
+.summary-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .integrated-summary {
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+    .summary-divider { display: none; }
+    .site-kpi-grid { grid-template-columns: 1fr; }
+}
+
+/* Light Theme Adjustments for Dual KPI */
+.light-theme .kpi-card.mini {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.06);
+}
+.light-theme .kpi-card.mini:hover {
+    border-color: rgba(0,0,0,0.12);
 }

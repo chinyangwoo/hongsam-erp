@@ -21,6 +21,7 @@
         padding: 15px 15px 5px 15px !important;
         border-right: none !important;
         border-bottom: 1px solid var(--border-color) !important;
+        transform: none !important; /* Override hide in style.css */
         z-index: 100;
     }
     .sidebar-header {

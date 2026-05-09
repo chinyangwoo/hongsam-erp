@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 users[idStr] = { password: '0000', name: '사원 ' + idStr };
             }
             // Master account (대표이사)
-            users['001'] = { password: '0724', name: '진양우 (대표이사)' };
+            users['001'] = { password: '1234', name: '진양우 (대표이사)' };
             
             localStorage.setItem('erp_users_db', JSON.stringify(users));
         }

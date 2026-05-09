@@ -1,5 +1,5 @@
 /**
- * document.js  ─  홍삼스파 ERP 문서관리 모듈 (동적 렌더링)
+ * document.js  ─  홍삼한방타운 ERP 문서관리 모듈 (동적 렌더링)
  * document_data.js의 DOC_CATEGORIES / DOC_TEMPLATES 참조
  *
  * 기능:

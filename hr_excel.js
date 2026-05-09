@@ -1,5 +1,5 @@
 /**
- * hr_excel.js  ─  홍삼스파 ERP  인사기록카드 엑셀 업로드 핸들러
+ * hr_excel.js  ─  홍삼한방타운 ERP  인사기록카드 엑셀 업로드 핸들러
  * SheetJS(XLSX) 라이브러리를 사용하여 엑셀 파일을 읽고
  * ERP의 localStorage 기반 직원 DB에 저장합니다.
  *

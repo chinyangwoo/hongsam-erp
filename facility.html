@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼한방타운 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼한방타운 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼한방타운 - 시설현황</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="facility.css?v=1">
+    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼한방타운 ERP</span>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+            <a href="facility.html" class="nav-item active">
+                <i class="fa-solid fa-building"></i> 시설현황</a>
+            <a href="simulation.html" class="nav-item">
+                <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>
+            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="localStorage.removeItem('isLoggedIn'); localStorage.removeItem('currentUser'); window.location.href='login.html';"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>시설현황</h1>
+                <p>홍삼스파 · 홍삼빌호텔 주요 시설 모니터링 및 유지보수 이력</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            
+            <!-- Site Toggle -->
+            <div class="facility-site-toggle">
+                <button class="site-btn active" data-site="spa"><i class="fa-solid fa-spa"></i> 홍삼스파</button>
+                <button class="site-btn" data-site="hotel"><i class="fa-solid fa-hotel"></i> 홍삼빌호텔</button>
+                <button class="site-btn" data-site="all"><i class="fa-solid fa-layer-group"></i> 전체</button>
+            </div>
+
+            <!-- Facility Grid -->
+            <div class="facility-grid">
+                
+                <!-- LEFT: Real-time Sensor Monitor -->
+                <div class="facility-panel glassmorphism">
+                    <div class="panel-header" style="justify-content: space-between;">
+                        <h2><i class="fa-solid fa-satellite-dish"></i> 실시간 시설 현황 모니터링</h2>
+                        <span class="badge" style="background:rgba(16,185,129,0.2); color:#10B981; border:1px solid rgba(16,185,129,0.4);"><i class="fa-solid fa-wifi"></i> 센서 연동 중</span>
+                    </div>
+                    <div class="panel-body" style="display:flex; flex-direction:column; gap:20px; overflow-y:auto;">
+                        
+                        <!-- 홍삼스파 시설 -->
+                        <div class="facility-section" data-site="spa">
+                            <h3 class="facility-section-title"><i class="fa-solid fa-spa" style="color:#8B5CF6;"></i> 홍삼스파 시설</h3>
+                            
+                            <!-- 보일러실 -->
+                            <div class="sensor-card">
+                                <h4><i class="fa-solid fa-fire-burner" style="color:#EF4444;"></i> 보일러실</h4>
+                                <div class="sensor-grid">
+                                    <div class="sensor-item">
+                                        <div class="sensor-label">센서 온도</div>
+                                        <div class="sensor-value" id="snsBoilerTemp">85.4 <small>℃</small></div>
+                                    </div>
+                                    <div class="sensor-item">
+                                        <div class="sensor-label">LPG 사용량/h</div>
+                                        <div class="sensor-value" id="snsBoilerLpg">12.5 <small>kg</small></div>
+                                    </div>
+                                    <div class="sensor-item ok">
+                                        <div class="sensor-label">가스 유출</div>
+                                        <div class="sensor-value" id="snsBoilerLeak"><i class="fa-solid fa-check"></i> 정상</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 전력 사용량 -->
+                            <div class="sensor-card">
+                                <h4 style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><i class="fa-solid fa-bolt" style="color:#F59E0B;"></i> 전력 사용량</span>
+                                    <span style="font-size:0.8rem; color:#94A3B8; font-weight:400;">당일 누적: <strong style="color:#F8FAFC;" id="snsTotalKwh">1,245</strong> kWh</span>
+                                </h4>
+                                <div class="sensor-grid">
+                                    <div class="sensor-item">
+                                        <div class="sensor-label">1층 전기망</div>
+                                        <div class="sensor-value blue" id="snsElec1F">42.1 <small>kW</small></div>
+                                    </div>
+                                    <div class="sensor-item">
+                                        <div class="sensor-label">2층 전기망</div>
+                                        <div class="sensor-value blue" id="snsElec2F">88.3 <small>kW</small></div>
+                                    </div>
+                                    <div class="sensor-item">
+                                        <div class="sensor-label">루프탑 전기망</div>
+                                        <div class="sensor-value blue" id="snsElecRF">56.7 <small>kW</small></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 스파/풀 온도 -->
+                            <div class="sensor-card">
+                                <h4><i class="fa-solid fa-water" style="color:#0EA5E9;"></i> 스파 및 풀장 적정 온도</h4>
+                                <div class="sensor-grid cols-2">
+                                    <div class="sensor-item-row">
+                                        <span>2F 대온천탕</span>
+                                        <span class="sensor-value" id="snsSpa1">40.5 <small>℃</small></span>
+                                    </div>
+                                    <div class="sensor-item-row">
+                                        <span>2F 이벤트탕</span>
+                                        <span class="sensor-value" id="snsSpa2">38.2 <small>℃</small></span>
+                                    </div>
+                                    <div class="sensor-item-row">
+                                        <span>루프탑 풀</span>
+                                        <span class="sensor-value" id="snsPool">32.8 <small>℃</small></span>
+                                    </div>
+                                    <div class="sensor-item-row">
+                                        <span>루프탑 사우나</span>
+                                        <span class="sensor-value red" id="snsSauna">82.1 <small>℃</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 홍삼빌호텔 시설 -->
+                        <div class="facility-section" data-site="hotel">
+                            <h3 class="facility-section-title"><i class="fa-solid fa-hotel" style="color:#3B82F6;"></i> 홍삼빌호텔 시설</h3>
+                            
+                            <div class="sensor-card placeholder-card">
+                                <div class="placeholder-content">
+                                    <i class="fa-solid fa-tools"></i>
+                                    <h4>호텔 시설 모니터링 준비 중</h4>
+                                    <p>홍삼빌호텔의 주요 시설(객실 설비, 보일러, 엘리베이터, 주방기기 등)에 대한<br>센서 연동 및 모니터링 항목이 향후 추가될 예정입니다.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 전 구역 안전 상태 -->
+                        <div class="safety-status-bar">
+                            <div class="safety-ok">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>전 구역 감지기 정상</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- RIGHT: Fault & Repair Ledger -->
+                <div class="facility-panel glassmorphism">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
+                        <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
+                    </div>
+                    <div class="panel-body ledger-list-container">
+                        <div class="ledger-item critical">
+                            <div class="ledger-meta">
+                                <span class="tag tag-important">수리중</span>
+                                <span class="ledger-site-badge spa">홍삼스파</span>
+                                <span class="l-date">접수: 2026.04.16</span>
+                            </div>
+                            <h4>루프탑 인피니티풀 순환 모터 소음 불량</h4>
+                            <p>모터 베어링 파손 의심. 현재 외부 수리업체(한일모터스) 방문 대기 중. 예비 모터 가동 중.</p>
+                            <div class="l-footer">
+                                <span>담당: 공무팀 박철수</span>
+                                <span>비용 예상: 450,000원</span>
+                            </div>
+                        </div>
+
+                        <div class="ledger-item resolved">
+                            <div class="ledger-meta">
+                                <span class="tag tag-general">수리완료</span>
+                                <span class="ledger-site-badge spa">홍삼스파</span>
+                                <span class="l-date">접수: 2026.04.14</span>
+                            </div>
+                            <h4>2층 남탕 샤워기 3번 수압 약함</h4>
+                            <p>샤워기 헤드 내부 스케일 제거 및 고무패킹 교체 완료.</p>
+                            <div class="l-footer">
+                                <span>담당: 공무팀 김민규</span>
+                                <span>완료: 2026.04.15</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ledger-item pending">
+                            <div class="ledger-meta">
+                                <span class="tag tag-hr">접수대기</span>
+                                <span class="ledger-site-badge hotel">홍삼빌호텔</span>
+                                <span class="l-date">접수: 2026.05.08</span>
+                            </div>
+                            <h4>3층 302호 에어컨 냉매 보충 필요</h4>
+                            <p>냉방 효율 저하. 냉매 보충 및 필터 청소 요망.</p>
+                            <div class="l-footer">
+                                <span>보고자: 메이드팀</span>
+                                <span>배정 요망</span>
+                            </div>
+                        </div>
+
+                        <div class="ledger-item pending">
+                            <div class="ledger-meta">
+                                <span class="tag tag-hr">접수대기</span>
+                                <span class="ledger-site-badge spa">홍삼스파</span>
+                                <span class="l-date">접수: 2026.04.17</span>
+                            </div>
+                            <h4>1층 프런트 우측 조명 램프 1개 나감</h4>
+                            <p>LED 다운라이트(주백색) 교체 요망.</p>
+                            <div class="l-footer">
+                                <span>보고자: 운영팀 프런트</span>
+                                <span>배정 요망</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Custom View logic -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="app.js?v=8"></script>
+    <script src="facility.js?v=1"></script>
+</body>
+</html>

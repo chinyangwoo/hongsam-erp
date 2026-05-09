@@ -1,0 +1,302 @@
+/* ====================================
+ * facility.css — 시설현황 모듈 스타일
+ * ==================================== */
+
+/* Site Toggle */
+.facility-site-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.site-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.site-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: var(--text-primary);
+}
+.site-btn.active {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #3B82F6;
+}
+
+/* Facility Grid */
+.facility-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 1024px) {
+    .facility-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.facility-panel {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.facility-panel .panel-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.facility-panel .panel-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.facility-panel .panel-body {
+    padding: 20px;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}
+
+/* Section Title */
+.facility-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Sensor Cards */
+.sensor-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+.sensor-card h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    text-align: center;
+}
+.sensor-grid.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.sensor-item {
+    background: rgba(255,255,255,0.03);
+    padding: 12px 10px;
+    border-radius: 8px;
+}
+.sensor-item.ok {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+}
+.sensor-item .sensor-label {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    margin-bottom: 4px;
+}
+.sensor-item .sensor-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #F8FAFC;
+}
+.sensor-item .sensor-value small {
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+.sensor-item .sensor-value.blue { color: #3B82F6; }
+.sensor-item .sensor-value.red { color: #EF4444; }
+.sensor-item.ok .sensor-label { color: #10B981; }
+.sensor-item.ok .sensor-value { font-size: 1rem; color: #10B981; }
+
+.sensor-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #94A3B8;
+}
+.sensor-item-row .sensor-value {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #F8FAFC;
+}
+.sensor-item-row .sensor-value.red { color: #EF4444; }
+.sensor-item-row .sensor-value small {
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+
+/* Placeholder Card */
+.placeholder-card {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.placeholder-content {
+    text-align: center;
+    color: #64748B;
+}
+.placeholder-content i {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+.placeholder-content h4 {
+    font-size: 1rem;
+    color: #94A3B8;
+    margin-bottom: 8px;
+    justify-content: center;
+}
+.placeholder-content p {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #64748B;
+}
+
+/* Safety Bar */
+.safety-status-bar {
+    display: flex;
+    gap: 12px;
+}
+.safety-ok {
+    flex: 1;
+    background: rgba(16,185,129,0.05);
+    border: 1px solid rgba(16,185,129,0.2);
+    padding: 12px 14px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #10B981;
+}
+
+/* Ledger Items */
+.ledger-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.ledger-item {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+}
+.ledger-item:hover {
+    border-color: rgba(255,255,255,0.15);
+}
+.ledger-item.critical {
+    border-left: 3px solid #EF4444;
+}
+.ledger-item.resolved {
+    border-left: 3px solid #10B981;
+    opacity: 0.7;
+}
+.ledger-item.pending {
+    border-left: 3px solid #F59E0B;
+}
+.ledger-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.ledger-site-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+.ledger-site-badge.spa {
+    background: rgba(139, 92, 246, 0.15);
+    color: #A78BFA;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+.ledger-site-badge.hotel {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.ledger-item h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin-bottom: 6px;
+}
+.ledger-item p {
+    font-size: 0.82rem;
+    color: #94A3B8;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+.l-date {
+    font-size: 0.78rem;
+    color: #64748B;
+}
+.l-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #64748B;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 8px;
+}
+
+/* Light Theme */
+.light-theme .sensor-card {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.08);
+}
+.light-theme .sensor-item {
+    background: rgba(0,0,0,0.04);
+}
+.light-theme .sensor-item .sensor-value { color: #1E293B; }
+.light-theme .sensor-item .sensor-label { color: #6B7280; }
+.light-theme .sensor-item-row { background: rgba(0,0,0,0.04); color: #6B7280; }
+.light-theme .sensor-item-row .sensor-value { color: #1E293B; }
+.light-theme .facility-section-title { color: #1E293B; border-color: rgba(0,0,0,0.08); }
+.light-theme .sensor-card h4 { color: #1E293B; }
+.light-theme .ledger-item { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.08); }
+.light-theme .ledger-item h4 { color: #1E293B; }
+.light-theme .ledger-item p { color: #6B7280; }
+.light-theme .placeholder-content h4 { color: #6B7280; }

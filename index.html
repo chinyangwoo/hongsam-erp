@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
-    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
+    <meta property="og:title" content="홍삼한방타운 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼한방타운 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>홍삼스파 - 통합 대시보드</title>
+    <title>홍삼한방타운 - 통합 대시보드</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,7 @@
         <div class="sidebar-header">
             <div class="logo">
                 <i class="fa-solid fa-spa"></i>
-                <span>홍삼스파 ERP</span>
+                <span>홍삼한방타운 ERP</span>
             </div>
         </div>
         
@@ -43,10 +43,13 @@
             <a href="hr.html" class="nav-item">
                 <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
             <a href="inventory.html" class="nav-item">
-                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
-            
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+            <a href="facility.html" class="nav-item">
+                <i class="fa-solid fa-building"></i> 시설현황</a>
+            <a href="simulation.html" class="nav-item">
+                <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>            
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item">
                 <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
@@ -80,7 +83,8 @@
         <header class="top-header">
             <div class="header-title">
                 <h1>통합 대시보드</h1>
-                <p>2026년 4월 17일, 금요일</p>
+                <p id="dashboardDate"></p>
+                <script>!function(){var d=new Date(),w=['일','월','화','수','목','금','토'];document.getElementById('dashboardDate').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일, '+w[d.getDay()]+'요일'}()</script>
             </div>
             
             <div class="header-actions">
@@ -114,45 +118,111 @@
                 <button class="alert-close"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- KPI Cards -->
-            <section class="kpi-grid">
-                <div class="kpi-card glassmorphism">
-                    <div class="kpi-icon blue"><i class="fa-solid fa-won-sign"></i></div>
-                    <div class="kpi-details">
-                        <h3>금일 매출</h3>
-                        <p class="amount" id="kpi-today-rev">1,250,000</p>
-                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
+            <!-- Dual-Site KPI Section -->
+            <section class="dual-kpi-section">
+                <!-- 홍삼스파 KPI -->
+                <div class="site-kpi-block glassmorphism">
+                    <div class="site-kpi-header">
+                        <div class="site-kpi-badge spa"><i class="fa-solid fa-spa"></i> 홍삼스파</div>
                     </div>
-                </div>
-
-                <div class="kpi-card glassmorphism">
-                    <div class="kpi-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
-                    <div class="kpi-details">
-                        <h3>월간 누적 매출</h3>
-                        <p class="amount" id="kpi-month-rev">45,120,000</p>
-                        <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
-                    </div>
-                </div>
-                
-                <div class="kpi-card glassmorphism">
-                    <div class="kpi-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <div class="kpi-details">
-                        <h3>전일 지출</h3>
-                        <p class="amount" id="kpi-yesterday-exp">350,000</p>
-                        <span class="trend negative"><i class="fa-solid fa-arrow-down"></i> 지출결의 연동됨</span>
-                    </div>
-                </div>
-
-                <div class="kpi-card glassmorphism">
-                    <div class="kpi-icon red"><i class="fa-solid fa-wallet"></i></div>
-                    <div class="kpi-details">
-                        <h3>월간 누적 지출</h3>
-                        <p class="amount" id="kpi-month-exp">18,300,400</p>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 45%;"></div>
+                    <div class="site-kpi-grid">
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon blue"><i class="fa-solid fa-won-sign"></i></div>
+                            <div class="kpi-details">
+                                <h3>금일 매출</h3>
+                                <p class="amount" id="kpi-spa-today-rev">1,250,000</p>
+                                <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> POS 연동 요망</span>
+                            </div>
                         </div>
-                        <span class="trend neutral">지출결의 연동됨</span>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="kpi-details">
+                                <h3>월간 누적 매출</h3>
+                                <p class="amount" id="kpi-spa-month-rev">45,120,000</p>
+                                <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> +8.2% 전월대비</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                            <div class="kpi-details">
+                                <h3>전일 지출</h3>
+                                <p class="amount" id="kpi-spa-yesterday-exp">350,000</p>
+                                <span class="trend negative"><i class="fa-solid fa-arrow-down"></i> 지출결의 연동</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon red"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="kpi-details">
+                                <h3>월간 누적 지출</h3>
+                                <p class="amount" id="kpi-spa-month-exp">18,300,400</p>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%;"></div></div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- 홍삼빌호텔 KPI -->
+                <div class="site-kpi-block glassmorphism">
+                    <div class="site-kpi-header">
+                        <div class="site-kpi-badge hotel"><i class="fa-solid fa-hotel"></i> 홍삼빌호텔</div>
+                    </div>
+                    <div class="site-kpi-grid">
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon blue"><i class="fa-solid fa-won-sign"></i></div>
+                            <div class="kpi-details">
+                                <h3>금일 매출</h3>
+                                <p class="amount" id="kpi-hotel-today-rev">890,000</p>
+                                <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> PMS 연동 요망</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon indigo"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="kpi-details">
+                                <h3>월간 누적 매출</h3>
+                                <p class="amount" id="kpi-hotel-month-rev">28,450,000</p>
+                                <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> +12.1% 전월대비</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon purple"><i class="fa-solid fa-bed"></i></div>
+                            <div class="kpi-details">
+                                <h3>객실 가동률</h3>
+                                <p class="amount" id="kpi-hotel-occupancy">67.4%</p>
+                                <span class="trend neutral">43실 기준</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card mini">
+                            <div class="kpi-icon green"><i class="fa-solid fa-tag"></i></div>
+                            <div class="kpi-details">
+                                <h3>ADR (평균 객단가)</h3>
+                                <p class="amount" id="kpi-hotel-adr">195,000</p>
+                                <span class="trend positive"><i class="fa-solid fa-arrow-up"></i> +5.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Integrated Summary Bar -->
+            <section class="integrated-summary glassmorphism">
+                <div class="summary-item">
+                    <span class="summary-label">통합 금일 매출</span>
+                    <span class="summary-value" id="kpi-total-today">₩ 2,140,000</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item">
+                    <span class="summary-label">통합 월간 매출</span>
+                    <span class="summary-value accent" id="kpi-total-month">₩ 73,570,000</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item">
+                    <span class="summary-label">통합 월간 지출</span>
+                    <span class="summary-value negative" id="kpi-total-exp">₩ 32,850,000</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item">
+                    <span class="summary-label">월간 영업이익</span>
+                    <span class="summary-value profit" id="kpi-total-profit">₩ 40,720,000</span>
                 </div>
             </section>
 
@@ -221,6 +291,7 @@
                         <table class="erp-table">
                             <thead>
                                 <tr>
+                                    <th>소속</th>
                                     <th>일자</th>
                                     <th>구분</th>
                                     <th>적요 (내용)</th>
@@ -231,6 +302,7 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td><span class="tag" style="background:rgba(139,92,246,0.15);color:#A78BFA;font-size:0.7rem;">스파</span></td>
                                     <td>2026.04.17</td>
                                     <td><span class="tag tag-expense">지출</span></td>
                                     <td>루프탑 샤워타월 및 샴푸 추가 발주 </td>
@@ -239,6 +311,7 @@
                                     <td><span class="status st-pending">승인대기</span></td>
                                 </tr>
                                 <tr>
+                                    <td><span class="tag" style="background:rgba(139,92,246,0.15);color:#A78BFA;font-size:0.7rem;">스파</span></td>
                                     <td>2026.04.16</td>
                                     <td><span class="tag tag-income">수입</span></td>
                                     <td>여행사 (하나투어) 단체 고객 45명 입금</td>
@@ -247,6 +320,7 @@
                                     <td><span class="status st-approved">승인완료</span></td>
                                 </tr>
                                 <tr>
+                                    <td><span class="tag" style="background:rgba(139,92,246,0.15);color:#A78BFA;font-size:0.7rem;">스파</span></td>
                                     <td>2026.04.15</td>
                                     <td><span class="tag tag-expense">지출</span></td>
                                     <td>1층 카페 원두 및 부자재 구매</td>
@@ -255,9 +329,10 @@
                                     <td><span class="status st-approved">승인완료</span></td>
                                 </tr>
                                 <tr>
-                                    <td>2026.04.15</td>
+                                    <td><span class="tag" style="background:rgba(59,130,246,0.15);color:#60A5FA;font-size:0.7rem;">호텔</span></td>
+                                    <td>2026.05.08</td>
                                     <td><span class="tag tag-expense">지출</span></td>
-                                    <td>가스요금 (고지서 납부 완료)</td>
+                                    <td>302호 에어컨 냉매 보충 수리</td>
                                     <td>지원팀</td>
                                     <td class="text-right">2,100,000</td>
                                     <td><span class="status st-approved">승인완료</span></td>
