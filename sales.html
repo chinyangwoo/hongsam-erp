@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -16,14 +16,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- FullCalendar CSS via CDN -->
+    <!-- FullCalendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-
     <!-- Custom Style -->
-    <link rel="stylesheet" href="style.css?v=11">
-    <link rel="stylesheet" href="sales.css?v=10">
-    <!-- Mobile Responsive Override -->
+    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="sales.css?v=12">
     <link rel="stylesheet" href="mobile.css?v=1">
 </head>
 <body class="dark-theme">
@@ -86,9 +83,8 @@
         <header class="top-header">
             <div class="header-title">
                 <h1>영업관리</h1>
-                <p>일정 공유 및 현금흐름 뷰어</p>
+                <p>홍삼빌호텔 + 홍삼스파 통합 매출 현황 대시보드</p>
             </div>
-            
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
@@ -96,63 +92,198 @@
             </div>
         </header>
 
-        <div class="dashboard-container" style="padding-bottom: 120px; overflow: visible;">
+        <div class="dashboard-container" style="padding-bottom: 80px; overflow: visible;">
             
-            <!-- Quick Finance Summary Pills -->
-            <div class="finance-summary-grid" style="overflow: visible;">
-                <div class="f-pill glassmorphism box-income">
-                    <div class="f-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                    <div class="f-text">
-                        <span>금월누적매출</span>
-                        <h3>₩ 125,500,000</h3>
+            <!-- ═══════════════════════════════════
+                 통합 매출 집계표 (KPI)
+                 ═══════════════════════════════════ -->
+            <div class="integrated-label"><i class="fa-solid fa-chart-line"></i> 통합 매출 집계 (홍삼빌호텔 + 홍삼스파)</div>
+            <div class="revenue-kpi-grid">
+                <div class="rev-kpi-card c-yesterday">
+                    <div class="kpi-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">전일 매출</div>
+                        <div class="kpi-value" id="kpiYesterday">₩ 4,850,000</div>
+                        <div class="kpi-sub"><span class="up">▲ 12%</span> 전주 동일 대비</div>
                     </div>
                 </div>
-                <div class="f-pill glassmorphism box-expense">
-                    <div class="f-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <div class="f-text">
-                        <span>금주누적매출</span>
-                        <h3>₩ 38,200,000</h3>
+                <div class="rev-kpi-card c-week">
+                    <div class="kpi-icon"><i class="fa-solid fa-calendar-week"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금주 매출</div>
+                        <div class="kpi-value" id="kpiWeek">₩ 38,200,000</div>
+                        <div class="kpi-sub"><span class="up">▲ 8%</span> 전주 대비</div>
                     </div>
                 </div>
-                <div class="f-pill glassmorphism box-event">
-                    <div class="f-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="f-text">
-                        <span>금월누적방문객수</span>
-                        <h3 style="display:flex; align-items:center; gap:8px;">
-                            <span id="visitorCountDisplay">1,450 명</span> 
-                            <button id="btnEditVisitor" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="fa-solid fa-pen" style="font-size:0.9rem;"></i></button>
-                        </h3>
+                <div class="rev-kpi-card c-month">
+                    <div class="kpi-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금월 매출</div>
+                        <div class="kpi-value" id="kpiMonth">₩ 125,500,000</div>
+                        <div class="kpi-sub"><span class="up">▲ 15%</span> 전월 대비</div>
+                    </div>
+                </div>
+                <div class="rev-kpi-card c-year">
+                    <div class="kpi-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금년 누적 매출</div>
+                        <div class="kpi-value" id="kpiYear">₩ 1,258,000,000</div>
+                        <div class="kpi-sub"><span class="up">▲ 22%</span> 전년 동기 대비</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs removed as requested -->
-
-            <div id="tab-calendar" style="margin-bottom: 40px;">
-                <div class="action-bar glassmorphism" style="margin-bottom: 0;">
-                    <div class="legend-box">
-                        <span class="legend"><span class="dot c-green"></span> 여행사/단체방문</span>
-                        <span class="legend"><span class="dot c-blue"></span> 시설 대관</span>
-                        <span class="legend"><span class="dot c-purple"></span> VIP</span>
-                        <span class="legend"><span class="dot c-orange"></span> 일반단체</span>
-                        <span class="legend"><span class="dot c-gray"></span> 기타</span>
-                    </div>
+            <!-- ═══════════════════════════════════
+                 홍삼빌호텔 영업현황
+                 ═══════════════════════════════════ -->
+            <div class="biz-section" id="hotelSection">
+                <div class="biz-section-header">
+                    <h2><i class="fa-solid fa-hotel" style="color:#EF4444;"></i> 홍삼빌호텔 영업현황 <span class="biz-badge hotel">총 43실</span></h2>
+                    <a href="https://hongsam.dothome.co.kr/index.html" target="_blank" class="biz-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> 호텔 대시보드</a>
                 </div>
-                
-                <div class="calendar-wrapper glassmorphism">
-                    <div id="calendar"></div>
+                <div class="biz-section-body">
+                    <!-- Hotel Sub KPIs -->
+                    <div class="sub-kpi-grid" id="hotelKpiGrid">
+                        <div class="sub-kpi">
+                            <div class="sk-label">오늘 점유율</div>
+                            <div class="sk-value" style="color:#F59E0B;">78<span style="font-size:0.8rem;">%</span></div>
+                            <div class="sk-delta up">▲ 5% 전일대비</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">객실 매출</div>
+                            <div class="sk-value" style="color:#10B981;">₩ 2,850,000</div>
+                            <div class="sk-delta up">▲ 8%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">RevPAR</div>
+                            <div class="sk-value" style="color:#3B82F6;">₩ 66,300</div>
+                            <div class="sk-delta up">▲ 3%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">판매 객실수</div>
+                            <div class="sk-value" style="color:#E2E8F0;">33<span style="font-size:0.8rem;"> / 43</span></div>
+                            <div class="sk-delta up">▲ 2실</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">ADR (평균요금)</div>
+                            <div class="sk-value" style="color:#8B5CF6;">₩ 86,400</div>
+                            <div class="sk-delta up">▲ 2%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">F&B 매출</div>
+                            <div class="sk-value" style="color:#F97316;">₩ 1,250,000</div>
+                            <div class="sk-delta down">▼ 3%</div>
+                        </div>
+                    </div>
+
+                    <!-- Hotel Charts Row -->
+                    <div class="rev-calendar-section">
+                        <div class="mini-calendar-wrap">
+                            <h3><i class="fa-regular fa-calendar" style="color:#EF4444;"></i> 월별 순매출 캘린더 <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:400;">2026년 5월</span></h3>
+                            <div class="mini-cal-grid" id="hotelMiniCal">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        <div class="chart-wrap">
+                            <h3><i class="fa-solid fa-chart-bar" style="color:#F59E0B;"></i> 30일 매출 추이</h3>
+                            <div class="bar-chart-area" id="hotelBarChart">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="tab-event-list" style="display: block; padding-bottom: 50px;">
-                <div class="table-container glassmorphism" style="margin-bottom: 50px;">
-                    <div class="table-header action-bar-override">
-                        <h2><i class="fa-solid fa-list-ul" style="color:#3B82F6; margin-right:8px;"></i>월간 달력 일정 요약 내용</h2>
+            <!-- ═══════════════════════════════════
+                 홍삼스파 영업현황
+                 ═══════════════════════════════════ -->
+            <div class="biz-section" id="spaSection">
+                <div class="biz-section-header">
+                    <h2><i class="fa-solid fa-spa" style="color:#3B82F6;"></i> 홍삼스파 영업현황 <span class="biz-badge spa">한방 사우나</span></h2>
+                </div>
+                <div class="biz-section-body">
+                    <!-- Spa Sub KPIs -->
+                    <div class="sub-kpi-grid" id="spaKpiGrid">
+                        <div class="sub-kpi">
+                            <div class="sk-label">오늘 입장객</div>
+                            <div class="sk-value" style="color:#3B82F6;">87<span style="font-size:0.8rem;">명</span></div>
+                            <div class="sk-delta up">▲ 12명 전일대비</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">입장 매출</div>
+                            <div class="sk-value" style="color:#10B981;">₩ 1,450,000</div>
+                            <div class="sk-delta up">▲ 15%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">식음료 매출</div>
+                            <div class="sk-value" style="color:#F97316;">₩ 680,000</div>
+                            <div class="sk-delta up">▲ 5%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">금월 누적 방문</div>
+                            <div class="sk-value" style="color:#E2E8F0;">1,450<span style="font-size:0.8rem;">명</span></div>
+                            <div class="sk-delta up">▲ 8%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">객단가</div>
+                            <div class="sk-value" style="color:#8B5CF6;">₩ 24,500</div>
+                            <div class="sk-delta up">▲ 3%</div>
+                        </div>
+                        <div class="sub-kpi">
+                            <div class="sk-label">부대시설 매출</div>
+                            <div class="sk-value" style="color:#F59E0B;">₩ 320,000</div>
+                            <div class="sk-delta down">▼ 2%</div>
+                        </div>
                     </div>
-                    <div class="list-responsive" style="padding: 20px;">
-                        <ul id="agendaList" class="agenda-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
-                            <!-- Items inserted dynamically via Javascript based on Calendar events -->
-                        </ul>
+
+                    <!-- Spa Calendar & Charts -->
+                    <div class="rev-calendar-section">
+                        <div class="mini-calendar-wrap">
+                            <h3><i class="fa-regular fa-calendar" style="color:#3B82F6;"></i> 월별 입장객 캘린더 <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:400;">2026년 5월</span></h3>
+                            <div class="mini-cal-grid" id="spaMiniCal">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        <div class="chart-wrap">
+                            <h3><i class="fa-solid fa-chart-bar" style="color:#3B82F6;"></i> 30일 매출 추이</h3>
+                            <div class="bar-chart-area" id="spaBarChart">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════
+                 홍삼스파 영업 일정 캘린더
+                 ═══════════════════════════════════ -->
+            <div class="biz-section">
+                <div class="biz-section-header">
+                    <h2><i class="fa-regular fa-calendar-check" style="color:#10B981;"></i> 홍삼스파 영업 일정 관리</h2>
+                </div>
+                <div class="biz-section-body">
+                    <div class="action-bar glassmorphism" style="margin-bottom: 0;">
+                        <div class="legend-box">
+                            <span class="legend"><span class="dot c-green"></span> 여행사/단체방문</span>
+                            <span class="legend"><span class="dot c-blue"></span> 시설 대관</span>
+                            <span class="legend"><span class="dot c-purple"></span> VIP</span>
+                            <span class="legend"><span class="dot c-orange"></span> 일반단체</span>
+                            <span class="legend"><span class="dot c-gray"></span> 기타</span>
+                        </div>
+                    </div>
+                    <div class="calendar-wrapper glassmorphism">
+                        <div id="calendar"></div>
+                    </div>
+
+                    <!-- Agenda List -->
+                    <div class="table-container glassmorphism" style="margin-top: 20px;">
+                        <div class="table-header action-bar-override">
+                            <h2><i class="fa-solid fa-list-ul" style="color:#3B82F6; margin-right:8px;"></i>월간 달력 일정 요약 내용</h2>
+                        </div>
+                        <div class="list-responsive" style="padding: 20px;">
+                            <ul id="agendaList" class="agenda-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,15 +300,14 @@
             </div>
             <div class="modal-body">
                 <div class="event-details">
-                    <h3 id="evTitle" class="ev-title">하나투어 진안관광 45명 방문</h3>
-                    <div class="ev-tag" id="evTag">여행사 단체 (지원팀)</div>
-                    
+                    <h3 id="evTitle" class="ev-title"></h3>
+                    <div class="ev-tag" id="evTag"></div>
                     <ul class="ev-info-list">
-                        <li><strong><i class="fa-regular fa-clock"></i> 일정:</strong> <span id="evDate">2026.04.22 14:00 ~ 18:00</span></li>
-                        <li><strong><i class="fa-solid fa-users"></i> 인원수:</strong> <span id="evPeople">45명</span></li>
-                        <li><strong><i class="fa-solid fa-won-sign"></i> 예상매출액:</strong> <span id="evRevenue" class="highlight-revenue">2,250,000원</span></li>
+                        <li><strong><i class="fa-regular fa-clock"></i> 일정:</strong> <span id="evDate"></span></li>
+                        <li><strong><i class="fa-solid fa-users"></i> 인원수:</strong> <span id="evPeople"></span></li>
+                        <li><strong><i class="fa-solid fa-won-sign"></i> 예상매출액:</strong> <span id="evRevenue" class="highlight-revenue"></span></li>
                         <li><strong><i class="fa-solid fa-list-check"></i> 준비사항:</strong> 
-                            <p id="evPrep" class="ev-desc">루프탑 사우나 단체입장 준비 요망, 수건 여유분 100장 추가 배치할 것.</p>
+                            <p id="evPrep" class="ev-desc"></p>
                         </li>
                     </ul>
                 </div>
@@ -204,7 +334,7 @@
                     </div>
                     <div>
                         <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">일정 제목 (내용)</label>
-                        <input type="text" id="neTitle" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit; transition:var(--transition);" placeholder="예: 단체 관광객 45명 방문" onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.15)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+                        <input type="text" id="neTitle" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit;" placeholder="예: 단체 관광객 45명 방문">
                     </div>
                     <div>
                         <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">분류 태그</label>
@@ -225,41 +355,11 @@
         </div>
     </div>
 
-    <!-- Edit Visitor Count Modal -->
-    <div class="modal-overlay" id="visitorEditModal">
-        <div class="modal-content glassmorphism" style="width: 450px;">
-            <div class="modal-header">
-                <h2>방문객수 기록 수정</h2>
-                <button class="btn-close" id="closeVisitorModalHeader"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" style="padding: 30px;">
-                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom: 24px; line-height:1.5;">현재까지의 누적 방문객수를 직접 입력하여 테이블과 대시보드를 업데이트합니다.</p>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;">정확한 금월 누적 방문객수 (명)</label>
-                    <div style="position:relative; display:flex; align-items:center;">
-                        <i class="fa-solid fa-users" style="position:absolute; left:16px; color:var(--text-secondary);"></i>
-                        <input type="number" id="visitorInput" style="background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); padding:14px 16px 14px 45px; border-radius:var(--radius-md); outline:none; font-family:inherit; font-size:1rem; width:100%; box-sizing:border-box; transition:var(--transition);" placeholder="예: 1450" onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.15)';" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" id="closeVisitorModal">취소</button>
-                <button class="btn-primary" id="saveVisitorBtn"><i class="fa-solid fa-check"></i> 저장하기</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom View logic -->
+    <!-- Scripts -->
     <script src="cloud_sync.js?v=1"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=7"></script>
-    <script src="sales.js?v=2"></script>
+    <script src="sales.js?v=4"></script>
 </body>
 </html>
-
-
-
-
-
-
