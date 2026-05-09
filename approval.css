@@ -1,4 +1,4 @@
-/* E-Approval Module Specific Styles */
+/* E-Approval Module Specific Styles — v3 */
 
 .approval-layout {
     display: flex;
@@ -103,6 +103,84 @@
     font-weight: bold;
 }
 
+/* ============ KPI Stats Bar ============ */
+.ap-kpi-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.ap-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    cursor: default;
+}
+.ap-kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ap-kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+.ap-kpi-icon.total {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+}
+.ap-kpi-icon.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-orange);
+}
+.ap-kpi-icon.approved {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-green);
+}
+.ap-kpi-icon.rejected {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--accent-red);
+}
+
+.ap-kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+.ap-kpi-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.ap-kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .ap-kpi-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 14px 20px;
+    }
+}
+
 /* ---------------- Main Content List ---------------- */
 .ap-main-content {
     flex: 1;
@@ -168,6 +246,20 @@
 .status-pending {
     background: rgba(245, 158, 11, 0.15) !important;
     color: var(--accent-orange) !important;
+}
+.status-approved {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: var(--accent-green) !important;
+}
+.status-rejected {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: var(--accent-red) !important;
+}
+.status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 /* ---------------- Document Viewer (Detailed Overlap) ---------------- */
@@ -339,6 +431,37 @@
 .format-card i { font-size: 1.8rem; color: var(--accent-blue); }
 .format-card p { font-size: 0.8rem; color: var(--text-secondary); }
 
+/* ============ File Upload Area ============ */
+.ap-file-upload-area {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+}
+.ap-file-upload-area:hover {
+    border-color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.btn-file-select {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+.btn-file-select:hover {
+    background: rgba(59, 130, 246, 0.25);
+}
+
 /* ---------------- E-Approval Modal Overlay ---------------- */
 .modal-overlay {
     position: fixed;
@@ -388,4 +511,3 @@
 .modal-body { padding: 30px; overflow-y: auto; flex: 1; }
 .btn-close { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
 .btn-close:hover { color: var(--text-primary); }
-
