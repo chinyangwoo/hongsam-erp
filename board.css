@@ -272,3 +272,104 @@
 .comment-input-area input:focus {
     border-color: var(--accent-blue);
 }
+
+/* ─── Write/Edit Form Controls ─── */
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.board-form-control {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.board-form-control:focus {
+    border-color: var(--accent-blue);
+}
+.board-form-control option {
+    background: #0F172A;
+}
+textarea.board-form-control {
+    line-height: 1.7;
+}
+
+/* ─── Post Detail: Edit / Delete buttons ─── */
+.btn-edit-post, .btn-delete-post {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+.btn-edit-post:hover {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+.btn-delete-post:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+/* ─── Comment List ─── */
+.comment-list-area {
+    margin-bottom: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.comment-item {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.comment-item:last-child {
+    border-bottom: none;
+}
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+}
+.comment-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+}
+.comment-date {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+.comment-text {
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding-left: 30px;
+}
