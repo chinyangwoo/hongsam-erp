@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiLoading = document.getElementById('aiLoading');
     const aiReportBody = document.getElementById('aiReportBody');
     const aiReportTime = document.getElementById('aiReportTime');
-    const AI_PROXY_URL = '/api/ai-analyze';
+    const AI_PROXY_URL = 'http://43.203.237.63:3001/api/ai-analyze';
 
     function collectERPData() {
         return {
