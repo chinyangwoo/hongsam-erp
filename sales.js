@@ -206,14 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const neTitleInput = document.getElementById('neTitle');
     const neTagInput = document.getElementById('neTag');
     let currentSelectedDate = '';
+    let currentCalendarType = 'spa';
 
     function closeNewEvModal() {
         if (newEventModal) newEventModal.classList.remove('show');
     }
-    window.openNewEventModal = function(dateStr) {
+    window.openNewEventModal = function(dateStr, calType = 'spa') {
         currentSelectedDate = dateStr;
+        currentCalendarType = calType;
         if (neDateInput) neDateInput.value = dateStr;
         if (neTitleInput) { neTitleInput.value = ''; neTitleInput.focus(); }
+        const nePeople = document.getElementById('nePeople');
+        const neRevenue = document.getElementById('neRevenue');
+        const nePrep = document.getElementById('nePrep');
+        if (nePeople) nePeople.value = '';
+        if (neRevenue) neRevenue.value = '';
+        if (nePrep) nePrep.value = '';
         if (neTagInput) neTagInput.selectedIndex = 0;
         if (newEventModal) newEventModal.classList.add('show');
     };
@@ -225,18 +233,33 @@ document.addEventListener('DOMContentLoaded', () => {
         saveNewEventBtn.addEventListener('click', () => {
             const title = neTitleInput ? neTitleInput.value.trim() : '';
             if (!title) { alert('일정 제목(내용)을 입력해주세요.'); return; }
+            
+            const peopleVal = document.getElementById('nePeople') ? document.getElementById('nePeople').value.trim() : '';
+            const revVal = document.getElementById('neRevenue') ? document.getElementById('neRevenue').value.trim() : '';
+            const prepVal = document.getElementById('nePrep') ? document.getElementById('nePrep').value.trim() : '';
+            
             const bgColor = neTagInput ? neTagInput.value : '#10B981';
             let tagLabel = '기타 일정';
             if (bgColor === '#10B981') tagLabel = '여행사 단체';
             else if (bgColor === '#3B82F6') tagLabel = '시설 대관';
             else if (bgColor === '#8B5CF6') tagLabel = 'VIP 의전 및 기타';
 
-            if (window.salesCalendar) {
-                window.salesCalendar.addEvent({
-                    title, start: currentSelectedDate,
-                    backgroundColor: bgColor, borderColor: bgColor,
-                    extendedProps: { people: '-', revenue: '-', prep: '신규 등록된 일정입니다.', tagLabel }
-                });
+            const newEvObj = {
+                title, start: currentSelectedDate,
+                backgroundColor: bgColor, borderColor: bgColor,
+                extendedProps: { 
+                    people: peopleVal || '-', 
+                    revenue: revVal || '-', 
+                    prep: prepVal || '신규 등록된 일정입니다.', 
+                    tagLabel 
+                }
+            };
+
+            if (currentCalendarType === 'hotel' && window.hotelCalendar) {
+                window.hotelCalendar.addEvent(newEvObj);
+                if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
+            } else if (window.salesCalendar) {
+                window.salesCalendar.addEvent(newEvObj);
                 if (typeof renderAgendaList === 'function') renderAgendaList();
             }
             closeNewEvModal();
@@ -426,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             ],
             eventClick: function(info) { window.openEventModal(info.event); },
-            dateClick: function(info) { window.openNewEventModal(info.dateStr); }
+            dateClick: function(info) { window.openNewEventModal(info.dateStr, 'hotel'); }
         });
         window.salesCalendar.render();
         renderAgendaList();
@@ -478,9 +501,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventModal = document.getElementById('eventModal');
     const closeEventBtn = document.getElementById('closeEventBtn');
     const closeEventModalX = document.getElementById('closeEventModal');
+    const editEventBtn = document.getElementById('editEventBtn');
+    const deleteEventBtn = document.getElementById('deleteEventBtn');
+
+    let currentEventObj = null;
 
     window.openEventModal = function(eventObj) {
         if (!eventModal) return;
+        currentEventObj = eventObj;
         document.getElementById('evTitle').innerText = eventObj.title;
         document.getElementById('evTag').innerText = eventObj.extendedProps.tagLabel || '기타 일정';
         const startDate = eventObj.start.toLocaleString('ko-KR');
@@ -496,6 +524,51 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeEventBtn) closeEventBtn.addEventListener('click', closeEvModal);
     if (closeEventModalX) closeEventModalX.addEventListener('click', closeEvModal);
     if (eventModal) eventModal.addEventListener('click', e => { if (e.target === eventModal) closeEvModal(); });
+
+    if (deleteEventBtn) {
+        deleteEventBtn.addEventListener('click', () => {
+            if (currentEventObj) {
+                if(confirm('이 영업일정을 삭제하시겠습니까?')) {
+                    currentEventObj.remove();
+                    if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
+                    if (typeof renderAgendaList === 'function') renderAgendaList();
+                    closeEvModal();
+                }
+            }
+        });
+    }
+
+    if (editEventBtn) {
+        editEventBtn.addEventListener('click', () => {
+            if (currentEventObj) {
+                const dStr = currentEventObj.startStr.split('T')[0];
+                let cType = 'spa';
+                // 간이 캘린더 타입 판별
+                try {
+                    const tagL = currentEventObj.extendedProps.tagLabel || '';
+                    if (tagL.includes('객실') || tagL.includes('식음료팀') || tagL.includes('호텔')) cType = 'hotel';
+                } catch(e) {}
+                
+                closeEvModal();
+                window.openNewEventModal(dStr, cType);
+                
+                if (document.getElementById('neTitle')) document.getElementById('neTitle').value = currentEventObj.title;
+                
+                const pText = currentEventObj.extendedProps.people;
+                if (document.getElementById('nePeople')) document.getElementById('nePeople').value = (pText && pText !== '-') ? pText : '';
+                
+                const rText = currentEventObj.extendedProps.revenue;
+                if (document.getElementById('neRevenue')) document.getElementById('neRevenue').value = (rText && rText !== '-') ? rText : '';
+                
+                const prText = currentEventObj.extendedProps.prep;
+                if (document.getElementById('nePrep')) document.getElementById('nePrep').value = (prText && prText !== '신규 등록된 일정입니다.') ? prText : '';
+                
+                currentEventObj.remove();
+                if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
+                if (typeof renderAgendaList === 'function') renderAgendaList();
+            }
+        });
+    }
 
     // ══════════════════════════════════════════
     // 6. 매출 입력/수정 (관리자 전용)
