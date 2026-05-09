@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="?�삼?�방?�??ERP - ?�합 경영관�??�스??>
-    <meta property="og:description" content="?�삼?�방?�???�합 ERP ?�스??- HR/근태, ?�고, ?�자결재, 메신?�, ?�설모니?�링">
+    <meta property="og:title" content="홍삼스파 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼스파 통합 ERP 시스템 - HR/근태, 재고, 전자결재, 메신저, 시설모니터링">
     <meta property="og:image" content="http://43.203.237.63/og-image.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://43.203.237.63/">
-    <title>?�삼?�방?�??- ?�내 메신?�</title>
+    <title>홍삼스파 - 사내 메신저</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,49 +28,46 @@
     <!-- General Sidebar Navigation -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
+            <div class="logo">
                 <i class="fa-solid fa-spa"></i>
-                <span>?�삼?�방?�??ERP</span>
-            </a>
+                <span>홍삼스파 ERP</span>
+            </div>
         </div>
         
         <nav class="nav-menu">
             <div class="nav-section">MAIN</div>
             <a href="index.html" class="nav-item">
-                <i class="fa-solid fa-chart-pie"></i> ?�합 ?�?�보??/a>
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
             <a href="traffic.html" class="nav-item">
-                <i class="fa-solid fa-video"></i> ?�래??모니?�링</a>
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
             <a href="hr.html" class="nav-item">
-                <i class="fa-solid fa-users"></i> HR/근태 관�?/a>
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item">
-                <i class="fa-regular fa-calendar-check"></i> ?�업관�?/a>
+                <i class="fa-regular fa-calendar-check"></i> 영업 및 캘린더</a>
             <a href="inventory.html" class="nav-item">
-                <i class="fa-solid fa-box-open"></i> ?�고관�?/a>
-            <a href="facility.html" class="nav-item">
-                <i class="fa-solid fa-building"></i> ?�설?�황</a>
-            <a href="simulation.html" class="nav-item">
-                <i class="fa-solid fa-chart-bar"></i> 경영?��??�이??/a>            
+                <i class="fa-solid fa-box-open"></i> 재고 및 공무</a>
+            
             <div class="nav-section">MONITORING & COMM</div>
             <a href="board.html" class="nav-item">
-                <i class="fa-regular fa-clipboard"></i> ?�사 게시??/a>
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
             <a href="messenger.html" class="nav-item active badge-container">
-                <i class="fa-solid fa-comment-dots"></i> ?�내 메신?� 
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
                 <span class="badge">3</span>
             </a>
             <a href="document.html" class="nav-item">
-                <i class="fa-regular fa-folder-open"></i> 문서 관�?/a>
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
             <a href="approval.html" class="nav-item">
-                <i class="fa-solid fa-file-signature"></i> ?�자결재</a>
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
             <a href="security.html" class="nav-item nav-admin-only">
-                <i class="fa-solid fa-shield-halved"></i> ?�스??보안</a>
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
         </nav>
 
         <div class="sidebar-footer">
             <div class="user-info">
                 <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
                 <div class="details">
-                    <span class="name">진양??(001)</span>
-                    <span class="role">?�?�이??(마스??</span>
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
                 </div>
             </div>
             <button class="logout-btn" onclick="localStorage.removeItem('isLoggedIn'); localStorage.removeItem('currentUser'); window.location.href='login.html';"><i class="fa-solid fa-right-from-bracket"></i></button>
@@ -82,10 +79,10 @@
         <!-- Top Header Minimal -->
         <header class="top-header" style="border-bottom: none; height: 60px;">
             <div class="header-title">
-                <h1>?�내 메신?�</h1>
+                <h1>사내 메신저</h1>
             </div>
             <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" title="?�마 변�?>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
             </div>
@@ -97,7 +94,7 @@
             <div class="chat-sidebar">
                 <div class="chat-search">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="직원 ?�는 ?�?�방 검??>
+                    <input type="text" placeholder="직원 또는 대화방 검색">
                 </div>
 
                 <div class="chat-groups scroll-area">
@@ -107,18 +104,18 @@
                     </div>
                     <ul class="channel-list">
                         <li class="channel-item has-unread">
-                            <span class="ch-hash">#</span> ?�체공�?�?                            <span class="ch-badge">1</span>
+                            <span class="ch-hash">#</span> 전체공지방
+                            <span class="ch-badge">1</span>
                         </li>
                         <li class="channel-item active">
-                            <span class="ch-hash">#</span> 지?��?�?                        </li>
+                            <span class="ch-hash">#</span> 지원팀방
+                        </li>
                         <li class="channel-item">
-                            <span class="ch-hash">#</span> ?�영?��?                        </li>
+                            <span class="ch-hash">#</span> 운영팀방
+                        </li>
                         <li class="channel-item">
-                            <span class="ch-hash">#</span> 공무?��?                        </li>
-                        <li class="channel-item">
-                            <span class="ch-hash">#</span> ?�텔 메이?��?�?                        </li>
-                        <li class="channel-item">
-                            <span class="ch-hash">#</span> ?�텔 주방?��?                        </li>
+                            <span class="ch-hash">#</span> 공무팀방
+                        </li>
                     </ul>
 
                     <!-- Direct Messages -->
@@ -138,8 +135,8 @@
                 <!-- Chat Window Header -->
                 <div class="chat-header">
                     <div class="ch-header-info">
-                        <h2># 경영 · 지?��? �?/h2>
-                        <p><i class="fa-solid fa-users"></i> 12�??�속�?/p>
+                        <h2># 경영 · 지원팀 방</h2>
+                        <p><i class="fa-solid fa-users"></i> 12명 접속중</p>
                     </div>
                     <div class="ch-header-tools">
                         <button class="btn-icon"><i class="fa-solid fa-phone"></i></button>
@@ -150,32 +147,32 @@
 
                 <!-- Chat Messages Area -->
                 <div class="chat-messages" id="chatMessagesArea">
-                    <div class="chat-date-divider"><span>?�늘 - 2026. 04. 17</span></div>
+                    <div class="chat-date-divider"><span>오늘 - 2026. 04. 17</span></div>
 
                     <!-- Peer Message -->
                     <div class="msg-wrapper peer">
-                        <img src="https://ui-avatars.com/api/?name=김지?? class="msg-avatar">
+                        <img src="https://ui-avatars.com/api/?name=김지원" class="msg-avatar">
                         <div class="msg-content-block">
                             <div class="msg-meta">
-                                <span class="m-name">김지??(지?��? ?�??</span>
-                                <span class="m-time">?�전 11:30</span>
+                                <span class="m-name">김지원 (지원팀 팀장)</span>
+                                <span class="m-time">오전 11:30</span>
                             </div>
-                            <div class="msg-bubble">?�?�님, ?�번 ??비품 결의??취합 ?�료?�습?�다. 1�??�런?��? 거쳐??문서 보�??�에 ?�었?�니 결재 부?�드립니??</div>
+                            <div class="msg-bubble">대표님, 이번 달 비품 결의서 취합 완료했습니다. 1층 프런트를 거쳐서 문서 보관함에 두었으니 결재 부탁드립니다.</div>
                         </div>
                     </div>
 
                     <!-- Peer Message (Broadcast mock in regular room) -->
                     <div class="msg-wrapper peer">
-                        <img src="https://ui-avatars.com/api/?name=?�스?? class="msg-avatar">
+                        <img src="https://ui-avatars.com/api/?name=시스템" class="msg-avatar">
                         <div class="msg-content-block">
                             <div class="msg-meta">
-                                <span class="m-name">?�스???�림</span>
-                                <span class="m-time">?�전 11:35</span>
+                                <span class="m-name">시스템 알림</span>
+                                <span class="m-time">오전 11:35</span>
                             </div>
                             <!-- Broadcast Special UI -->
                             <div class="msg-bubble broadcast">
-                                <strong class="b-title"><i class="fa-solid fa-bullhorn"></i> 긴급: 2�??�?�천???�리 ?�림</strong>
-                                <p>금일 14:00 부??1?�간 가???�수 ?�프 ?��????�습?�다. 고객 ?��? ??참고 바랍?�다.</p>
+                                <strong class="b-title"><i class="fa-solid fa-bullhorn"></i> 긴급: 2층 대온천탕 수리 알림</strong>
+                                <p>금일 14:00 부터 1시간 가량 온수 펌프 점검이 있습니다. 고객 응대 시 참고 바랍니다.</p>
                             </div>
                         </div>
                     </div>
@@ -184,9 +181,9 @@
                     <div class="msg-wrapper self">
                         <div class="msg-content-block">
                             <div class="msg-meta">
-                                <span class="m-time">?�후 12:45</span>
+                                <span class="m-time">오후 12:45</span>
                             </div>
-                            <div class="msg-bubble">?? ?�인?�습?�다. ?�따 ?�후???�의?�에???�시 뵙죠.</div>
+                            <div class="msg-bubble">네, 확인했습니다. 이따 오후에 회의실에서 잠시 뵙죠.</div>
                         </div>
                     </div>
 
@@ -197,16 +194,16 @@
                     
                     <!-- Advanced Tool Bar -->
                     <div class="chat-toolbar">
-                        <button title="?�일 첨�?"><i class="fa-solid fa-paperclip"></i></button>
-                        <button title="?�모?�콘"><i class="fa-regular fa-face-smile"></i></button>
-                        <div class="broadcast-toggle" title="?�?�이??마스???�용 기능">
+                        <button title="파일 첨부"><i class="fa-solid fa-paperclip"></i></button>
+                        <button title="이모티콘"><i class="fa-regular fa-face-smile"></i></button>
+                        <div class="broadcast-toggle" title="대표이사/마스터 전용 기능">
                             <input type="checkbox" id="checkBroadcast">
-                            <label for="checkBroadcast"><i class="fa-solid fa-bullhorn"></i> ?�체 공�? (Broadcast)</label>
+                            <label for="checkBroadcast"><i class="fa-solid fa-bullhorn"></i> 전체 공지 (Broadcast)</label>
                         </div>
                     </div>
                     
                     <div class="chat-input-wrapper">
-                        <textarea id="chatInput" placeholder="메시지�??�력?�세?? (Enter�??�르�??�송, Shift+Enter??줄바�?" rows="1"></textarea>
+                        <textarea id="chatInput" placeholder="메시지를 입력하세요. (Enter를 누르면 전송, Shift+Enter는 줄바꿈)" rows="1"></textarea>
                         <button class="btn-send" id="btnSendMsg"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
 
