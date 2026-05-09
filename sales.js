@@ -177,7 +177,127 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ══════════════════════════════════════════
-    // 4. FULLCALENDAR (스파 영업일정)
+    // 4-A. FULLCALENDAR (호텔 영업일정)
+    // ══════════════════════════════════════════
+    const hotelCalendarEl = document.getElementById('hotelCalendar');
+
+    if (hotelCalendarEl) {
+        window.hotelCalendar = new FullCalendar.Calendar(hotelCalendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            height: 650,
+            selectable: true,
+            events: [
+                {
+                    title: '전주대 교수 워크숍 단체 투숙 (15실)',
+                    start: `${y}-${mStr}-05T15:00:00`,
+                    end: `${y}-${mStr}-07T11:00:00`,
+                    backgroundColor: '#EF4444', borderColor: '#EF4444',
+                    extendedProps: {
+                        people: '30명 (15실)', revenue: '6,450,000원',
+                        prep: '3층 전체 블록 배정, 조식 30인분 준비, 회의실 세팅.',
+                        tagLabel: '객실 예약 (단체)'
+                    }
+                },
+                {
+                    title: '(주)금산인삼 창립기념 연회',
+                    start: `${y}-${mStr}-12T18:00:00`,
+                    end: `${y}-${mStr}-12T22:00:00`,
+                    backgroundColor: '#F59E0B', borderColor: '#F59E0B',
+                    extendedProps: {
+                        people: '80명', revenue: '8,500,000원',
+                        prep: '대연회장 세팅, 코스 요리 80인분, 화훼 장식, 사회자 마이크 준비.',
+                        tagLabel: '연회/행사 (식음료팀)'
+                    }
+                },
+                {
+                    title: '진안군 관광포럼 시설 대관',
+                    start: `${y}-${mStr}-18T09:00:00`,
+                    end: `${y}-${mStr}-18T17:00:00`,
+                    backgroundColor: '#3B82F6', borderColor: '#3B82F6',
+                    extendedProps: {
+                        people: '100명', revenue: '5,000,000원',
+                        prep: '중회의실+소회의실 동시 대관, 빔프로젝터 2대, 점심 도시락 100개.',
+                        tagLabel: '시설 대관 (운영팀)'
+                    }
+                },
+                {
+                    title: 'VIP 스위트 예약 (일본 거래처)',
+                    start: `${y}-${mStr}-25T14:00:00`,
+                    end: `${y}-${mStr}-27T11:00:00`,
+                    backgroundColor: '#8B5CF6', borderColor: '#8B5CF6',
+                    extendedProps: {
+                        people: '4명 (2실)', revenue: '(대외비)',
+                        prep: 'VIP 스위트룸 배정, 공항 픽업 차량 수배, 일본어 통역 대기.',
+                        tagLabel: 'VIP (본사)'
+                    }
+                },
+                {
+                    title: '대전 동호회 MT 예약 (8실)',
+                    start: `${y}-${mStr}-20T15:00:00`,
+                    end: `${y}-${mStr}-21T11:00:00`,
+                    backgroundColor: '#EF4444', borderColor: '#EF4444',
+                    extendedProps: {
+                        people: '16명 (8실)', revenue: '2,400,000원',
+                        prep: '2층 단체 배정, 바비큐장 예약, 야외 캠프파이어 준비.',
+                        tagLabel: '객실 예약 (단체)'
+                    }
+                }
+            ],
+            eventClick: function(info) { window.openEventModal(info.event); },
+            dateClick: function(info) { window.openNewEventModal(info.dateStr); }
+        });
+        window.hotelCalendar.render();
+        renderHotelAgendaList();
+    }
+
+    // ── Hotel Agenda List Renderer ──
+    function renderHotelAgendaList() {
+        const agendaUl = document.getElementById('hotelAgendaList');
+        if (!agendaUl || !window.hotelCalendar) return;
+
+        const events = window.hotelCalendar.getEvents();
+        events.sort((a, b) => new Date(a.start) - new Date(b.start));
+        agendaUl.innerHTML = '';
+
+        if (events.length === 0) {
+            agendaUl.innerHTML = '<li style="color:var(--text-secondary); text-align:center; padding:20px;">등록된 일정이 없습니다.</li>';
+            return;
+        }
+
+        events.forEach(ev => {
+            const startDate = new Date(ev.start);
+            const mo = startDate.getMonth() + 1;
+            const da = startDate.getDate();
+            const dateText = `${mo}월 ${da}일`;
+            let peopleText = ev.extendedProps.people !== '-' ? ev.extendedProps.people : '';
+            let contentText = ev.title;
+            if (peopleText) contentText += ` (${peopleText} 예정)`;
+            if (ev.extendedProps.prep && ev.extendedProps.prep !== '신규 등록된 일정입니다.') {
+                contentText += ` - ${ev.extendedProps.prep}`;
+            }
+
+            const li = document.createElement('li');
+            li.onclick = () => window.openEventModal(ev);
+            li.innerHTML = `
+                <div style="flex-shrink:0; font-weight:700; color:#EF4444; background:rgba(239,68,68,0.15); padding:6px 12px; border-radius:6px; min-width:80px; text-align:center;">${dateText}</div>
+                <div style="flex:1; color:var(--text-primary); font-size:0.95rem; line-height:1.4;">
+                    <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${ev.backgroundColor}; margin-right:8px; vertical-align:middle;"></span>
+                    ${contentText}
+                </div>
+                <div style="color:var(--text-muted); font-size:0.85rem;">${ev.extendedProps.tagLabel || '기타'}</div>
+            `;
+            agendaUl.appendChild(li);
+        });
+    }
+
+    // ══════════════════════════════════════════
+    // 4-B. FULLCALENDAR (스파 영업일정)
     // ══════════════════════════════════════════
     const calendarEl = document.getElementById('calendar');
 
