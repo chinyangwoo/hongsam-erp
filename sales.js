@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             ],
             eventClick: function(info) { window.openEventModal(info.event); },
-            dateClick: function(info) { window.openNewEventModal(info.dateStr); }
+            dateClick: function(info) { window.openNewEventModal(info.dateStr, 'hotel'); }
         });
         window.hotelCalendar.render();
         renderHotelAgendaList();
@@ -678,11 +678,11 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteRevBtn.style.display = 'none';
         }
 
-        revenueModal.style.display = 'flex';
+        revenueModal.classList.add('show');
     };
 
     function closeRevenueModal() {
-        if (revenueModal) revenueModal.style.display = 'none';
+        if (revenueModal) revenueModal.classList.remove('show');
     }
 
     if (closeRevModalBtn) closeRevModalBtn.addEventListener('click', closeRevenueModal);
