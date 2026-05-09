@@ -195,6 +195,33 @@ document.addEventListener('DOMContentLoaded', () => {
     
     renderBarCharts();
 
+    function saveCalendarEvents() {
+        if (window.hotelCalendar) {
+            const hEvs = window.hotelCalendar.getEvents().map(ev => ({
+                id: ev.id,
+                title: ev.title,
+                start: ev.startStr,
+                end: ev.endStr || null,
+                backgroundColor: ev.backgroundColor,
+                borderColor: ev.borderColor,
+                extendedProps: { ...ev.extendedProps }
+            }));
+            localStorage.setItem('erp_hotel_events', JSON.stringify(hEvs));
+        }
+        if (window.salesCalendar) {
+            const sEvs = window.salesCalendar.getEvents().map(ev => ({
+                id: ev.id,
+                title: ev.title,
+                start: ev.startStr,
+                end: ev.endStr || null,
+                backgroundColor: ev.backgroundColor,
+                borderColor: ev.borderColor,
+                extendedProps: { ...ev.extendedProps }
+            }));
+            localStorage.setItem('erp_spa_events', JSON.stringify(sEvs));
+        }
+    }
+
     // ══════════════════════════════════════════
     // 3. NEW EVENT MODAL
     // ══════════════════════════════════════════
@@ -257,9 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (currentCalendarType === 'hotel' && window.hotelCalendar) {
                 window.hotelCalendar.addEvent(newEvObj);
+                saveCalendarEvents();
                 if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
             } else if (window.salesCalendar) {
                 window.salesCalendar.addEvent(newEvObj);
+                saveCalendarEvents();
                 if (typeof renderAgendaList === 'function') renderAgendaList();
             }
             closeNewEvModal();
@@ -282,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             height: 650,
             selectable: true,
-            events: [
+            events: JSON.parse(localStorage.getItem('erp_hotel_events')) || [
                 {
                     title: '전주대 교수 워크숍 단체 투숙 (15실)',
                     start: `${y}-${mStr}-05T15:00:00`,
@@ -402,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             height: 650,
             selectable: true,
-            events: [
+            events: JSON.parse(localStorage.getItem('erp_spa_events')) || [
                 {
                     title: '하나투어 진안관광 45명',
                     start: `${y}-${mStr}-22T14:00:00`,
@@ -530,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentEventObj) {
                 if(confirm('이 영업일정을 삭제하시겠습니까?')) {
                     currentEventObj.remove();
+                    saveCalendarEvents();
                     if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
                     if (typeof renderAgendaList === 'function') renderAgendaList();
                     closeEvModal();
@@ -564,6 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (document.getElementById('nePrep')) document.getElementById('nePrep').value = (prText && prText !== '신규 등록된 일정입니다.') ? prText : '';
                 
                 currentEventObj.remove();
+                saveCalendarEvents();
                 if (typeof renderHotelAgendaList === 'function') renderHotelAgendaList();
                 if (typeof renderAgendaList === 'function') renderAgendaList();
             }
