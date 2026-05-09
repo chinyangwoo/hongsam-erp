@@ -1,7 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
-// 홍삼한방타운 ERP — 전자결재 모듈 (approval.js v3)
+// 홍삼스파 ERP — 전자결재 모듈 (approval.js v2)
 // LNB 문서함 전환 + 데이터 기반 CRUD + 승인/반려 상태관리
-// + KPI 대시보드 + 첨부파일 지원
 // ═══════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 date: '2026-04-17',
                 status: 'pending',  // pending | approved | rejected
                 reviewDate: '2026-04-17', approveDate: null,
-                rejectReason: null,
-                attachments: []
+                rejectReason: null
             },
             {
                 id: 2, docNum: 'HS-20260416-002', type: '지출결의서',
@@ -44,8 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 date: '2026-04-16',
                 status: 'pending',
                 reviewDate: '2026-04-16', approveDate: null,
-                rejectReason: null,
-                attachments: []
+                rejectReason: null
             },
             {
                 id: 3, docNum: 'HS-20260410-003', type: '기안서(일반)',
@@ -57,33 +54,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 date: '2026-04-10',
                 status: 'approved',
                 reviewDate: '2026-04-10', approveDate: '2026-04-11',
-                rejectReason: null,
-                attachments: ['유니폼_디자인시안_A.pdf']
+                rejectReason: null
             },
             {
                 id: 4, docNum: 'HS-20260408-004', type: '휴가계',
-                title: '5월 스파 객실 비품 구매 기안',
-                author: '최민기', authorDept: '스파운영팀',
-                reviewer: '김지원', reviewerDept: '팀장',
+                title: '연차 휴가 신청 (4/20~4/21, 2일)',
+                content: '사유: 개인 사유 (가족 행사)\n기간: 2026-04-20 ~ 2026-04-21 (2일간)\n업무 대행: 이영희 크루\n\n위와 같이 연차 휴가를 신청합니다.',
+                author: '최민기', authorDept: '운영팀',
+                reviewer: '김지원', reviewerDept: '지원팀장',
                 approver: '진양우', approverDept: '대표',
                 date: '2026-04-08',
                 status: 'rejected',
                 reviewDate: '2026-04-08', approveDate: null,
-                rejectReason: '해당 기간 루프탑 정기점검 일정과 겹칩니다. 일정 조율 후 재기안 바랍니다.',
-                attachments: []
-            },
-            {
-                id: 5, docNum: 'HS-20260505-005', type: '지출결의서',
-                title: '5월 사내 행사 (직원 생일파티) 예산 결의',
-                content: '1. 지출 목적\n5월 생일자 직원(이영희, 박철수) 축하 이벤트 예산을 결의합니다.\n\n2. 지출 상세\n- 케이크 (2호) : 35,000원 x 2개 = 70,000원\n- 꽃바구니 : 25,000원 x 2개 = 50,000원\n- 기프트카드 : 50,000원 x 2명 = 100,000원\n\n총 청구 금액: 220,000원',
-                author: '김지원', authorDept: '지원팀',
-                reviewer: '진양우', reviewerDept: '대표',
-                approver: '진양우', approverDept: '대표',
-                date: '2026-05-05',
-                status: 'approved',
-                reviewDate: '2026-05-05', approveDate: '2026-05-06',
-                rejectReason: null,
-                attachments: []
+                rejectReason: '해당 기간 루프탑 정기점검 일정과 겹칩니다. 일정 조율 후 재기안 바랍니다.'
             }
         ];
     }
@@ -139,23 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ══════════════════════════════════════════
-    //  KPI 대시보드 업데이트
-    // ══════════════════════════════════════════
-    function updateKpiCards() {
-        const docs = loadDocs();
-        const total = docs.length;
-        const pending = docs.filter(d => d.status === 'pending').length;
-        const approved = docs.filter(d => d.status === 'approved').length;
-        const rejected = docs.filter(d => d.status === 'rejected').length;
-
-        const el = (id) => document.getElementById(id);
-        if (el('kpiTotal')) el('kpiTotal').textContent = total;
-        if (el('kpiPending')) el('kpiPending').textContent = pending;
-        if (el('kpiApproved')) el('kpiApproved').textContent = approved;
-        if (el('kpiRejected')) el('kpiRejected').textContent = rejected;
-    }
-
-    // ══════════════════════════════════════════
     //  문서 리스트 렌더링
     // ══════════════════════════════════════════
     function renderDocList() {
@@ -166,9 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const allDocs = loadDocs();
         const pendingCount = allDocs.filter(d => d.status === 'pending').length;
         document.getElementById('badgePending').textContent = pendingCount;
-
-        // KPI 업데이트
-        updateKpiCards();
 
         if (!filtered.length) {
             body.innerHTML = `<div style="padding:60px; text-align:center; color:var(--text-secondary);">
@@ -181,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="ap-item doc-actionable" data-doc-id="${d.id}">
                 <div class="c-date">${d.date}</div>
                 <div class="c-form"><span class="tag-outline">${escapeHtml(d.type)}</span></div>
-                <div class="c-title highlight">${escapeHtml(d.title)}${(d.attachments && d.attachments.length) ? ' <i class="fa-solid fa-paperclip" style="color:var(--text-secondary); font-size:0.8rem;" title="첨부파일 있음"></i>' : ''}</div>
+                <div class="c-title highlight">${escapeHtml(d.title)}</div>
                 <div class="c-author">${escapeHtml(d.author)} (${escapeHtml(d.authorDept)})</div>
                 <div class="c-status">${statusBadge(d)}</div>
             </div>
@@ -246,24 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 결재선 상태
-        const signDraft = '<span style="color:#10B981;">✓ 기안</span>';
+        const signDraft = doc.status !== 'rejected' ? '<span style="color:#10B981;">✓ 기안</span>' : '<span style="color:#10B981;">✓ 기안</span>';
         const signReview = doc.reviewDate ? '<span style="color:#10B981;">✓ 검토</span>' : '<span style="color:var(--text-secondary);">대기</span>';
         let signApprove;
         if (doc.status === 'approved') signApprove = '<span style="color:#10B981;">✓ 승인</span>';
         else if (doc.status === 'rejected') signApprove = '<span style="color:#EF4444;">✗ 반려</span>';
         else signApprove = '<span class="pending-sign">결재 대기</span>';
-
-        // 첨부파일 영역
-        let attachmentHtml = '';
-        if (doc.attachments && doc.attachments.length > 0) {
-            attachmentHtml = `
-                <div style="margin-top:30px; padding-top:20px; border-top:1px solid #CBD5E1;">
-                    <h3 style="font-size:1rem; margin-bottom:10px;"><i class="fa-solid fa-paperclip"></i> 첨부 파일 (${doc.attachments.length}건)</h3>
-                    <ul style="list-style:none; padding:0;">
-                        ${doc.attachments.map(f => `<li style="padding:6px 0; color:#3B82F6; font-size:0.9rem;"><i class="fa-regular fa-file"></i> ${escapeHtml(f)}</li>`).join('')}
-                    </ul>
-                </div>`;
-        }
 
         // 결재 용지 렌더링
         document.getElementById('dvPaperContent').innerHTML = `
@@ -283,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="paper-content-area">
                 ${escapeHtml(doc.content).replace(/\n/g, '<br>')}
             </div>
-            ${attachmentHtml}
         `;
 
         document.getElementById('docViewer').style.display = 'flex';
@@ -342,39 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const approver1 = document.getElementById('approver1');
     const approver2 = document.getElementById('approver2');
 
-    // 첨부파일 표시
-    const draftFileInput = document.getElementById('draftFile');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    if (draftFileInput) {
-        draftFileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                const names = Array.from(this.files).map(f => f.name);
-                fileNameDisplay.textContent = names.join(', ');
-                fileNameDisplay.style.color = 'var(--accent-blue)';
-            } else {
-                fileNameDisplay.textContent = '선택된 파일 없음';
-                fileNameDisplay.style.color = 'var(--text-secondary)';
-            }
-        });
-    }
-
     function showDraftModal() {
         document.getElementById('draftSubject').value = '';
         document.getElementById('draftContent').value = '';
         document.getElementById('draftType').value = '지출결의서';
-        const drafterRole = document.getElementById('drafterRole');
-        if (drafterRole) drafterRole.value = 'crew';
-        const approver1 = document.getElementById('approver1');
-        const approver2 = document.getElementById('approver2');
-        if(!approver1 || !approver2) return;
-
-        approver1.value = '팀장(큐레이터)';
-        approver2.value = '총지배인(호스트)';
-        if (draftFileInput) draftFileInput.value = '';
-        if (fileNameDisplay) {
-            fileNameDisplay.textContent = '선택된 파일 없음';
-            fileNameDisplay.style.color = 'var(--text-secondary)';
-        }
+        drafterRole.value = 'crew';
+        approver1.value = '큐레이터 (팀장)';
+        approver2.value = '호스트 (지배인)';
         draftModal.classList.add('show');
     }
     function hideDraftModal() { draftModal.classList.remove('show'); }
@@ -386,12 +310,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 결재선 자동 업데이트
     if (drafterRole) {
-        drafterRole.addEventListener('change', (e) => {
-            const role = e.target.value;
-            if (role === 'crew') { approver1.value = '팀장(큐레이터)'; approver2.value = '총지배인(호스트)'; }
-            else if (role === 'curator') { approver1.value = '총지배인(호스트)'; approver2.value = '진양우 (대표)'; }
-            else if (role === 'host') { approver1.value = '- (생략)'; approver2.value = '진양우 (대표)'; }
-            else if (role === 'master') { approver1.value = '- (생략)'; approver2.value = '- (생략)'; }
+        drafterRole.addEventListener('change', () => {
+            const role = drafterRole.value;
+            if (role === 'crew') { approver1.value = '큐레이터 (팀장)'; approver2.value = '호스트 (지배인)'; }
+            else if (role === 'curator') { approver1.value = '호스트 (지배인)'; approver2.value = '진양우 (대표이사)'; }
+            else if (role === 'host') { approver1.value = '- (생략)'; approver2.value = '진양우 (대표이사)'; }
         });
     }
 
@@ -411,12 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxId = docs.reduce((m, d) => Math.max(m, d.id), 0);
         const newDocNum = 'HS-' + dateStr.replace(/-/g, '') + '-' + String(maxId + 1).padStart(3, '0');
 
-        // 첨부파일 이름 수집
-        let attachNames = [];
-        if (draftFileInput && draftFileInput.files.length > 0) {
-            attachNames = Array.from(draftFileInput.files).map(f => f.name);
-        }
-
         docs.push({
             id: maxId + 1,
             docNum: newDocNum,
@@ -433,8 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             status: 'pending',
             reviewDate: null,
             approveDate: null,
-            rejectReason: null,
-            attachments: attachNames
+            rejectReason: null
         });
 
         saveDocs(docs);

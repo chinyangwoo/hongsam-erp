@@ -348,7 +348,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" id="closeEventBtn">닫기</button>
-                <button class="btn-primary">수정</button>
+                <button class="btn-primary admin-only-btn" id="editEventBtn" style="display:none;"><i class="fa-solid fa-pen"></i> 수정</button>
+                <button class="btn-primary admin-only-btn" id="deleteEventBtn" style="display:none; background:linear-gradient(135deg,#EF4444,#DC2626);"><i class="fa-solid fa-trash"></i> 삭제</button>
             </div>
         </div>
     </div>
@@ -389,11 +390,57 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════
+         매출 입력/수정 모달 (관리자 전용)
+         ═══════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="revenueModal">
+        <div class="modal-content glassmorphism" style="width: 560px;">
+            <div class="modal-header">
+                <h2 id="revModalTitle"><i class="fa-solid fa-won-sign" style="color:#10B981; margin-right:8px;"></i>매출 데이터 입력</h2>
+                <button class="btn-close" id="closeRevModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 28px;">
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- 날짜 -->
+                    <div>
+                        <label class="rev-label">매출 날짜</label>
+                        <input type="date" id="revDate" class="rev-input" readonly>
+                    </div>
+                    <!-- 사업부 선택 -->
+                    <div>
+                        <label class="rev-label">사업부</label>
+                        <select id="revBizUnit" class="rev-input">
+                            <option value="hotel">🏨 홍삼빌호텔</option>
+                            <option value="spa">♨️ 홍삼스파</option>
+                        </select>
+                    </div>
+                    <!-- 동적 매출 항목 -->
+                    <div id="revFieldsContainer">
+                        <!-- JS가 사업부에 따라 동적 생성 -->
+                    </div>
+                    <!-- 메모 -->
+                    <div>
+                        <label class="rev-label">메모 (선택)</label>
+                        <textarea id="revMemo" class="rev-input" rows="2" placeholder="특이사항 기록 (예: 단체 할인 적용)"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelRevBtn">취소</button>
+                <button class="btn-primary" id="deleteRevBtn" style="display:none; background:linear-gradient(135deg,#EF4444,#DC2626);"><i class="fa-solid fa-trash"></i> 삭제</button>
+                <button class="btn-primary" id="saveRevBtn"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 비관리자 안내 토스트 -->
+    <div id="toastMsg" style="position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(239,68,68,0.9); color:white; padding:14px 28px; border-radius:12px; font-weight:600; font-size:0.9rem; z-index:99999; display:none; backdrop-filter:blur(10px); box-shadow:0 8px 32px rgba(0,0,0,0.3);"></div>
+
     <!-- Scripts -->
     <script src="cloud_sync.js?v=1"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=7"></script>
-    <script src="sales.js?v=4"></script>
+    <script src="sales.js?v=5"></script>
 </body>
 </html>

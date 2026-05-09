@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             employees = [
                 {
                     emp_id: "105", name: "홍길동", login_id: "105", login_pw: "0000",
-                    department: "스파운영팀", team_detail: "2층 스파담당", rank: "크루", emp_type: "정규직", status: "재직",
+                    department: "운영팀", team_detail: "2층 스파담당", rank: "크루", emp_type: "정규직", status: "재직",
                     photo: "https://ui-avatars.com/api/?name=홍길동&background=random"
                 },
                 {
@@ -442,20 +442,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existing) existing.remove();
 
         const rankMap = {
-            '마스터': 'tag-important',
+            '마스터': 'tag-important', '임원': 'tag-important',
             '호스트': 'tag-important', 
             '큐레이터': 'tag-general',
             '크루': 'tag-general',
-            '계약직': 'tag-hr',
-            '알바': 'tag-hr'
+            '계약직': 'tag-hr'
         };
         const rankLabelMap = {
-            '마스터': '대표(마스터)',
-            '호스트': '총지배인(호스트)',
-            '큐레이터': '팀장(큐레이터)',
-            '크루': '팀원(크루)',
-            '계약직': '계약직',
-            '알바': '알바'
+            '마스터': '마스터(대표이사)',
+            '임원': '임원',
+            '호스트': '호스트(지배인)',
+            '큐레이터': '큐레이터(팀장)',
+            '크루': '크루(팀원)',
+            '계약직': '계약직'
         };
         const tagCls = rankMap[emp.rank] || 'tag-general';
         const rankLabel = rankLabelMap[emp.rank] || emp.rank;

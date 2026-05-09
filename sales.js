@@ -12,75 +12,131 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = today.getDate();
     const mStr = String(m + 1).padStart(2, '0');
 
+    // ── 관리자 권한 및 매출 데이터 초기화 ──
+    const currentUser = localStorage.getItem('currentUser') || '';
+    const ADMIN_IDS = ['001'];
+    let isAdmin = ADMIN_IDS.includes(currentUser);
+    try {
+        const employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
+        const empRecord = employees.find(e => e.emp_id === currentUser);
+        if (empRecord && empRecord.is_admin) isAdmin = true;
+    } catch(e) {}
+
+    // 관리자 UI 요소 표시
+    if (isAdmin) {
+        document.querySelectorAll('.admin-badge').forEach(el => el.style.display = 'inline-flex');
+        document.querySelectorAll('.admin-only-btn').forEach(el => el.style.display = 'inline-block');
+    }
+
+    let revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
+
     // ══════════════════════════════════════════
-    // 1. 미니 캘린더 렌더링 (호텔/스파)
+    // 1. 매출 미니 캘린더 렌더링 (호텔/스파 통합)
     // ══════════════════════════════════════════
-    function generateMiniCalendar(containerId, data, unit) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+    window.renderRevenueCalendars = function() {
+        const hotelCal = document.getElementById('hotelMiniCal');
+        const spaCal = document.getElementById('spaMiniCal');
+        if (!hotelCal || !spaCal) return;
 
         const daysInMonth = new Date(y, m + 1, 0).getDate();
         const firstDay = new Date(y, m, 1).getDay(); // 0=Sun
-
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-        let html = '';
 
-        // Header row
+        let hotelHtml = '', spaHtml = '';
+
+        // Headers
         dayNames.forEach((dn, i) => {
             let cls = 'day-head';
             if (i === 0) cls += ' sun';
             if (i === 6) cls += ' sat';
-            html += `<div class="${cls}">${dn}</div>`;
+            hotelHtml += `<div class="${cls}">${dn}</div>`;
+            spaHtml += `<div class="${cls}">${dn}</div>`;
         });
 
-        // Empty cells before 1st
         for (let i = 0; i < firstDay; i++) {
-            html += '<div class="day-cell empty"></div>';
+            hotelHtml += '<div class="day-cell empty"></div>';
+            spaHtml += '<div class="day-cell empty"></div>';
         }
 
-        // Day cells
+        // 차트 렌더링을 위해 데이터를 수집
+        const hChartData = [];
+        const sChartData = [];
+
         for (let day = 1; day <= daysInMonth; day++) {
             const isToday = (day === d) ? ' today' : '';
-            const val = (day <= d && data[day - 1] !== undefined) ? data[day - 1] : null;
-            let revText = '';
-            if (val !== null && val > 0) {
-                if (unit === 'won') {
-                    revText = val >= 100 ? Math.round(val) + '만' : val + '만';
-                } else {
-                    revText = val + '명';
-                }
+            const dateKey = `${y}-${mStr}-${String(day).padStart(2, '0')}`;
+            
+            // 시뮬레이션 데이터 믹스 또는 실제 데이터 적용
+            let hotelRev = 0;
+            let spaRev = 0;
+            
+            if (revDb[dateKey]) {
+                hotelRev = revDb[dateKey].hotelObjRev || 0;
+                spaRev = revDb[dateKey].spaEntrance || 0;
+            } else if (day <= d) {
+                // 시뮬레이션
+                const dow = new Date(y, m, day).getDay();
+                const hBase = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
+                const sBase = (dow === 5 || dow === 6) ? 120 : (dow === 0 ? 95 : 65);
+                hotelRev = Math.max(120, hBase + Math.floor(Math.random() * 80) - 40);
+                spaRev = Math.max(30, sBase + Math.floor(Math.random() * 30) - 15);
+                
+                revDb[dateKey] = {
+                    hotelObjRev: hotelRev,
+                    spaEntrance: spaRev
+                };
             }
-            html += `
-                <div class="day-cell${isToday}">
+
+            if (day <= d) {
+                hChartData.push(hotelRev);
+                sChartData.push(spaRev);
+            }
+
+            // 호텔 셀 렌더링
+            let hRevText = hotelRev > 0 ? (hotelRev >= 100 ? Math.round(hotelRev) + '만' : hotelRev + '만') : '';
+            let hClassStr = `day-cell${isToday}`;
+            if (isAdmin) hClassStr += ' admin-clickable';
+            if (hotelRev > 0) hClassStr += ' has-revenue';
+
+            hotelHtml += `
+                <div class="${hClassStr}" data-date="${dateKey}" data-biz="hotel" title="${isAdmin ? '매출 입력' : ''}">
                     <div class="day-num">${day}</div>
-                    ${revText ? `<div class="day-rev">${revText}</div>` : ''}
+                    ${hRevText ? `<div class="day-rev-data"><div class="rev-item rev-hotel">${hRevText}</div></div>` : ''}
+                </div>`;
+
+            // 스파 셀 렌더링
+            let sRevText = spaRev > 0 ? spaRev + '명' : '';
+            let sClassStr = `day-cell${isToday}`;
+            if (isAdmin) sClassStr += ' admin-clickable';
+            if (spaRev > 0) sClassStr += ' has-revenue';
+
+            spaHtml += `
+                <div class="${sClassStr}" data-date="${dateKey}" data-biz="spa" title="${isAdmin ? '매출 입력' : ''}">
+                    <div class="day-num">${day}</div>
+                    ${sRevText ? `<div class="day-rev-data"><div class="rev-item rev-spa">${sRevText}</div></div>` : ''}
                 </div>`;
         }
 
-        container.innerHTML = html;
-    }
+        hotelCal.innerHTML = hotelHtml;
+        spaCal.innerHTML = spaHtml;
 
-    // 호텔 일별 매출 데이터 (만 원 단위, 최근 d일)
-    const hotelDailyRevenue = [];
-    for (let i = 1; i <= d; i++) {
-        // 주말(금,토)은 매출 높고, 평일은 낮은 시뮬레이션
-        const dow = new Date(y, m, i).getDay();
-        const base = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
-        const variance = Math.floor(Math.random() * 80) - 40;
-        hotelDailyRevenue.push(Math.max(120, base + variance));
-    }
+        // DB 갱신 후, 저장소 반영
+        localStorage.setItem('erp_revenue_db', JSON.stringify(revDb));
 
-    // 스파 일별 입장객 수 데이터
-    const spaDailyVisitors = [];
-    for (let i = 1; i <= d; i++) {
-        const dow = new Date(y, m, i).getDay();
-        const base = (dow === 5 || dow === 6) ? 120 : (dow === 0 ? 95 : 65);
-        const variance = Math.floor(Math.random() * 30) - 15;
-        spaDailyVisitors.push(Math.max(30, base + variance));
-    }
+        // 관리자용 클릭 이벤트
+        if (isAdmin) {
+            document.querySelectorAll('.day-cell.admin-clickable').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    openRevenueModal(this.dataset.date, this.dataset.biz);
+                });
+            });
+        }
 
-    generateMiniCalendar('hotelMiniCal', hotelDailyRevenue, 'won');
-    generateMiniCalendar('spaMiniCal', spaDailyVisitors, 'person');
+    }
+    
+    // 최초 1회 렌더링
+    renderRevenueCalendars();
+    setTimeout(renderRevenueCalendars, 50);
 
     // ══════════════════════════════════════════
     // 2. 30일 바 차트 렌더링
@@ -107,26 +163,37 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = html;
     }
 
-    // 호텔 30일 매출 추이
-    const hotel30Data = [];
-    for (let i = 0; i < 30; i++) {
-        const pastDate = new Date(y, m, d - 29 + i);
-        const dow = pastDate.getDay();
-        const base = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
-        hotel30Data.push(Math.max(100, base + Math.floor(Math.random() * 100) - 50));
-    }
-
-    // 스파 30일 매출 추이
-    const spa30Data = [];
-    for (let i = 0; i < 30; i++) {
-        const pastDate = new Date(y, m, d - 29 + i);
-        const dow = pastDate.getDay();
-        const base = (dow === 5 || dow === 6) ? 200 : (dow === 0 ? 150 : 90);
-        spa30Data.push(Math.max(40, base + Math.floor(Math.random() * 60) - 30));
-    }
-
-    generateBarChart('hotelBarChart', hotel30Data, 'linear-gradient(180deg, #F59E0B, #D97706)', 'won');
-    generateBarChart('spaBarChart', spa30Data, 'linear-gradient(180deg, #3B82F6, #2563EB)', 'won');
+    // 호텔/스파 30일 매출/입장객 차트 (revDb 연동)
+    window.renderBarCharts = function() {
+        const hotel30Data = [];
+        const spa30Data = [];
+        
+        for (let i = 0; i < 30; i++) {
+            const pastDate = new Date(y, m, d - 29 + i);
+            const py = pastDate.getFullYear();
+            const pm = String(pastDate.getMonth() + 1).padStart(2, '0');
+            const pd = String(pastDate.getDate()).padStart(2, '0');
+            const dateKey = `${py}-${pm}-${pd}`;
+            
+            if (revDb[dateKey]) {
+                hotel30Data.push(revDb[dateKey].hotelObjRev || 0);
+                spa30Data.push(revDb[dateKey].spaEntrance || 0);
+            } else {
+                const dow = pastDate.getDay();
+                // 호텔 시뮬
+                const hBase = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
+                hotel30Data.push(Math.max(100, hBase + Math.floor(Math.random() * 100) - 50));
+                
+                // 스파 시뮬
+                const sBase = (dow === 5 || dow === 6) ? 200 : (dow === 0 ? 150 : 90);
+                spa30Data.push(Math.max(40, sBase + Math.floor(Math.random() * 60) - 30));
+            }
+        }
+        generateBarChart('hotelBarChart', hotel30Data, 'linear-gradient(180deg, #F59E0B, #D97706)', 'won');
+        generateBarChart('spaBarChart', spa30Data, 'linear-gradient(180deg, #3B82F6, #2563EB)', 'person');
+    };
+    
+    renderBarCharts();
 
     // ══════════════════════════════════════════
     // 3. NEW EVENT MODAL
@@ -223,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     extendedProps: {
                         people: '100명', revenue: '5,000,000원',
                         prep: '중회의실+소회의실 동시 대관, 빔프로젝터 2대, 점심 도시락 100개.',
-                        tagLabel: '시설 대관 (운영팀)'
+                        tagLabel: '시설 대관 (스파운영팀)'
                     }
                 },
                 {
@@ -354,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     extendedProps: {
                         people: '60명', revenue: '1,800,000원',
                         prep: '어르신 전용 온천 프로그램 운영, 점심 식사 포함.',
-                        tagLabel: '일반단체 (운영팀)'
+                        tagLabel: '일반단체 (스파운영팀)'
                     }
                 }
             ],
@@ -430,4 +497,162 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeEventModalX) closeEventModalX.addEventListener('click', closeEvModal);
     if (eventModal) eventModal.addEventListener('click', e => { if (e.target === eventModal) closeEvModal(); });
 
+    // ══════════════════════════════════════════
+    // 6. 매출 입력/수정 (관리자 전용)
+    // ══════════════════════════════════════════
+    const revenueModal = document.getElementById('revenueModal');
+    const closeRevModalBtn = document.getElementById('closeRevModal');
+    const cancelRevBtn = document.getElementById('cancelRevBtn');
+    const saveRevBtn = document.getElementById('saveRevBtn');
+    const deleteRevBtn = document.getElementById('deleteRevBtn');
+    
+    function showToast(msg) {
+        const t = document.getElementById('toastMsg');
+        if (t) {
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    }
+
+    window.openRevenueModal = function(dateStr, bizUnit) {
+        if (!revenueModal) return;
+        document.getElementById('revDate').value = dateStr;
+        document.getElementById('revBizUnit').value = bizUnit;
+        
+        // 동적 폼 생성
+        const fieldsContainer = document.getElementById('revFieldsContainer');
+        fieldsContainer.innerHTML = '';
+        
+        const data = revDb[dateStr] || {};
+        
+        if (bizUnit === 'hotel') {
+            document.getElementById('revModalTitle').innerHTML = '<i class="fa-solid fa-hotel" style="color:#EF4444; margin-right:8px;"></i>홍삼빌호텔 매출 입력';
+            fieldsContainer.innerHTML = `
+                <div class="rev-field-row">
+                    <label>객실 매출</label>
+                    <input type="number" id="inp_hotelObjRev" class="rev-amount-input" value="${data.hotelObjRev || ''}" placeholder="0">
+                    <span class="rev-unit">만원</span>
+                </div>
+                <div class="rev-field-row">
+                    <label>F&B 매출</label>
+                    <input type="number" id="inp_hotelFbRev" class="rev-amount-input" value="${data.hotelFbRev || ''}" placeholder="0">
+                    <span class="rev-unit">만원</span>
+                </div>
+                <div class="rev-field-row">
+                    <label>판매 객실수</label>
+                    <input type="number" id="inp_hotelSold" class="rev-amount-input" value="${data.hotelSold || ''}" placeholder="0">
+                    <span class="rev-unit">실</span>
+                </div>
+            `;
+        } else {
+            document.getElementById('revModalTitle').innerHTML = '<i class="fa-solid fa-hot-tub-person" style="color:#3B82F6; margin-right:8px;"></i>홍삼스파 매출 입력';
+            fieldsContainer.innerHTML = `
+                <div class="rev-field-row">
+                    <label>입장객 수</label>
+                    <input type="number" id="inp_spaEntrance" class="rev-amount-input" value="${data.spaEntrance || ''}" placeholder="0">
+                    <span class="rev-unit">명</span>
+                </div>
+                <div class="rev-field-row">
+                    <label>입장 매출</label>
+                    <input type="number" id="inp_spaTickRev" class="rev-amount-input" value="${data.spaTickRev || ''}" placeholder="0">
+                    <span class="rev-unit">만원</span>
+                </div>
+                <div class="rev-field-row">
+                    <label>식음료/기타</label>
+                    <input type="number" id="inp_spaFbRev" class="rev-amount-input" value="${data.spaFbRev || ''}" placeholder="0">
+                    <span class="rev-unit">만원</span>
+                </div>
+            `;
+        }
+        
+        document.getElementById('revMemo').value = data.memo || '';
+        
+        if (revDb[dateStr] && Object.keys(revDb[dateStr]).length > 0) {
+            deleteRevBtn.style.display = 'inline-block';
+        } else {
+            deleteRevBtn.style.display = 'none';
+        }
+
+        revenueModal.style.display = 'flex';
+    };
+
+    function closeRevenueModal() {
+        if (revenueModal) revenueModal.style.display = 'none';
+    }
+
+    if (closeRevModalBtn) closeRevModalBtn.addEventListener('click', closeRevenueModal);
+    if (cancelRevBtn) cancelRevBtn.addEventListener('click', closeRevenueModal);
+    if (revenueModal) revenueModal.addEventListener('click', e => { if (e.target === revenueModal) closeRevenueModal(); });
+
+    if (saveRevBtn) {
+        saveRevBtn.addEventListener('click', () => {
+            const dateStr = document.getElementById('revDate').value;
+            const bizUnit = document.getElementById('revBizUnit').value;
+            
+            if (!revDb[dateStr]) revDb[dateStr] = {};
+            
+            if (bizUnit === 'hotel') {
+                revDb[dateStr].hotelObjRev = parseInt(document.getElementById('inp_hotelObjRev').value) || 0;
+                revDb[dateStr].hotelFbRev = parseInt(document.getElementById('inp_hotelFbRev').value) || 0;
+                revDb[dateStr].hotelSold = parseInt(document.getElementById('inp_hotelSold').value) || 0;
+            } else {
+                revDb[dateStr].spaEntrance = parseInt(document.getElementById('inp_spaEntrance').value) || 0;
+                revDb[dateStr].spaTickRev = parseInt(document.getElementById('inp_spaTickRev').value) || 0;
+                revDb[dateStr].spaFbRev = parseInt(document.getElementById('inp_spaFbRev').value) || 0;
+            }
+            revDb[dateStr].memo = document.getElementById('revMemo').value.trim();
+            
+            localStorage.setItem('erp_revenue_db', JSON.stringify(revDb));
+            
+            try {
+                fetch('http://43.203.237.63:3001/api/db/erp_revenue_db', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(revDb)
+                }).catch(e => console.warn(e));
+            } catch(e) {}
+            
+            closeRevenueModal();
+            renderRevenueCalendars();
+            if (typeof renderBarCharts === 'function') renderBarCharts();
+            showToast('매출 데이터가 정상적으로 저장되었습니다.');
+        });
+    }
+
+    if (deleteRevBtn) {
+        deleteRevBtn.addEventListener('click', () => {
+            const dateStr = document.getElementById('revDate').value;
+            const bizUnit = document.getElementById('revBizUnit').value;
+            
+            if (revDb[dateStr]) {
+                if (bizUnit === 'hotel') {
+                    delete revDb[dateStr].hotelObjRev;
+                    delete revDb[dateStr].hotelFbRev;
+                    delete revDb[dateStr].hotelSold;
+                } else {
+                    delete revDb[dateStr].spaEntrance;
+                    delete revDb[dateStr].spaTickRev;
+                    delete revDb[dateStr].spaFbRev;
+                }
+                
+                if (Object.keys(revDb[dateStr]).every(k => k === 'memo' || !revDb[dateStr][k])) {
+                    delete revDb[dateStr];
+                }
+                
+                localStorage.setItem('erp_revenue_db', JSON.stringify(revDb));
+                
+                try {
+                    fetch('http://43.203.237.63:3001/api/db/erp_revenue_db', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(revDb)
+                    }).catch(e => console.warn(e));
+                } catch(e) {}
+            }
+            
+            closeRevenueModal();
+            renderRevenueCalendars();
+            if (typeof renderBarCharts === 'function') renderBarCharts();
+            showToast('해당 일자의 데이터가 삭제되었습니다.');
+        });
+    }
 });

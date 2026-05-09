@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -140,16 +140,21 @@
                     <div class="filter-box">
                         <select class="styled-select">
                             <option value="all">부서 전체</option>
-                            <option value="지원팀">지원팀</option>
-                            <option value="운영팀">운영팀</option>
+                            <option value="스파운영팀">스파운영팀</option>
+                            <option value="호텔운영팀">호텔운영팀</option>
                             <option value="식음료팀">식음료팀</option>
+                            <option value="지원팀">지원팀</option>
                             <option value="공무팀">공무팀</option>
+                            <option value="홍보팀">홍보팀</option>
                         </select>
                         <select class="styled-select">
                             <option value="all">직급 전체</option>
-                            <option value="큐레이터">팀장 (큐레이터)</option>
-                            <option value="크루">팀원 (크루)</option>
-                            <option value="알바">계약직 (알바)</option>
+                            <option value="마스터">대표(마스터)</option>
+                            <option value="호스트">총지배인(호스트)</option>
+                            <option value="큐레이터">팀장(큐레이터)</option>
+                            <option value="크루">팀원(크루)</option>
+                            <option value="알바">알바</option>
+                            <option value="계약직">계약직</option>
                         </select>
                     </div>
                 </div>
@@ -167,11 +172,12 @@
                         <div class="kpi-details" style="width:100%;">
                             <h3>팀별 급여지급총액</h3>
                             <select id="teamSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
-                                <option value="운영팀" data-amount="25000000" style="background:#0F172A;">운영팀</option>
+                                <option value="스파운영팀" data-amount="25000000" style="background:#0F172A;">스파운영팀</option>
+                                <option value="호텔운영팀" data-amount="20000000" style="background:#0F172A;">호텔운영팀</option>
                                 <option value="식음료팀" data-amount="18500000" style="background:#0F172A;">식음료팀</option>
-                                <option value="경영지원팀" data-amount="12000000" style="background:#0F172A;">경영지원팀</option>
+                                <option value="지원팀" data-amount="12000000" style="background:#0F172A;">지원팀</option>
                                 <option value="공무팀" data-amount="9900000" style="background:#0F172A;">공무팀</option>
-                                <option value="마케팅팀" data-amount="7800000" style="background:#0F172A;">마케팅팀</option>
+                                <option value="홍보팀" data-amount="7800000" style="background:#0F172A;">홍보팀</option>
                             </select>
                             <p class="amount" id="teamAmountDisplay">2,500만</p>
                         </div>
@@ -182,12 +188,12 @@
                         <div class="kpi-details" style="width:100%;">
                             <h3>직급별 급여지급총액</h3>
                             <select id="rankSelect" style="background:rgba(0,0,0,0.3); color:#F8FAFC; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:6px 10px; font-family:inherit; font-size:0.8rem; outline:none; width:100%; margin-bottom:8px;">
-                                <option value="마스터" data-amount="65000000" style="background:#0F172A;">마스터 (대표이사)</option>
-                                <option value="호스트" data-amount="34000000" style="background:#0F172A;">호스트 (지배인)</option>
-                                <option value="큐레이터" data-amount="25500000" style="background:#0F172A;">큐레이터 (팀장)</option>
-                                <option value="크루" data-amount="18000000" style="background:#0F172A;">크루 (팀원)</option>
-                                <option value="계약직" data-amount="12000000" style="background:#0F172A;">계약직</option>
+                                <option value="마스터" data-amount="65000000" style="background:#0F172A;">대표(마스터)</option>
+                                <option value="호스트" data-amount="34000000" style="background:#0F172A;">총지배인(호스트)</option>
+                                <option value="큐레이터" data-amount="25500000" style="background:#0F172A;">팀장(큐레이터)</option>
+                                <option value="크루" data-amount="18000000" style="background:#0F172A;">팀원(크루)</option>
                                 <option value="알바" data-amount="8000000" style="background:#0F172A;">알바</option>
+                                <option value="계약직" data-amount="12000000" style="background:#0F172A;">계약직</option>
                             </select>
                             <p class="amount" id="rankAmountDisplay">1,800만</p>
                         </div>
@@ -433,14 +439,14 @@
                     </div>
                     <div class="basic-tags" id="profTags">
                         <span class="tag tag-important">정규직</span>
-                        <span class="tag tag-general">운영팀</span>
+                        <span class="tag tag-general">스파운영팀</span>
                     </div>
                 </div>
                 
                 <!-- Right: Tabs Details -->
                 <div class="profile-right">
                     <h1 class="p-name"><span id="profName">홍길동</span> <span class="p-id">사번: <span id="profId">105</span></span></h1>
-                    <p class="p-job" id="profJob">직무: 스파 2층 담당 / 직급: 팀원 (크루)</p>
+                    <p class="p-job" id="profJob">직무: 스파 2층 담당 / 직급: 팀원(크루)</p>
                     
                     <div class="p-info-grid">
                         <div class="info-item">
@@ -479,7 +485,7 @@
                             </li>
                             <li>
                                 <div class="t-date">2025.01.15</div>
-                                <div class="t-event">경력직(운영팀 크루) 최종 입사</div>
+                                <div class="t-event">경력직(스파운영팀 크루) 최종 입사</div>
                             </li>
                         </ul>
                     </div>
@@ -597,11 +603,12 @@
                             <label>부서 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpDept" class="styled-input" required>
                                 <option value="">부서 선택</option>
-                                <option value="지원팀">지원팀</option>
-                                <option value="운영팀">운영팀</option>
+                                <option value="스파운영팀">스파운영팀</option>
+                                <option value="호텔운영팀">호텔운영팀</option>
                                 <option value="식음료팀">식음료팀</option>
+                                <option value="지원팀">지원팀</option>
                                 <option value="공무팀">공무팀</option>
-                                <option value="마케팅팀">마케팅팀</option>
+                                <option value="홍보팀">홍보팀</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -612,12 +619,12 @@
                             <label>직급 <span style="color:#EF4444;">*</span></label>
                             <select id="newEmpRank" class="styled-input" required>
                                 <option value="">직급 선택</option>
+                                <option value="마스터">대표(마스터)</option>
+                                <option value="호스트">총지배인(호스트)</option>
+                                <option value="큐레이터">팀장(큐레이터)</option>
+                                <option value="크루">팀원(크루)</option>
+                                <option value="알바">알바</option>
                                 <option value="계약직">계약직</option>
-                                <option value="크루">크루(팀원)</option>
-                                <option value="큐레이터">큐레이터(팀장)</option>
-                                <option value="호스트">호스트(지배인)</option>
-                                <option value="임원">임원</option>
-                                <option value="마스터">마스터(대표이사)</option>
                             </select>
                         </div>
                         <div class="form-group">

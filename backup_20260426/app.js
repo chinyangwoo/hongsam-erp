@@ -42,11 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const roleSpans = document.querySelectorAll('.user-info .role');
         if (roleSpans.length > 0) {
             const rankLabelMap = {
-                '마스터': '대표(마스터)',
-                '호스트': '총지배인(호스트)',
-                '큐레이터': '팀장(큐레이터)',
-                '크루': '팀원(크루)',
-                '알바': '알바',
+                '마스터': '대표이사 (마스터)',
+                '임원': '임원',
+                '호스트': '지배인 (호스트)',
+                '큐레이터': '팀장 (큐레이터)',
+                '크루': '팀원 (크루)',
+                '알바': '아르바이트',
                 '계약직': '계약직'
             };
             let roleText = '사원'; // 기본값
@@ -63,10 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Admin-Only Navigation Control ---
         // admin 계정 목록 (사번 기준)
         const ADMIN_IDS = ['001']; // 대표이사만 admin
-        let isAdmin = ADMIN_IDS.includes(currentUser);
-        if (empRecord && empRecord.is_admin) {
-            isAdmin = true;
-        }
+        const isAdmin = ADMIN_IDS.includes(currentUser);
         
         // admin이 아닌 사용자에게는 보안 모듈 메뉴 숨기기
         document.querySelectorAll('.nav-admin-only').forEach(el => {
@@ -88,9 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { url: 'inventory.html', permIndex: 3, name: '재고 및 공무' },
                 { url: 'traffic.html', permIndex: 4, name: '트래픽 모니터링' },
                 { url: 'document.html', permIndex: 5, name: '문서 관리' },
-                { url: 'approval.html', permIndex: 6, name: '전자결재' },
-                { url: 'facility.html', permIndex: 7, name: '시설현황' },
-                { url: 'simulation.html', permIndex: 8, name: '경영시뮬레이션' }
+                { url: 'approval.html', permIndex: 6, name: '전자결재' }
             ];
 
             menuMapping.forEach(mapping => {

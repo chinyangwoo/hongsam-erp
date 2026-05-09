@@ -334,3 +334,131 @@
     height: 1px;
     background: rgba(255,255,255,0.08);
 }
+
+/* ═══════════════════════════════════════
+   4. 매출 입력 모달 (관리자 전용)
+   ═══════════════════════════════════════ */
+.rev-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 600;
+}
+.rev-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-md, 8px);
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+    color: var(--text-primary, #F8FAFC);
+    outline: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+.rev-input:focus {
+    border-color: var(--accent-blue, #3B82F6);
+}
+.rev-input[type="number"] {
+    text-align: right;
+    font-weight: 600;
+}
+textarea.rev-input {
+    resize: vertical;
+    min-height: 50px;
+}
+
+.rev-field-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.rev-field-row label {
+    min-width: 100px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.rev-field-row .rev-amount-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #10B981;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: right;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+.rev-field-row .rev-amount-input:focus {
+    border-color: #3B82F6;
+}
+.rev-field-row .rev-amount-input::placeholder {
+    color: rgba(255,255,255,0.2);
+    font-weight: 400;
+}
+.rev-field-row .rev-unit {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    min-width: 20px;
+}
+
+/* Revenue calendar clickable cells */
+.mini-cal-grid .day-cell.has-revenue {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+}
+.mini-cal-grid .day-cell.admin-clickable {
+    cursor: pointer;
+}
+.mini-cal-grid .day-cell.admin-clickable:hover {
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+}
+
+/* Admin badge on section header */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: rgba(16,185,129,0.15);
+    color: #10B981;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Revenue data cell in mini calendar */
+.mini-cal-grid .day-cell .day-rev-data {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-top: 2px;
+}
+.mini-cal-grid .day-cell .day-rev-data .rev-item {
+    font-size: 0.6rem;
+    line-height: 1.2;
+}
+.mini-cal-grid .day-cell .day-rev-data .rev-hotel {
+    color: #EF4444;
+}
+.mini-cal-grid .day-cell .day-rev-data .rev-spa {
+    color: #3B82F6;
+}
+
+/* Toast animation */
+@keyframes toastSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+#toastMsg.show {
+    display: block !important;
+    animation: toastSlideUp 0.3s ease;
+}

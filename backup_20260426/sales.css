@@ -1,0 +1,304 @@
+/* Sales & Finance Module Specific Styles */
+
+/* ---------------- Modal Styles (needed since sales.html doesn't load hr.css) ---------------- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.modal-overlay.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #F8FAFC;
+}
+
+.modal-body {
+    padding: 24px 28px;
+    flex: 1;
+}
+
+.modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    transition: color 0.2s;
+}
+.btn-close:hover { color: #F8FAFC; }
+
+.btn-primary {
+    background: linear-gradient(135deg, #3B82F6, #6366F1);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn-secondary {
+    background: rgba(255,255,255,0.07);
+    color: #94A3B8;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+/* Fix cashflow table cutoff */
+#tab-cashflow {
+    overflow: visible;
+    padding-bottom: 60px;
+}
+
+/* ---------------- Summary Pills ---------------- */
+.finance-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.f-pill {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    gap: 20px;
+    border-radius: var(--radius-md);
+}
+
+.f-pill .f-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.box-income .f-icon { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+.box-expense .f-icon { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+.box-event .f-icon { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+
+.f-text span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.f-text h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 6px;
+}
+.box-income .f-text h3 { color: var(--accent-green); }
+.box-expense .f-text h3 { color: var(--accent-red); }
+
+/* ---------------- Tabs (Reusing existing layout context) ---------------- */
+.sales-tabs-container {
+    margin-top: 10px;
+}
+
+.action-bar-override {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* ---------------- Full Calendar Overrides ---------------- */
+.calendar-wrapper {
+    padding: 24px;
+    margin: 16px auto 0 auto;
+    max-width: 1300px;
+    min-height: 600px;
+    overflow: visible;
+}
+
+.legend-box {
+    display: flex;
+    gap: 20px;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.c-green { background: #10B981; }
+.c-blue  { background: #3B82F6; }
+.c-purple{ background: #8B5CF6; }
+.c-orange{ background: #F97316; }
+.c-gray  { background: #6B7280; }
+
+/* Force FullCalendar to respect dark theme variables */
+.fc-theme-standard td, .fc-theme-standard th {
+    border-color: var(--border-color) !important;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.25rem !important;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.fc .fc-button-primary {
+    background-color: transparent !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow: none !important;
+    transition: var(--transition);
+}
+
+.fc .fc-button-primary:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, 
+.fc .fc-button-primary:not(:disabled):active {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    border-color: var(--accent-blue) !important;
+    color: var(--accent-blue) !important;
+}
+
+.fc .fc-daygrid-day-number, .fc .fc-col-header-cell-cushion {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.fc .fc-day-today {
+    background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.fc-event {
+    cursor: pointer;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-weight: 600;
+    font-size: 0.8rem !important;
+}
+
+/* ---------------- Event Modal Custom ---------------- */
+.ev-title {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+
+.ev-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-green);
+}
+
+.ev-info-list {
+    list-style: none;
+}
+
+.ev-info-list li {
+    margin-bottom: 16px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.ev-info-list li strong {
+    color: var(--text-secondary);
+    width: 120px;
+    display: inline-block;
+}
+
+.ev-info-list li strong i {
+    width: 20px;
+    text-align: center;
+}
+
+.highlight-revenue {
+    font-weight: 700;
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+}
+
+.ev-desc {
+    background: rgba(0,0,0,0.1);
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
