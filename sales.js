@@ -28,6 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.admin-only-btn').forEach(el => el.style.display = 'inline-block');
     }
 
+    // ── 비관리자: 매출 섹션 숨기고 캘린더만 공개 ──
+    if (!isAdmin) {
+        // 매출 KPI, 영업현황(미니캘린더+차트) 섹션 숨기기
+        document.querySelectorAll('.sales-admin-only').forEach(el => el.style.display = 'none');
+        // 헤더 설명 변경
+        const headerDesc = document.getElementById('salesHeaderDesc');
+        if (headerDesc) headerDesc.innerText = '홍삼빌호텔 + 홍삼스파 영업 일정 캘린더';
+        // 이벤트 모달에서 예상매출액 항목 숨기기
+        const evRevenueRow = document.getElementById('evRevenue');
+        if (evRevenueRow && evRevenueRow.closest('li')) {
+            evRevenueRow.closest('li').style.display = 'none';
+        }
+    }
+
     let revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
 
     // ══════════════════════════════════════════

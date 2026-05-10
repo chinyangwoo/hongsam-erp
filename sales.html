@@ -40,7 +40,7 @@
                 <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
             <a href="traffic.html" class="nav-item">
                 <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
-            <a href="hr.html" class="nav-item">
+            <a href="hr.html" class="nav-item nav-admin-only">
                 <i class="fa-solid fa-users"></i> HR/근태 관리</a>
             <a href="sales.html" class="nav-item active">
                 <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
@@ -83,7 +83,7 @@
         <header class="top-header">
             <div class="header-title">
                 <h1>영업관리</h1>
-                <p>홍삼빌호텔 + 홍삼스파 통합 매출 현황 대시보드</p>
+                <p id="salesHeaderDesc">홍삼빌호텔 + 홍삼스파 통합 매출 현황 대시보드</p>
             </div>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
@@ -97,8 +97,8 @@
             <!-- ═══════════════════════════════════
                  통합 매출 집계표 (KPI)
                  ═══════════════════════════════════ -->
-            <div class="integrated-label"><i class="fa-solid fa-chart-line"></i> 통합 매출 집계 (홍삼빌호텔 + 홍삼스파)</div>
-            <div class="revenue-kpi-grid">
+            <div class="integrated-label sales-admin-only"><i class="fa-solid fa-chart-line"></i> 통합 매출 집계 (홍삼빌호텔 + 홍삼스파)</div>
+            <div class="revenue-kpi-grid sales-admin-only">
                 <div class="rev-kpi-card c-yesterday">
                     <div class="kpi-icon"><i class="fa-solid fa-calendar-day"></i></div>
                     <div class="kpi-body">
@@ -136,7 +136,7 @@
             <!-- ═══════════════════════════════════
                  홍삼빌호텔 영업현황
                  ═══════════════════════════════════ -->
-            <div class="biz-section" id="hotelSection">
+            <div class="biz-section sales-admin-only" id="hotelSection">
                 <div class="biz-section-header">
                     <h2><i class="fa-solid fa-hotel" style="color:#EF4444;"></i> 홍삼빌호텔 영업현황 <span class="biz-badge hotel">총 43실</span></h2>
                     <a href="https://hongsam.dothome.co.kr/index.html" target="_blank" class="biz-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> 호텔 대시보드</a>
@@ -231,7 +231,7 @@
             <!-- ═══════════════════════════════════
                  홍삼스파 영업현황
                  ═══════════════════════════════════ -->
-            <div class="biz-section" id="spaSection">
+            <div class="biz-section sales-admin-only" id="spaSection">
                 <div class="biz-section-header">
                     <h2><i class="fa-solid fa-spa" style="color:#3B82F6;"></i> 홍삼스파 영업현황 <span class="biz-badge spa">한방 사우나</span></h2>
                 </div>
@@ -376,7 +376,7 @@
                             <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">예상 인원수</label>
                             <input type="text" id="nePeople" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit;" placeholder="예: 45명">
                         </div>
-                        <div style="flex:1;">
+                        <div style="flex:1;" class="sales-admin-only">
                             <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">예상 매출(원)</label>
                             <input type="text" id="neRevenue" style="width:100%; padding:12px; border-radius:var(--radius-md); background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-primary); outline:none; font-family:inherit;" placeholder="예: 2,250,000원">
                         </div>

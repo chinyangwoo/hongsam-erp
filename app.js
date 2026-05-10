@@ -79,6 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.replace('index.html');
         }
 
+        // admin이 아닌 사용자가 hr.html에 직접 접속 시도 시 차단
+        if (!isAdmin && window.location.pathname.includes('hr.html')) {
+            alert('접근 권한이 없습니다. HR/인사/근태 관리는 관리자(ADMIN)만 열람할 수 있습니다.');
+            window.location.replace('index.html');
+        }
+
         // --- 세부 모듈별 열람 권한 제어 ---
         if (empRecord && !isAdmin && empRecord.permissions && Array.isArray(empRecord.permissions)) {
             const menuMapping = [

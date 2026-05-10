@@ -443,5 +443,176 @@ if (itemExcelUpload && inventoryTableBody) {
         reader.readAsArrayBuffer(file);
     });
 }
+// 10. Quick Item Registration (빠른 품목 등록)
+const btnItemSave = document.getElementById('btnItemSave');
+const btnItemClear = document.getElementById('btnItemClear');
+
+if (btnItemSave) {
+    btnItemSave.addEventListener('click', () => {
+        const nameInput = document.getElementById('itemName');
+        const name = nameInput ? nameInput.value.trim() : '';
+        
+        if (!name) {
+            nameInput.style.borderColor = '#EF4444';
+            nameInput.setAttribute('placeholder', '⚠ 품목명을 입력해주세요!');
+            nameInput.focus();
+            setTimeout(() => {
+                nameInput.style.borderColor = 'rgba(59,130,246,0.4)';
+                nameInput.setAttribute('placeholder', '예: 대형 비치타월, 바디워시, A4용지...');
+            }, 2000);
+            return;
+        }
+
+        // 값 수집 (미입력 시 기본값)
+        const site = document.getElementById('itemSite')?.value || '스파';
+        const zone = document.getElementById('itemZone')?.value || '공통 창고';
+        const category = document.getElementById('itemCategory')?.value || '기타';
+        const currentQty = parseInt(document.getElementById('itemCurrentQty')?.value) || 0;
+        const unit = document.getElementById('itemUnit')?.value || '개';
+        const safeQty = parseInt(document.getElementById('itemSafeQty')?.value) || 0;
+
+        // 소속 배지 색상
+        const siteColorMap = {
+            '스파': 'background:rgba(139,92,246,0.15);color:#A78BFA',
+            '호텔': 'background:rgba(59,130,246,0.15);color:#60A5FA',
+            '공통': 'background:rgba(59,130,246,0.15);color:#60A5FA'
+        };
+        const siteStyle = siteColorMap[site] || siteColorMap['공통'];
+
+        // 재고 상태 판별
+        const isWarning = currentQty <= safeQty && safeQty > 0;
+        const rowClass = isWarning ? 'stock-critical' : '';
+        const qtyClass = isWarning ? 'text-right qty-critical' : 'text-right';
+        const badgeHtml = isWarning
+            ? '<span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span>'
+            : '<span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span>';
+
+        // 테이블에 행 추가
+        const tbody = document.getElementById('inventoryTableBody');
+        if (tbody) {
+            const tr = document.createElement('tr');
+            if (isWarning) tr.className = 'stock-critical';
+            tr.style.background = 'rgba(59,130,246,0.1)';
+            tr.innerHTML = `
+                <td><span class="tag" style="${siteStyle};font-size:0.7rem;">${site}</span></td>
+                <td><strong>${name}</strong></td>
+                <td>${zone}</td>
+                <td>${category}</td>
+                <td class="${qtyClass}">${currentQty} ${unit}</td>
+                <td class="text-right">${safeQty} ${unit}</td>
+                <td>${badgeHtml}</td>
+                <td>
+                    <button class="btn-icon" title="입고(+)"><i class="fa-solid fa-plus"></i></button>
+                    <button class="btn-icon" title="출고(-)"><i class="fa-solid fa-minus"></i></button>
+                </td>
+            `;
+            // 최상단에 삽입 (신규 품목이 맨 위에 보이도록)
+            tbody.insertBefore(tr, tbody.firstChild);
+            
+            // 하이라이트 효과 제거
+            setTimeout(() => { tr.style.background = ''; }, 2000);
+
+            // +/- 버튼 이벤트 바인딩
+            tr.querySelectorAll('.btn-icon').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const qtyCell = row.querySelector('td:nth-child(5)');
+                    if (!qtyCell) return;
+                    let currentText = qtyCell.innerText;
+                    let currentNum = parseInt(currentText.replace(/[^0-9\.\-]/g, ''), 10) || 0;
+                    let unitMatch = currentText.match(/[^\d\s\.\-]+/);
+                    let u = unitMatch ? unitMatch[0] : '개';
+
+                    if (this.title.includes('입고')) {
+                        currentNum += 1;
+                        qtyCell.innerHTML = `<strong>${currentNum}</strong> ${u}`;
+                        qtyCell.style.color = '#10B981';
+                    } else if (this.title.includes('출고')) {
+                        if (currentNum > 0) currentNum -= 1;
+                        qtyCell.innerHTML = `<strong>${currentNum}</strong> ${u}`;
+                        qtyCell.style.color = '#EF4444';
+                    }
+
+                    const safeCell = row.querySelector('td:nth-child(6)');
+                    const safeNum = parseInt(safeCell.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+                    const badgeCell = row.querySelector('td:nth-child(7)');
+                    
+                    if (currentNum <= safeNum && safeNum > 0) {
+                        row.classList.add('stock-critical');
+                        qtyCell.classList.add('qty-critical');
+                        badgeCell.innerHTML = '<span class="badge-critical"><i class="fa-solid fa-circle-exclamation"></i> 즉시 발주 요망</span>';
+                    } else {
+                        row.classList.remove('stock-critical');
+                        qtyCell.classList.remove('qty-critical');
+                        badgeCell.innerHTML = '<span class="badge-normal"><i class="fa-solid fa-check"></i> 정상</span>';
+                    }
+                    
+                    setTimeout(() => { qtyCell.style.color = ''; }, 500);
+                });
+            });
+        }
+
+        // 저장 피드백 토스트
+        const toast = document.getElementById('itemSaveToast');
+        const toastText = document.getElementById('itemSaveToastText');
+        if (toast && toastText) {
+            toastText.textContent = `"${name}" 품목이 재고 현황에 등록되었습니다.`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // 연속등록 모드 처리
+        const continuousMode = document.getElementById('itemContinuousMode');
+        if (continuousMode && continuousMode.checked) {
+            // 품목명만 초기화, 나머지 유지
+            nameInput.value = '';
+            nameInput.focus();
+        } else {
+            // 전체 초기화 후 재고현황 탭으로 이동
+            nameInput.value = '';
+            const tabInvBtn = document.querySelector('.tab-btn[data-target="tab-inventory"]');
+            if (tabInvBtn) tabInvBtn.click();
+        }
+    });
+}
+
+// 초기화 버튼
+if (btnItemClear) {
+    btnItemClear.addEventListener('click', () => {
+        const nameInput = document.getElementById('itemName');
+        if (nameInput) nameInput.value = '';
+        const supplierInput = document.getElementById('itemSupplier');
+        if (supplierInput) supplierInput.value = '';
+        const currentQtyInput = document.getElementById('itemCurrentQty');
+        if (currentQtyInput) currentQtyInput.value = '0';
+        const safeQtyInput = document.getElementById('itemSafeQty');
+        if (safeQtyInput) safeQtyInput.value = '0';
+        // select 초기화
+        const siteSelect = document.getElementById('itemSite');
+        if (siteSelect) siteSelect.selectedIndex = 0;
+        const zoneSelect = document.getElementById('itemZone');
+        if (zoneSelect) zoneSelect.selectedIndex = 0;
+        const catSelect = document.getElementById('itemCategory');
+        if (catSelect) catSelect.selectedIndex = 0;
+        const unitSelect = document.getElementById('itemUnit');
+        if (unitSelect) unitSelect.selectedIndex = 0;
+        // details 접기
+        const details = document.getElementById('itemOptionalFields');
+        if (details) details.removeAttribute('open');
+        // 포커스
+        if (nameInput) nameInput.focus();
+    });
+}
+
+// Enter 키로 빠른 저장
+const itemNameInput = document.getElementById('itemName');
+if (itemNameInput && btnItemSave) {
+    itemNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            btnItemSave.click();
+        }
+    });
+}
 
 });
