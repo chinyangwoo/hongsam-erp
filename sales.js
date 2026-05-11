@@ -201,6 +201,83 @@ document.addEventListener('DOMContentLoaded', () => {
         // 차트 및 캘린더 갱신
         if (typeof renderRevenueCalendars === 'function') renderRevenueCalendars();
         if (typeof renderBarCharts === 'function') renderBarCharts();
+
+        // ── 3) 통합 매출 집계 KPI 자동 계산 (실제 데이터 기반) ──
+        const wonFmt = v => {
+            if (v >= 100000000) return '₩ ' + (v / 100000000).toFixed(1) + '억';
+            if (v >= 10000) return '₩ ' + Math.round(v).toLocaleString();
+            return '₩ ' + v.toLocaleString();
+        };
+        const pctDelta = (curr, prev) => {
+            if (!prev || prev === 0) return null;
+            return Math.round(((curr - prev) / prev) * 100);
+        };
+        const setKpi = (valId, subId, value, pct, label) => {
+            const elV = document.getElementById(valId);
+            const elS = document.getElementById(subId);
+            if (elV) elV.innerText = wonFmt(value);
+            if (elS && pct !== null) {
+                const arrow = pct >= 0 ? '▲' : '▼';
+                const cls = pct >= 0 ? 'up' : 'down';
+                elS.innerHTML = `<span class="${cls}">${arrow} ${Math.abs(pct)}%</span> ${label}`;
+            } else if (elS) {
+                elS.innerHTML = `<span style="color:var(--text-secondary);">호텔 실적 기준</span>`;
+            }
+        };
+
+        // 날짜 유틸
+        const todayD = new Date(y, m, d);
+        const getDateKey = (dt) => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+        const getMonday = (dt) => { const dd = new Date(dt); const day = dd.getDay(); const diff = dd.getDate() - day + (day === 0 ? -6 : 1); dd.setDate(diff); return dd; };
+
+        // (a) 전일 매출 — 가장 최근 날짜 기준
+        const sortedRecs = [...hotelApiData].sort((a,b) => b.date.localeCompare(a.date));
+        if (sortedRecs.length >= 1) {
+            const yesterdayRev = sortedRecs[0].revenue.total || 0;
+            // 전주 동일 요일 데이터 찾기
+            const latestDate = new Date(sortedRecs[0].date);
+            const sameLastWeek = new Date(latestDate);
+            sameLastWeek.setDate(sameLastWeek.getDate() - 7);
+            const lastWeekKey = getDateKey(sameLastWeek);
+            const lastWeekRec = hotelApiData.find(r => r.date === lastWeekKey);
+            const lastWeekRev = lastWeekRec ? lastWeekRec.revenue.total : null;
+            setKpi('kpiYesterday', 'kpiYesterdaySub', yesterdayRev, pctDelta(yesterdayRev, lastWeekRev), '전주 동일 대비');
+        }
+
+        // (b) 금주 매출 (월~일 기준)
+        const thisMonday = getMonday(todayD);
+        const prevMonday = new Date(thisMonday); prevMonday.setDate(prevMonday.getDate() - 7);
+        let thisWeekTotal = 0, prevWeekTotal = 0;
+        hotelApiData.forEach(r => {
+            const rd = new Date(r.date);
+            if (rd >= thisMonday && rd <= todayD) thisWeekTotal += (r.revenue.total || 0);
+            const prevSunday = new Date(thisMonday); prevSunday.setDate(prevSunday.getDate() - 1);
+            if (rd >= prevMonday && rd <= prevSunday) prevWeekTotal += (r.revenue.total || 0);
+        });
+        setKpi('kpiWeek', 'kpiWeekSub', thisWeekTotal, pctDelta(thisWeekTotal, prevWeekTotal), '전주 대비');
+
+        // (c) 금월 매출
+        const thisMonthPrefix = `${y}-${mStr}`;
+        const prevM = m === 0 ? 11 : m - 1;
+        const prevY = m === 0 ? y - 1 : y;
+        const prevMonthPrefix = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
+        let thisMonthTotal = 0, prevMonthTotal = 0;
+        hotelApiData.forEach(r => {
+            if (r.date.startsWith(thisMonthPrefix)) thisMonthTotal += (r.revenue.total || 0);
+            if (r.date.startsWith(prevMonthPrefix)) prevMonthTotal += (r.revenue.total || 0);
+        });
+        setKpi('kpiMonth', 'kpiMonthSub', thisMonthTotal, pctDelta(thisMonthTotal, prevMonthTotal), '전월 대비');
+
+        // (d) 금년 누적 매출
+        const thisYearPrefix = `${y}`;
+        let yearTotal = 0;
+        hotelApiData.forEach(r => {
+            if (r.date.startsWith(thisYearPrefix)) yearTotal += (r.revenue.total || 0);
+        });
+        const elYear = document.getElementById('kpiYear');
+        const elYearSub = document.getElementById('kpiYearSub');
+        if (elYear) elYear.innerText = wonFmt(yearTotal);
+        if (elYearSub) elYearSub.innerHTML = `<span style="color:var(--text-secondary);">1월~${m+1}월 호텔 실적 합산</span>`;
     }
 
     // 호텔 데이터 자동 로드
