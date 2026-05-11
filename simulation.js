@@ -79,8 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Object.keys(revDb).forEach(k => {
             if (k.startsWith(`${y}-${m}`)) {
                 const r = revDb[k];
-                spaMonthRev += (r.spaEntrance || 0) + (r.spaFood || 0) + (r.spaRetail || 0) + (r.spaEtc || 0);
-                spaMonthExp += (r.spaExpTotal || 0);
+                spaMonthRev += ((r.spaTickRev || 0) + (r.spaFbRev || 0)) * 10000;
+                spaMonthExp += (r.spaExpTotal || 0) * 10000;
             }
         });
 
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let sms = 0;
             Object.keys(revDb).forEach(k => {
                 if (k.startsWith(prefix)) {
-                    sms += (revDb[k].spaEntrance || 0) + (revDb[k].spaFood || 0) + (revDb[k].spaRetail || 0) + (revDb[k].spaEtc || 0);
+                    sms += ((revDb[k].spaTickRev || 0) + (revDb[k].spaFbRev || 0)) * 10000;
                 }
             });
             spaData.push(Math.round(sms / 1000));

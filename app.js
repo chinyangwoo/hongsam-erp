@@ -521,22 +521,18 @@ document.addEventListener('DOMContentLoaded', () => {
         let spaLatestDate = todayKey;
         if (!revDb[spaLatestDate]) spaLatestDate = yestKey;
 
-        const SPA_START_DATE = '2026-09-01';
-        if (revDb[spaLatestDate] && spaLatestDate >= SPA_START_DATE) {
-            spaTodayRev = (revDb[spaLatestDate].spaEntrance || 0) + (revDb[spaLatestDate].spaFood || 0) + (revDb[spaLatestDate].spaRetail || 0) + (revDb[spaLatestDate].spaEtc || 0);
+        if (revDb[spaLatestDate]) {
+            spaTodayRev = ((revDb[spaLatestDate].spaTickRev || 0) + (revDb[spaLatestDate].spaFbRev || 0)) * 10000;
         }
         if (revDb[yestKey]) {
-            spaYestExp = revDb[yestKey].spaExpTotal || 0;
+            spaYestExp = (revDb[yestKey].spaExpTotal || 0) * 10000;
         }
 
         Object.keys(revDb).forEach(k => {
             if (k.startsWith(`${y}-${m}`)) {
                 const r = revDb[k];
-                // 26년 9월 1일 이전 데이터는 합산 제외
-                if (k >= SPA_START_DATE) {
-                    spaMonthRev += (r.spaEntrance || 0) + (r.spaFood || 0) + (r.spaRetail || 0) + (r.spaEtc || 0);
-                }
-                spaMonthExp += (r.spaExpTotal || 0);
+                spaMonthRev += ((r.spaTickRev || 0) + (r.spaFbRev || 0)) * 10000;
+                spaMonthExp += (r.spaExpTotal || 0) * 10000;
             }
         });
 
@@ -595,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let hRev = 0, sRev = 0;
                 const hRec = hotelApiData.find(x => x.date === cKey);
                 if (hRec) hRev = hRec.revenue.total || 0;
-                if (revDb[cKey] && cKey >= SPA_START_DATE) sRev = (revDb[cKey].spaEntrance||0) + (revDb[cKey].spaFood||0) + (revDb[cKey].spaRetail||0) + (revDb[cKey].spaEtc||0);
+                if (revDb[cKey]) sRev = ((revDb[cKey].spaTickRev||0) + (revDb[cKey].spaFbRev||0)) * 10000;
                 
                 labels.push(i === 0 ? '오늘' : `${dDate.getMonth()+1}.${dDate.getDate()}`);
                 // 천원 단위 표시
