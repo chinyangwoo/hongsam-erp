@@ -80,25 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const isToday = (day === d) ? ' today' : '';
             const dateKey = `${y}-${mStr}-${String(day).padStart(2, '0')}`;
             
-            // 시뮬레이션 데이터 믹스 또는 실제 데이터 적용
+            // 실제 입력 데이터만 표시 (시뮬레이션 데이터 없음)
             let hotelRev = 0;
             let spaRev = 0;
             
             if (revDb[dateKey]) {
                 hotelRev = revDb[dateKey].hotelObjRev || 0;
                 spaRev = revDb[dateKey].spaEntrance || 0;
-            } else if (day <= d) {
-                // 시뮬레이션
-                const dow = new Date(y, m, day).getDay();
-                const hBase = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
-                const sBase = (dow === 5 || dow === 6) ? 120 : (dow === 0 ? 95 : 65);
-                hotelRev = Math.max(120, hBase + Math.floor(Math.random() * 80) - 40);
-                spaRev = Math.max(30, sBase + Math.floor(Math.random() * 30) - 15);
-                
-                revDb[dateKey] = {
-                    hotelObjRev: hotelRev,
-                    spaEntrance: spaRev
-                };
             }
 
             if (day <= d) {
@@ -177,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = html;
     }
 
-    // 호텔/스파 30일 매출/입장객 차트 (revDb 연동)
+    // 호텔/스파 30일 매출/입장객 차트 (실제 입력 데이터만 표시)
     window.renderBarCharts = function() {
         const hotel30Data = [];
         const spa30Data = [];
@@ -193,21 +181,75 @@ document.addEventListener('DOMContentLoaded', () => {
                 hotel30Data.push(revDb[dateKey].hotelObjRev || 0);
                 spa30Data.push(revDb[dateKey].spaEntrance || 0);
             } else {
-                const dow = pastDate.getDay();
-                // 호텔 시뮬
-                const hBase = (dow === 5 || dow === 6) ? 450 : (dow === 0 ? 380 : 250);
-                hotel30Data.push(Math.max(100, hBase + Math.floor(Math.random() * 100) - 50));
-                
-                // 스파 시뮬
-                const sBase = (dow === 5 || dow === 6) ? 200 : (dow === 0 ? 150 : 90);
-                spa30Data.push(Math.max(40, sBase + Math.floor(Math.random() * 60) - 30));
+                hotel30Data.push(0);
+                spa30Data.push(0);
             }
         }
         generateBarChart('hotelBarChart', hotel30Data, 'linear-gradient(180deg, #F59E0B, #D97706)', 'won');
         generateBarChart('spaBarChart', spa30Data, 'linear-gradient(180deg, #3B82F6, #2563EB)', 'person');
     };
+
+    // ── 스파 KPI 카드 자동 업데이트 (실제 입력 데이터 기반) ──
+    window.updateSpaKpiCards = function() {
+        const todayKey = `${y}-${mStr}-${String(d).padStart(2, '0')}`;
+        const yesterdayDate = new Date(y, m, d - 1);
+        const yKey = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth()+1).padStart(2,'0')}-${String(yesterdayDate.getDate()).padStart(2,'0')}`;
+        
+        const todayData = revDb[todayKey] || {};
+        const yesterdayData = revDb[yKey] || {};
+        
+        // 오늘 입장객
+        const todayVisitors = todayData.spaEntrance || 0;
+        const yesterdayVisitors = yesterdayData.spaEntrance || 0;
+        const el1 = document.getElementById('spa-kpi-visitors');
+        const el1d = document.getElementById('spa-kpi-visitors-delta');
+        if (el1 && todayVisitors > 0) {
+            el1.innerHTML = todayVisitors + '<span style="font-size:0.8rem;">명</span>';
+            const diff = todayVisitors - yesterdayVisitors;
+            if (yesterdayVisitors > 0) {
+                el1d.className = diff >= 0 ? 'sk-delta up' : 'sk-delta down';
+                el1d.innerText = (diff >= 0 ? '▲ ' : '▼ ') + Math.abs(diff) + '명 전일대비';
+            } else {
+                el1d.className = 'sk-delta';
+                el1d.style.color = 'var(--text-secondary)';
+                el1d.innerText = '전일 데이터 없음';
+            }
+        }
+        
+        // 입장 매출
+        const ticketRev = todayData.spaTickRev || 0;
+        const el2 = document.getElementById('spa-kpi-ticket');
+        if (el2 && ticketRev > 0) el2.innerText = '₩ ' + (ticketRev * 10000).toLocaleString();
+        
+        // 식음료 매출
+        const fbRev = todayData.spaFbRev || 0;
+        const el3 = document.getElementById('spa-kpi-fb');
+        if (el3 && fbRev > 0) el3.innerText = '₩ ' + (fbRev * 10000).toLocaleString();
+        
+        // 금월 누적 방문
+        let monthTotal = 0;
+        for (let day = 1; day <= d; day++) {
+            const dk = `${y}-${mStr}-${String(day).padStart(2, '0')}`;
+            if (revDb[dk] && revDb[dk].spaEntrance) monthTotal += revDb[dk].spaEntrance;
+        }
+        const el4 = document.getElementById('spa-kpi-monthly');
+        if (el4 && monthTotal > 0) el4.innerHTML = monthTotal.toLocaleString() + '<span style="font-size:0.8rem;">명</span>';
+        
+        // 객단가 (총 매출 / 총 방문객)
+        let monthTicketTotal = 0;
+        for (let day = 1; day <= d; day++) {
+            const dk = `${y}-${mStr}-${String(day).padStart(2, '0')}`;
+            if (revDb[dk] && revDb[dk].spaTickRev) monthTicketTotal += revDb[dk].spaTickRev;
+        }
+        const el5 = document.getElementById('spa-kpi-perperson');
+        if (el5 && monthTotal > 0 && monthTicketTotal > 0) {
+            const perPerson = Math.round((monthTicketTotal * 10000) / monthTotal);
+            el5.innerText = '₩ ' + perPerson.toLocaleString();
+        }
+    };
     
     renderBarCharts();
+    updateSpaKpiCards();
 
     function saveCalendarEvents() {
         if (window.hotelCalendar) {
@@ -445,52 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             height: 650,
             selectable: true,
-            events: JSON.parse(localStorage.getItem('erp_spa_events')) || [
-                {
-                    title: '하나투어 진안관광 45명',
-                    start: `${y}-${mStr}-22T14:00:00`,
-                    end: `${y}-${mStr}-22T18:00:00`,
-                    backgroundColor: '#10B981', borderColor: '#10B981',
-                    extendedProps: {
-                        people: '45명', revenue: '2,250,000원',
-                        prep: '루프탑 사우나 단체입장 준비 요망, 수건 여유분 100장 추가 배치할 것.',
-                        tagLabel: '여행사 단체 (지원팀)'
-                    }
-                },
-                {
-                    title: 'Jinan 지자체 행사 단독 대관',
-                    start: `${y}-${mStr}-14T09:00:00`,
-                    end: `${y}-${mStr}-16T18:00:00`,
-                    backgroundColor: '#3B82F6', borderColor: '#3B82F6',
-                    extendedProps: {
-                        people: '120명', revenue: '12,000,000원',
-                        prep: '전관 대관 행사. 안전 요원 3명 추가 배치, 식음료팀 특식 준비 필요.',
-                        tagLabel: '시설 대관 (지원팀)'
-                    }
-                },
-                {
-                    title: 'VIP 의전 (협력사 대표단)',
-                    start: `${y}-${mStr}-28T11:00:00`,
-                    end: `${y}-${mStr}-28T15:00:00`,
-                    backgroundColor: '#8B5CF6', borderColor: '#8B5CF6',
-                    extendedProps: {
-                        people: '5명', revenue: '(대외비)',
-                        prep: '일본식 정원 프라이빗 예약 진행, VIP 전용 어메니티 세팅 완료할 것.',
-                        tagLabel: 'VIP 의전 (본사)'
-                    }
-                },
-                {
-                    title: '대전 노인복지센터 단체 방문',
-                    start: `${y}-${mStr}-10T10:00:00`,
-                    end: `${y}-${mStr}-10T16:00:00`,
-                    backgroundColor: '#F97316', borderColor: '#F97316',
-                    extendedProps: {
-                        people: '60명', revenue: '1,800,000원',
-                        prep: '어르신 전용 온천 프로그램 운영, 점심 식사 포함.',
-                        tagLabel: '일반단체 (스파운영팀)'
-                    }
-                }
-            ],
+            events: JSON.parse(localStorage.getItem('erp_spa_events')) || [],
             eventClick: function(info) { window.openEventModal(info.event); },
             dateClick: function(info) { window.openNewEventModal(info.dateStr, 'hotel'); }
         });
@@ -733,6 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeRevenueModal();
             renderRevenueCalendars();
             if (typeof renderBarCharts === 'function') renderBarCharts();
+            if (typeof updateSpaKpiCards === 'function') updateSpaKpiCards();
             showToast('매출 데이터가 정상적으로 저장되었습니다.');
         });
     }
@@ -770,6 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeRevenueModal();
             renderRevenueCalendars();
             if (typeof renderBarCharts === 'function') renderBarCharts();
+            if (typeof updateSpaKpiCards === 'function') updateSpaKpiCards();
             showToast('해당 일자의 데이터가 삭제되었습니다.');
         });
     }
