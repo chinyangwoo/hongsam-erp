@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const d = today.getDate();
     const mStr = String(m + 1).padStart(2, '0');
 
+    // ── 캘린더 네비게이션 상태 ──
+    let calYear = y;
+    let calMonth = m;
+
     // ── 관리자 권한 및 매출 데이터 초기화 ──
     const currentUser = localStorage.getItem('currentUser') || '';
     const ADMIN_IDS = ['001'];
@@ -111,6 +115,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (latestRec) {
+            // 날짜 파싱해서 MM/DD 형식 만들기
+            const lrDate = new Date(latestRec.date);
+            const dateStr = `${lrDate.getMonth() + 1}/${lrDate.getDate()}`;
+
+            // 라벨 업데이트
+            document.getElementById('hotel-kpi-occ-label').innerText = `점유율 (${dateStr})`;
+            document.getElementById('hotel-kpi-room-rev-label').innerText = `객실 매출 (${dateStr})`;
+            document.getElementById('hotel-kpi-revpar-label').innerText = `RevPAR (${dateStr})`;
+            document.getElementById('hotel-kpi-rooms-sold-label').innerText = `판매 객실수 (${dateStr})`;
+            document.getElementById('hotel-kpi-adr-label').innerText = `ADR (${dateStr})`;
+            document.getElementById('hotel-kpi-fb-label').innerText = `F&B 매출 (${dateStr})`;
+
             const fmt = v => '₩ ' + v.toLocaleString();
             const delta = (curr, prev, unit) => {
                 if (!prev) return { cls: 'sk-delta', text: `최신: ${latestRec.date}`, style: 'color:var(--text-secondary)' };
@@ -296,8 +312,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const spaCal = document.getElementById('spaMiniCal');
         if (!hotelCal || !spaCal) return;
 
-        const daysInMonth = new Date(y, m + 1, 0).getDate();
-        const firstDay = new Date(y, m, 1).getDay(); // 0=Sun
+        // 월별 레이블 업데이트
+        const lbl = document.getElementById('hotelCalMonthLabel');
+        if (lbl) lbl.innerText = `${calYear}년 ${calMonth + 1}월`;
+
+        const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+        const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
 
         let hotelHtml = '', spaHtml = '';
@@ -321,8 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const sChartData = [];
 
         for (let day = 1; day <= daysInMonth; day++) {
-            const isToday = (day === d) ? ' today' : '';
-            const dateKey = `${y}-${mStr}-${String(day).padStart(2, '0')}`;
+            const isToday = (calYear === y && calMonth === m && day === d) ? ' today' : '';
+            const cStrMonth = String(calMonth + 1).padStart(2, '0');
+            const dateKey = `${calYear}-${cStrMonth}-${String(day).padStart(2, '0')}`;
             
             // 실제 입력 데이터만 표시 (시뮬레이션 데이터 없음)
             let hotelRev = 0;
@@ -333,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 spaRev = revDb[dateKey].spaEntrance || 0;
             }
 
-            if (day <= d) {
+            if (calYear < y || (calYear === y && calMonth < m) || (calYear === y && calMonth === m && day <= d)) {
                 hChartData.push(hotelRev);
                 sChartData.push(spaRev);
             }
@@ -377,9 +398,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         }
-
     }
-    
+
+    // ── 캘린더 네비게이션 이벤트 ──
+    const btnPrev = document.getElementById('hotelCalPrev');
+    const btnNext = document.getElementById('hotelCalNext');
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            calMonth--;
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            renderRevenueCalendars();
+        });
+    }
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            calMonth++;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            renderRevenueCalendars();
+        });
+    }
+
     // 최초 1회 렌더링
     renderRevenueCalendars();
     setTimeout(renderRevenueCalendars, 50);
