@@ -468,31 +468,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ══════════════════════════════════════════
-    // 진안군 진안읍 실시간 날씨 (OpenWeatherMap)
+    // 진안군 진안읍 실시간 날씨 (Open-Meteo — 무료, API키 불필요)
     // ══════════════════════════════════════════
     (function loadJinanWeather() {
         const widget = document.getElementById('weatherWidget');
         if (!widget) return; // index.html 이외 페이지에서는 무시
 
-        const OWM_KEY = '0c1d14abde03c1f4230d0db01aab272c'; // Free-tier key
         const LAT = 35.7914;  // 진안군 진안읍 위도
         const LON = 127.4242; // 진안군 진안읍 경도
-        const CACHE_KEY = 'erp_weather_cache';
+        const CACHE_KEY = 'erp_weather_cache_v2';
         const CACHE_TTL = 30 * 60 * 1000; // 30분 캐시
 
+        // WMO 날씨 코드 → 한국어 설명 + 아이콘 매핑
+        const WMO_MAP = {
+            0:  { desc: '맑음',        icon: 'fa-sun',              color: '#FBBF24' },
+            1:  { desc: '대체로 맑음',  icon: 'fa-sun',              color: '#FBBF24' },
+            2:  { desc: '구름 조금',    icon: 'fa-cloud-sun',        color: '#60A5FA' },
+            3:  { desc: '흐림',        icon: 'fa-cloud',            color: '#94A3B8' },
+            45: { desc: '안개',        icon: 'fa-smog',             color: '#9CA3AF' },
+            48: { desc: '짙은 안개',    icon: 'fa-smog',             color: '#6B7280' },
+            51: { desc: '가벼운 이슬비', icon: 'fa-cloud-rain',       color: '#60A5FA' },
+            53: { desc: '이슬비',      icon: 'fa-cloud-rain',       color: '#3B82F6' },
+            55: { desc: '짙은 이슬비',  icon: 'fa-cloud-rain',       color: '#2563EB' },
+            61: { desc: '약한 비',     icon: 'fa-cloud-showers-heavy', color: '#3B82F6' },
+            63: { desc: '비',         icon: 'fa-cloud-showers-heavy', color: '#2563EB' },
+            65: { desc: '강한 비',     icon: 'fa-cloud-showers-heavy', color: '#1D4ED8' },
+            66: { desc: '약한 빙우',   icon: 'fa-icicles',          color: '#93C5FD' },
+            67: { desc: '강한 빙우',   icon: 'fa-icicles',          color: '#60A5FA' },
+            71: { desc: '약한 눈',     icon: 'fa-snowflake',        color: '#BFDBFE' },
+            73: { desc: '눈',         icon: 'fa-snowflake',        color: '#93C5FD' },
+            75: { desc: '강한 눈',     icon: 'fa-snowflake',        color: '#60A5FA' },
+            80: { desc: '소나기',      icon: 'fa-cloud-showers-heavy', color: '#3B82F6' },
+            81: { desc: '소나기',      icon: 'fa-cloud-showers-heavy', color: '#2563EB' },
+            82: { desc: '강한 소나기',  icon: 'fa-cloud-showers-heavy', color: '#1D4ED8' },
+            95: { desc: '뇌우',       icon: 'fa-cloud-bolt',       color: '#F59E0B' },
+            96: { desc: '우박 뇌우',   icon: 'fa-cloud-bolt',       color: '#EF4444' },
+            99: { desc: '강한 우박 뇌우', icon: 'fa-cloud-bolt',     color: '#DC2626' }
+        };
+
+        function getWmo(code) {
+            return WMO_MAP[code] || { desc: '알 수 없음', icon: 'fa-question', color: '#94A3B8' };
+        }
+
         function renderWeather(data) {
-            const temp = Math.round(data.main.temp);
-            const feelsLike = Math.round(data.main.feels_like);
-            const humidity = data.main.humidity;
-            const desc = data.weather[0].description;
-            const iconCode = data.weather[0].icon;
-            const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+            const c = data.current;
+            const temp = Math.round(c.temperature_2m);
+            const feelsLike = Math.round(c.apparent_temperature);
+            const humidity = c.relative_humidity_2m;
+            const wmo = getWmo(c.weather_code);
 
             document.getElementById('weatherTemp').textContent = `${temp}°`;
-            document.getElementById('weatherDesc').textContent = desc;
+            document.getElementById('weatherDesc').textContent = wmo.desc;
             document.getElementById('weatherFeels').textContent = `체감 ${feelsLike}°`;
             document.getElementById('weatherHumid').innerHTML = `<i class="fa-solid fa-droplet" style="color:#3B82F6; margin-right:1px;"></i>${humidity}%`;
-            document.getElementById('weatherIcon').src = iconUrl;
+            
+            // FontAwesome 아이콘 사용 (이미지 대신)
+            const iconEl = document.getElementById('weatherIcon');
+            iconEl.style.display = 'none'; // img 태그 숨김
+            // 아이콘을 span으로 교체
+            let faIcon = widget.querySelector('.weather-fa-icon');
+            if (!faIcon) {
+                faIcon = document.createElement('span');
+                faIcon.className = 'weather-fa-icon';
+                faIcon.style.cssText = 'font-size:2rem; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));';
+                iconEl.parentNode.insertBefore(faIcon, iconEl);
+            }
+            faIcon.innerHTML = `<i class="fa-solid ${wmo.icon}" style="color:${wmo.color};"></i>`;
+            
             widget.style.display = 'flex';
         }
 
@@ -505,8 +547,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch(e) {}
 
-        // API 호출
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${OWM_KEY}&units=metric&lang=kr`)
+        // Open-Meteo API 호출 (API 키 불필요)
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Asia/Seoul`;
+        
+        fetch(apiUrl)
             .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
             .then(data => {
                 renderWeather(data);
