@@ -431,27 +431,181 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // POS & Accounting Logic Mock Update
-    function updateKPIs() {
-        // [POS 매출 연동 로직 설명]
-        // 1. POS 시스템의 API(예: OKPOS)를 호출하여 금일(today) 및 월간(month) 누적 매출 데이터를 가져옵니다.
-        // 2. Fetch API나 Axios 등을 사용하여 백엔드(서버)에서 POS연동 데이터를 가져오고 HTML에 렌더링합니다.
+    // ══════════════════════════════════════════
+    // 통합 대시보드 매출 KPI 자동 연동
+    // ══════════════════════════════════════════
+    async function fetchDashboardData() {
+        // 1. 호텔 데이터 로드
+        let hotelApiData = [];
+        const HOTEL_API = 'https://hongsam.dothome.co.kr/api.php?action=load';
+        const HOTEL_CACHE_KEY = 'erp_hotel_api_cache';
+        try {
+            const cached = JSON.parse(localStorage.getItem(HOTEL_CACHE_KEY) || '{}');
+            if (cached.ts && (Date.now() - cached.ts < 30 * 60 * 1000) && cached.data) {
+                hotelApiData = cached.data;
+            } else {
+                const res = await fetch(HOTEL_API);
+                if (res.ok) {
+                    hotelApiData = await res.json();
+                    localStorage.setItem(HOTEL_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: hotelApiData }));
+                }
+            }
+        } catch(e) {
+            try { hotelApiData = JSON.parse(localStorage.getItem(HOTEL_CACHE_KEY) || '{}').data || []; } catch(e2) {}
+        }
+
+        // 2. 스파 데이터 로드 (로컬 DB)
+        let revDb = {};
+        try { revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}'); } catch(e) {}
+
+        // 날짜 헬퍼
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, '0');
+        const d = String(today.getDate()).padStart(2, '0');
+        const todayKey = `${y}-${m}-${d}`;
+
+        const yest = new Date(today); yest.setDate(yest.getDate() - 1);
+        const yestY = yest.getFullYear();
+        const yestM = String(yest.getMonth() + 1).padStart(2, '0');
+        const yestD = String(yest.getDate()).padStart(2, '0');
+        const yestKey = `${yestY}-${yestM}-${yestD}`;
+
+        // -- 호텔 KPI 계산 --
+        let hotelLatestRec = null;
+        if (hotelApiData.length > 0) {
+            const sorted = hotelApiData.sort((a, b) => b.date.localeCompare(a.date));
+            hotelLatestRec = sorted[0]; // 가장 최근일자 (보통 전일 또는 오늘)
+        }
+
+        let hotelTodayRev = 0;
+        let hotelMonthRev = 0;
+        if (hotelLatestRec) hotelTodayRev = hotelLatestRec.revenue.total || 0;
         
-        // [지출결의 연동 로직 설명]
-        // 1. 회계 담당자가 시스템에 입력한 지출 데이터베이스(erp_cashflow_db)를 조회.
-        // 2. 전일 날짜에 해당하는 지출을 합산하여 '전일 지출'에 반영.
-        // 3. 매달 1일부터 전일까지 해당하는 지출을 합산하여 '월간 누적 지출'에 반영.
-        
-        let yesterdayTotal = 350000;
-        let monthTotal = 18300400;
-        
-        // 실제 데이터가 있다고 가정할 때의 업데이트
-        const kpiYestExp = document.getElementById('kpi-yesterday-exp');
-        const kpiMonthExp = document.getElementById('kpi-month-exp');
-        if (kpiYestExp) kpiYestExp.innerText = yesterdayTotal.toLocaleString();
-        if (kpiMonthExp) kpiMonthExp.innerText = monthTotal.toLocaleString();
+        hotelApiData.forEach(r => {
+            if (r.date.startsWith(`${y}-${m}`)) hotelMonthRev += (r.revenue.total || 0);
+        });
+
+        const elHotelToday = document.getElementById('kpi-hotel-today-rev');
+        const elHotelTodayTrend = document.getElementById('kpi-hotel-today-trend');
+        const elHotelMonth = document.getElementById('kpi-hotel-month-rev');
+        const elHotelMonthTrend = document.getElementById('kpi-hotel-month-trend');
+        const elHotelOcc = document.getElementById('kpi-hotel-occupancy');
+        const elHotelAdr = document.getElementById('kpi-hotel-adr');
+
+        if (elHotelToday) {
+            elHotelToday.innerText = hotelTodayRev.toLocaleString();
+            if (elHotelTodayTrend && hotelLatestRec) {
+                const lrD = new Date(hotelLatestRec.date);
+                elHotelTodayTrend.innerHTML = `<i class="fa-solid fa-check"></i> ${lrD.getMonth()+1}/${lrD.getDate()} 기준`;
+                elHotelTodayTrend.className = 'trend neutral';
+            }
+        }
+        if (elHotelMonth) {
+            elHotelMonth.innerText = hotelMonthRev.toLocaleString();
+            if (elHotelMonthTrend) {
+                elHotelMonthTrend.innerHTML = `<i class="fa-solid fa-calendar-check"></i> 이번달 합계`;
+                elHotelMonthTrend.className = 'trend neutral';
+            }
+        }
+        if (elHotelOcc && hotelLatestRec) elHotelOcc.innerText = (hotelLatestRec.metrics.occRate || 0) + '%';
+        if (elHotelAdr && hotelLatestRec) elHotelAdr.innerText = (hotelLatestRec.metrics.adr || 0).toLocaleString();
+
+        // -- 스파 KPI 계산 --
+        let spaTodayRev = 0;
+        let spaMonthRev = 0;
+        let spaYestExp = 0;
+        let spaMonthExp = 0;
+
+        // 가장 최근 스파 데이터 (todayKey부터 과거로 탐색)
+        let spaLatestDate = todayKey;
+        if (!revDb[spaLatestDate]) spaLatestDate = yestKey;
+
+        if (revDb[spaLatestDate]) {
+            spaTodayRev = (revDb[spaLatestDate].spaEntrance || 0) + (revDb[spaLatestDate].spaFood || 0) + (revDb[spaLatestDate].spaRetail || 0) + (revDb[spaLatestDate].spaEtc || 0);
+        }
+        if (revDb[yestKey]) {
+            spaYestExp = revDb[yestKey].spaExpTotal || 0;
+        }
+
+        Object.keys(revDb).forEach(k => {
+            if (k.startsWith(`${y}-${m}`)) {
+                const r = revDb[k];
+                spaMonthRev += (r.spaEntrance || 0) + (r.spaFood || 0) + (r.spaRetail || 0) + (r.spaEtc || 0);
+                spaMonthExp += (r.spaExpTotal || 0);
+            }
+        });
+
+        const elSpaToday = document.getElementById('kpi-spa-today-rev');
+        const elSpaTodayTrend = document.getElementById('kpi-spa-today-trend');
+        const elSpaMonth = document.getElementById('kpi-spa-month-rev');
+        const elSpaMonthTrend = document.getElementById('kpi-spa-month-trend');
+        const elSpaYestExp = document.getElementById('kpi-spa-yesterday-exp');
+        const elSpaMonthExp = document.getElementById('kpi-spa-month-exp');
+
+        if (elSpaToday) {
+            elSpaToday.innerText = spaTodayRev.toLocaleString();
+            if (elSpaTodayTrend) {
+                const dpt = spaLatestDate.split('-');
+                elSpaTodayTrend.innerHTML = `<i class="fa-solid fa-check"></i> ${parseInt(dpt[1])}/${parseInt(dpt[2])} 기준`;
+                elSpaTodayTrend.className = 'trend neutral';
+            }
+        }
+        if (elSpaMonth) {
+            elSpaMonth.innerText = spaMonthRev.toLocaleString();
+            if (elSpaMonthTrend) {
+                elSpaMonthTrend.innerHTML = `<i class="fa-solid fa-calendar-check"></i> 이번달 합계`;
+                elSpaMonthTrend.className = 'trend neutral';
+            }
+        }
+        if (elSpaYestExp) elSpaYestExp.innerText = spaYestExp.toLocaleString();
+        if (elSpaMonthExp) elSpaMonthExp.innerText = spaMonthExp.toLocaleString();
+
+        // -- 통합 요약 계산 --
+        const totalToday = hotelTodayRev + spaTodayRev;
+        const totalMonthRev = hotelMonthRev + spaMonthRev;
+        const totalMonthExp = spaMonthExp; // 현재 지출은 스파 위주로 기록
+        const totalProfit = totalMonthRev - totalMonthExp;
+
+        const elTotToday = document.getElementById('kpi-total-today');
+        const elTotMonth = document.getElementById('kpi-total-month');
+        const elTotExp = document.getElementById('kpi-total-exp');
+        const elTotProfit = document.getElementById('kpi-total-profit');
+
+        if (elTotToday) elTotToday.innerText = '₩ ' + totalToday.toLocaleString();
+        if (elTotMonth) elTotMonth.innerText = '₩ ' + totalMonthRev.toLocaleString();
+        if (elTotExp) elTotExp.innerText = '₩ ' + totalMonthExp.toLocaleString();
+        if (elTotProfit) elTotProfit.innerText = '₩ ' + totalProfit.toLocaleString();
+        // -- 차트 업데이트 (최근 7일 매출) --
+        if (typeof revenueChart !== 'undefined' && revenueChart) {
+            const labels = [];
+            const data = [];
+            for (let i = 6; i >= 0; i--) {
+                const dDate = new Date(today);
+                dDate.setDate(dDate.getDate() - i);
+                const cy = dDate.getFullYear();
+                const cm = String(dDate.getMonth() + 1).padStart(2, '0');
+                const cd = String(dDate.getDate()).padStart(2, '0');
+                const cKey = `${cy}-${cm}-${cd}`;
+                
+                let hRev = 0, sRev = 0;
+                const hRec = hotelApiData.find(x => x.date === cKey);
+                if (hRec) hRev = hRec.revenue.total || 0;
+                if (revDb[cKey]) sRev = (revDb[cKey].spaEntrance||0) + (revDb[cKey].spaFood||0) + (revDb[cKey].spaRetail||0) + (revDb[cKey].spaEtc||0);
+                
+                labels.push(i === 0 ? '오늘' : `${dDate.getMonth()+1}.${dDate.getDate()}`);
+                // 천원 단위 표시
+                data.push(Math.round((hRev + sRev) / 1000));
+            }
+            
+            revenueChart.data.labels = labels;
+            revenueChart.data.datasets[0].data = data;
+            revenueChart.update();
+        }
     }
-    updateKPIs();
+    
+    // 호출
+    fetchDashboardData();
 
     function updateChartsTheme() {
         if (typeof Chart === 'undefined') return;

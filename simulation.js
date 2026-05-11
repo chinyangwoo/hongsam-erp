@@ -12,30 +12,127 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── Revenue Trend Chart (12개월) ──
     var revCtx = document.getElementById('simRevenueChart');
+    var revChart = null;
+    var isDark = document.body.classList.contains('dark-theme');
     if (revCtx && typeof Chart !== 'undefined') {
-        var isDark = document.body.classList.contains('dark-theme');
-        new Chart(revCtx.getContext('2d'), {
+        revChart = new Chart(revCtx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: ['6월','7월','8월','9월','10월','11월','12월','1월','2월','3월','4월','5월'],
+                labels: [],
                 datasets: [
-                    { label: '홍삼스파 매출', data: [120,145,168,135,118,105,95,88,102,125,142,155], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true },
-                    { label: '홍삼빌호텔 매출', data: [85,95,112,88,72,65,58,52,68,82,98,113], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true }
+                    { label: '홍삼스파 매출', data: [], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true },
+                    { label: '홍삼빌호텔 매출', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true }
                 ]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top', labels: { usePointStyle: true, padding: 20, color: isDark ? '#94A3B8' : '#6B7280' } },
-                    tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ₩' + ctx.parsed.y.toLocaleString() + '백만'; } } }
+                    tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ₩' + ctx.parsed.y.toLocaleString() + '천원'; } } }
                 },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { callback: function(v) { return '₩' + v + 'M'; }, color: isDark ? '#94A3B8' : '#6B7280' } },
+                    y: { beginAtZero: true, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { callback: function(v) { return '₩' + (v/1000).toFixed(0) + 'M'; }, color: isDark ? '#94A3B8' : '#6B7280' } },
                     x: { grid: { display: false }, ticks: { color: isDark ? '#94A3B8' : '#6B7280' } }
                 }
             }
         });
     }
+
+    async function loadSimulationData() {
+        let hotelApiData = [];
+        try {
+            const cached = JSON.parse(localStorage.getItem('erp_hotel_api_cache') || '{}');
+            if (cached.ts && (Date.now() - cached.ts < 30 * 60 * 1000) && cached.data) {
+                hotelApiData = cached.data;
+            } else {
+                const res = await fetch('https://hongsam.dothome.co.kr/api.php?action=load');
+                if (res.ok) hotelApiData = await res.json();
+            }
+        } catch(e) {
+            try { hotelApiData = JSON.parse(localStorage.getItem('erp_hotel_api_cache') || '{}').data || []; } catch(e2) {}
+        }
+
+        let revDb = {};
+        try { revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}'); } catch(e) {}
+
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, '0');
+
+        let hotelMonthRev = 0;
+        let spaMonthRev = 0;
+        let spaMonthExp = 0;
+        let hotelLatestOcc = 0;
+
+        // 호텔 당월 매출 및 최신 점유율
+        let hotelLatestRec = null;
+        if (hotelApiData.length > 0) {
+            const sorted = hotelApiData.sort((a, b) => b.date.localeCompare(a.date));
+            hotelLatestRec = sorted[0];
+            hotelLatestOcc = hotelLatestRec.metrics.occRate || 0;
+        }
+
+        hotelApiData.forEach(r => {
+            if (r.date.startsWith(`${y}-${m}`)) hotelMonthRev += (r.revenue.total || 0);
+        });
+
+        Object.keys(revDb).forEach(k => {
+            if (k.startsWith(`${y}-${m}`)) {
+                const r = revDb[k];
+                spaMonthRev += (r.spaEntrance || 0) + (r.spaFood || 0) + (r.spaRetail || 0) + (r.spaEtc || 0);
+                spaMonthExp += (r.spaExpTotal || 0);
+            }
+        });
+
+        const elRev = document.getElementById('simRevenue');
+        const elCost = document.getElementById('simCost');
+        const elProfit = document.getElementById('simProfit');
+        const elOcc = document.getElementById('simOccupancy');
+
+        const totalRev = hotelMonthRev + spaMonthRev;
+        const totalProfit = totalRev - spaMonthExp;
+
+        if (elRev) elRev.innerText = '₩ ' + totalRev.toLocaleString();
+        if (elCost) elCost.innerText = '₩ ' + spaMonthExp.toLocaleString();
+        if (elProfit) elProfit.innerText = '₩ ' + totalProfit.toLocaleString();
+        if (elOcc) elOcc.innerText = hotelLatestOcc + '%';
+
+        // 12개월 차트 데이터
+        const labels = [];
+        const spaData = [];
+        const hotelData = [];
+
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            const sy = d.getFullYear();
+            const sm = String(d.getMonth() + 1).padStart(2, '0');
+            const prefix = `${sy}-${sm}`;
+            
+            labels.push(`${d.getMonth() + 1}월`);
+            
+            let smh = 0;
+            hotelApiData.forEach(r => {
+                if (r.date.startsWith(prefix)) smh += (r.revenue.total || 0);
+            });
+            hotelData.push(Math.round(smh / 1000)); // 천원 단위
+
+            let sms = 0;
+            Object.keys(revDb).forEach(k => {
+                if (k.startsWith(prefix)) {
+                    sms += (revDb[k].spaEntrance || 0) + (revDb[k].spaFood || 0) + (revDb[k].spaRetail || 0) + (revDb[k].spaEtc || 0);
+                }
+            });
+            spaData.push(Math.round(sms / 1000));
+        }
+
+        if (revChart) {
+            revChart.data.labels = labels;
+            revChart.data.datasets[0].data = spaData;
+            revChart.data.datasets[1].data = hotelData;
+            revChart.update();
+        }
+    }
+    loadSimulationData();
 
     // ── Cost Breakdown Doughnut ──
     var costCtx = document.getElementById('simCostChart');
