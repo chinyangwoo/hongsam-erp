@@ -964,8 +964,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Sort months descending
         const sortedMonths = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a));
         
-        // Take top 3 months
-        const recentMonths = sortedMonths.slice(0, 3);
+        // Take top 12 months (Full year)
+        const recentMonths = sortedMonths.slice(0, 12);
         
         if (recentMonths.length === 0) {
             container.innerHTML = '<div style="text-align: center; padding: 30px; color: #94A3B8;">등록된 급여 정보가 없습니다. 급여대장 엑셀 업로드 또는 간편 입력을 사용하세요.</div>';
