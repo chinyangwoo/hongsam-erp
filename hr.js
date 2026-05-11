@@ -924,8 +924,52 @@ document.addEventListener('DOMContentLoaded', () => {
             employees.forEach(emp => addEmployeeCard(emp));
         } catch (_) {}
     }
+
+    function renderPayrollTable() {
+        const tbody = document.getElementById('payrollTableBody');
+        if (!tbody) return;
+        
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(_) {}
+        
+        // Filter employees that have basic payroll info
+        const payrollEmps = employees.filter(e => e.base_salary && parseInt(e.base_salary) > 0);
+        if (payrollEmps.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 30px;">등록된 급여 정보가 없습니다. 급여대장 엑셀 업로드 또는 간편 입력을 사용하세요.</td></tr>';
+            return;
+        }
+
+        payrollEmps.sort((a, b) => parseInt(a.emp_id, 10) - parseInt(b.emp_id, 10));
+        tbody.innerHTML = '';
+        
+        const fmt = (n, neg=false) => {
+            let num = Number(n) || 0;
+            if(neg && num > 0) num = -num;
+            return num.toLocaleString('ko-KR');
+        };
+
+        payrollEmps.forEach(emp => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${emp.emp_id || '-'}</td>
+                <td>${emp.rank || '-'}</td>
+                <td>${emp.name || '-'}</td>
+                <td class="text-right">${fmt(emp.base_salary)}</td>
+                <td class="text-right">${fmt(emp.meal_allowance)}</td>
+                <td class="text-right">${fmt(emp.ot_allowance)}</td>
+                <td class="text-right">${fmt(emp.national_pension, true)}</td>
+                <td class="text-right">${fmt(emp.health_insurance, true)}</td>
+                <td class="text-right">${fmt(emp.employment_ins, true)}</td>
+                <td class="text-right">${fmt(emp.income_tax, true)}</td>
+                <td class="text-right highlight">${fmt(emp.net_salary)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
     loadSavedEmployees();
     renderVacationTable(); // 초기 연차현황 렌더링
+    renderPayrollTable();  // 급여 테이블 렌더링
 
     // ─── 정적 카드에도 수정/삭제 버튼 추가 ───
     document.querySelectorAll('.employee-card').forEach(card => {
