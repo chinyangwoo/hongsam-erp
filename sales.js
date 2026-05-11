@@ -45,6 +45,169 @@ document.addEventListener('DOMContentLoaded', () => {
     let revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
 
     // ══════════════════════════════════════════
+    // 0. 홍삼빌호텔 API 자동 연동 (hongsam.dothome.co.kr)
+    // ══════════════════════════════════════════
+    const HOTEL_API = 'https://hongsam.dothome.co.kr/api.php?action=load';
+    const HOTEL_CACHE_KEY = 'erp_hotel_api_cache';
+    const HOTEL_CACHE_TTL = 30 * 60 * 1000; // 30분 캐시
+
+    let hotelApiData = []; // 호텔 API에서 가져온 원본 레코드
+
+    async function fetchHotelData() {
+        // 캐시 확인
+        try {
+            const cached = JSON.parse(localStorage.getItem(HOTEL_CACHE_KEY) || '{}');
+            if (cached.ts && (Date.now() - cached.ts < HOTEL_CACHE_TTL) && cached.data) {
+                hotelApiData = cached.data;
+                applyHotelDataToERP();
+                return;
+            }
+        } catch(e) {}
+
+        // API 호출
+        try {
+            const res = await fetch(HOTEL_API);
+            if (res.ok) {
+                hotelApiData = await res.json();
+                localStorage.setItem(HOTEL_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: hotelApiData }));
+                console.log(`[호텔API] ${hotelApiData.length}건 데이터 수신 완료`);
+            } else {
+                throw new Error('API HTTP ' + res.status);
+            }
+        } catch(e) {
+            console.warn('[호텔API] 직접 연결 실패, 서버 캐시 시도:', e.message);
+            // 서버 캐시 파일 fallback
+            try {
+                const fallback = await fetch('/hotel_data_cache.json');
+                if (fallback.ok) hotelApiData = await fallback.json();
+            } catch(e2) {
+                // 로컬 캐시 fallback
+                try { hotelApiData = JSON.parse(localStorage.getItem(HOTEL_CACHE_KEY) || '{}').data || []; } catch(e3) {}
+            }
+        }
+
+        if (hotelApiData.length > 0) applyHotelDataToERP();
+    }
+
+    function applyHotelDataToERP() {
+        // 날짜별 Map 구성 (가장 최근 레코드 우선)
+        const dateMap = {};
+        hotelApiData.forEach(r => { dateMap[r.date] = r; });
+
+        // ── 1) 호텔 KPI 카드 업데이트 ──
+        const todayKey = `${y}-${mStr}-${String(d).padStart(2, '0')}`;
+        const yestDate = new Date(y, m, d - 1);
+        const yKey = `${yestDate.getFullYear()}-${String(yestDate.getMonth()+1).padStart(2,'0')}-${String(yestDate.getDate()).padStart(2,'0')}`;
+
+        // 가장 최근 데이터 찾기 (오늘이 없으면 가장 마지막 날짜)
+        let latestRec = dateMap[todayKey];
+        let prevRec = dateMap[yKey];
+        
+        if (!latestRec) {
+            // 오늘 데이터가 없으면 가장 최근 날짜 데이터 사용
+            const sorted = hotelApiData.sort((a, b) => b.date.localeCompare(a.date));
+            if (sorted.length > 0) latestRec = sorted[0];
+            if (sorted.length > 1) prevRec = sorted[1];
+        }
+
+        if (latestRec) {
+            const fmt = v => '₩ ' + v.toLocaleString();
+            const delta = (curr, prev, unit) => {
+                if (!prev) return { cls: 'sk-delta', text: `최신: ${latestRec.date}`, style: 'color:var(--text-secondary)' };
+                const diff = curr - prev;
+                const pct = prev > 0 ? Math.round(((curr - prev) / prev) * 100) : 0;
+                if (diff >= 0) return { cls: 'sk-delta up', text: `▲ ${unit === '%' ? Math.abs(pct) + '%' : Math.abs(diff) + unit} 전일대비`, style: '' };
+                else return { cls: 'sk-delta down', text: `▼ ${unit === '%' ? Math.abs(pct) + '%' : Math.abs(diff) + unit} 전일대비`, style: '' };
+            };
+
+            // 점유율
+            const occ = latestRec.metrics.occRate || 0;
+            const prevOcc = prevRec ? (prevRec.metrics.occRate || 0) : null;
+            const elOcc = document.getElementById('hotel-kpi-occ');
+            const elOccD = document.getElementById('hotel-kpi-occ-delta');
+            if (elOcc) elOcc.innerHTML = occ + '<span style="font-size:0.8rem;">%</span>';
+            if (elOccD && prevOcc !== null) {
+                const d1 = delta(occ, prevOcc, '%');
+                elOccD.className = d1.cls; elOccD.innerText = d1.text;
+                if (d1.style) elOccD.style.color = d1.style.split(':')[1];
+            } else if (elOccD) {
+                elOccD.innerText = '최신: ' + latestRec.date;
+            }
+
+            // 객실매출
+            const roomRev = latestRec.revenue.room || 0;
+            const elRR = document.getElementById('hotel-kpi-room-rev');
+            const elRRD = document.getElementById('hotel-kpi-room-rev-delta');
+            if (elRR) elRR.innerText = fmt(roomRev);
+            if (elRRD && prevRec) {
+                const d2 = delta(roomRev, prevRec.revenue.room || 0, '%');
+                elRRD.className = d2.cls; elRRD.innerText = d2.text;
+            }
+
+            // RevPAR
+            const revpar = latestRec.metrics.revpar || 0;
+            const elRP = document.getElementById('hotel-kpi-revpar');
+            const elRPD = document.getElementById('hotel-kpi-revpar-delta');
+            if (elRP) elRP.innerText = fmt(revpar);
+            if (elRPD && prevRec) {
+                const d3 = delta(revpar, prevRec.metrics.revpar || 0, '%');
+                elRPD.className = d3.cls; elRPD.innerText = d3.text;
+            }
+
+            // 판매 객실수
+            const roomsSold = latestRec.rooms.total || 0;
+            const elRS = document.getElementById('hotel-kpi-rooms-sold');
+            const elRSD = document.getElementById('hotel-kpi-rooms-sold-delta');
+            if (elRS) elRS.innerHTML = roomsSold + '<span style="font-size:0.8rem;"> / 43</span>';
+            if (elRSD && prevRec) {
+                const diff = roomsSold - (prevRec.rooms.total || 0);
+                elRSD.className = diff >= 0 ? 'sk-delta up' : 'sk-delta down';
+                elRSD.innerText = (diff >= 0 ? '▲ ' : '▼ ') + Math.abs(diff) + '실 전일대비';
+            }
+
+            // ADR
+            const adr = latestRec.metrics.adr || 0;
+            const elADR = document.getElementById('hotel-kpi-adr');
+            const elADRD = document.getElementById('hotel-kpi-adr-delta');
+            if (elADR) elADR.innerText = fmt(adr);
+            if (elADRD && prevRec) {
+                const d4 = delta(adr, prevRec.metrics.adr || 0, '%');
+                elADRD.className = d4.cls; elADRD.innerText = d4.text;
+            }
+
+            // F&B 매출
+            const fbRev = latestRec.revenue.food || 0;
+            const elFB = document.getElementById('hotel-kpi-fb');
+            const elFBD = document.getElementById('hotel-kpi-fb-delta');
+            if (elFB) elFB.innerText = fmt(fbRev);
+            if (elFBD && prevRec) {
+                const d5 = delta(fbRev, prevRec.revenue.food || 0, '%');
+                elFBD.className = d5.cls; elFBD.innerText = d5.text;
+            }
+        }
+
+        // ── 2) 호텔 매출 데이터를 revDb에 동기화 (미니캘린더 + 바차트 반영) ──
+        hotelApiData.forEach(r => {
+            if (!revDb[r.date]) revDb[r.date] = {};
+            // 만원 단위로 변환 (API는 원 단위)
+            revDb[r.date].hotelObjRev = Math.round((r.revenue.total || 0) / 10000);
+            revDb[r.date].hotelRoomRev = r.revenue.room || 0;
+            revDb[r.date].hotelFbRev = r.revenue.food || 0;
+            revDb[r.date].hotelRoomsSold = r.rooms.total || 0;
+            revDb[r.date].hotelOccRate = r.metrics.occRate || 0;
+        });
+        localStorage.setItem('erp_revenue_db', JSON.stringify(revDb));
+
+        // 차트 및 캘린더 갱신
+        if (typeof renderRevenueCalendars === 'function') renderRevenueCalendars();
+        if (typeof renderBarCharts === 'function') renderBarCharts();
+    }
+
+    // 호텔 데이터 자동 로드
+    fetchHotelData();
+
+
+    // ══════════════════════════════════════════
     // 1. 매출 미니 캘린더 렌더링 (호텔/스파 통합)
     // ══════════════════════════════════════════
     window.renderRevenueCalendars = function() {
