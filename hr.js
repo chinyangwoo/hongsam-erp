@@ -1097,51 +1097,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!recentMonth) return;
 
         let totalPayroll = 0;
-        const teamTotals = {};
-        const rankTotals = {};
 
         monthlyData[recentMonth].forEach(emp => {
             const gross = Number(emp.base_salary||0) + Number(emp.meal_allowance||0) + Number(emp.ot_allowance||0);
             totalPayroll += gross;
-            if (emp.dept) teamTotals[emp.dept] = (teamTotals[emp.dept] || 0) + gross;
-            if (emp.rank) rankTotals[emp.rank] = (rankTotals[emp.rank] || 0) + gross;
         });
 
-        // 1. 전사원급여지급총액
+        // 1. 해당 월 급여지급총액
+        const titleEl = document.getElementById('totalPayrollTitle');
+        if (titleEl) {
+            titleEl.textContent = `${recentMonth} 급여지급총액`;
+        }
+        
         const elTotalList = document.querySelectorAll('.kpi-card');
         elTotalList.forEach(card => {
             const h3 = card.querySelector('h3');
-            if (h3 && h3.textContent.includes('전사원 급여지급총액')) {
+            if (h3 && h3.textContent.includes('급여지급총액')) {
                 const amountP = card.querySelector('.amount');
                 if (amountP) amountP.textContent = totalPayroll.toLocaleString();
             }
         });
 
-        // 2. 팀별급여총액
-        const teamSelect = document.getElementById('teamSelect');
-        if (teamSelect) {
-            Array.from(teamSelect.options).forEach(opt => {
-                const teamName = opt.value;
-                opt.setAttribute('data-amount', teamTotals[teamName] || 0);
-            });
-            teamSelect.dispatchEvent(new Event('change'));
-        }
-
-        // 3. 직급별급여지급총액
-        const rankSelect = document.getElementById('rankSelect');
-        if (rankSelect) {
-            Array.from(rankSelect.options).forEach(opt => {
-                let rname = opt.value;
-                let amt = 0;
-                Object.keys(rankTotals).forEach(k => {
-                    if (k.includes(rname)) amt += rankTotals[k];
-                });
-                opt.setAttribute('data-amount', amt);
-            });
-            rankSelect.dispatchEvent(new Event('change'));
-        }
-
-        // 4. 월매출대비인건비비중
+        // 2. 월매출대비인건비비중
         let hotelMonthRev = 0;
         let spaMonthRev = 0;
         try {
@@ -1175,15 +1152,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalSales = hotelMonthRev + spaMonthRev;
         const ratio = totalSales > 0 ? ((totalPayroll / totalSales) * 100).toFixed(1) : 0;
         
-        elTotalList.forEach(card => {
-            const h3 = card.querySelector('h3');
-            if (h3 && h3.textContent.includes('월 매출 대비 인건비 비중')) {
-                const amountP = card.querySelector('.amount');
-                if (amountP) amountP.textContent = ratio + '%';
-                const bar = card.querySelector('.progress-bar-fill');
-                if (bar) bar.style.width = ratio + '%';
-            }
-        });
+        const ratioAmountEl = document.getElementById('payrollRatioAmount');
+        const ratioBarEl = document.getElementById('payrollRatioBar');
+        
+        if (ratioAmountEl) ratioAmountEl.textContent = ratio + '%';
+        if (ratioBarEl) ratioBarEl.style.width = ratio + '%';
     }
 
     loadSavedEmployees();
