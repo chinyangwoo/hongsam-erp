@@ -960,6 +960,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="number" id="inp_spaFbRev" class="rev-amount-input" value="${data.spaFbRev || ''}" placeholder="0">
                     <span class="rev-unit">만원</span>
                 </div>
+                <div class="rev-field-row" style="margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1);">
+                    <label style="color:#FCA5A5;">일일 지출액</label>
+                    <input type="number" id="inp_spaExpTotal" class="rev-amount-input" value="${data.spaExpTotal || ''}" placeholder="0" style="border-color:rgba(239,68,68,0.3);">
+                    <span class="rev-unit" style="color:#FCA5A5;">만원</span>
+                </div>
             `;
         }
         
@@ -997,6 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 revDb[dateStr].spaEntrance = parseInt(document.getElementById('inp_spaEntrance').value) || 0;
                 revDb[dateStr].spaTickRev = parseInt(document.getElementById('inp_spaTickRev').value) || 0;
                 revDb[dateStr].spaFbRev = parseInt(document.getElementById('inp_spaFbRev').value) || 0;
+                revDb[dateStr].spaExpTotal = parseInt(document.getElementById('inp_spaExpTotal').value) || 0;
             }
             revDb[dateStr].memo = document.getElementById('revMemo').value.trim();
             
