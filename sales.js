@@ -244,15 +244,19 @@ document.addEventListener('DOMContentLoaded', () => {
             setKpi('kpiYesterday', 'kpiYesterdaySub', yesterdayRev, pctDelta(yesterdayRev, lastWeekRev), '전주 동일 대비');
         }
 
-        // (b) 금주 매출 (월~일 기준)
-        const thisMonday = getMonday(todayD);
-        const prevMonday = new Date(thisMonday); prevMonday.setDate(prevMonday.getDate() - 7);
+        // (b) 금주 매출 (최근 7일 기준 — 가장 마지막 데이터 기준)
+        const latestDataDate = sortedRecs.length > 0 ? new Date(sortedRecs[0].date) : todayD;
+        const weekStartDate = new Date(latestDataDate);
+        weekStartDate.setDate(weekStartDate.getDate() - 6); // 최근 7일
+        const prevWeekEnd = new Date(weekStartDate);
+        prevWeekEnd.setDate(prevWeekEnd.getDate() - 1);
+        const prevWeekStart = new Date(prevWeekEnd);
+        prevWeekStart.setDate(prevWeekStart.getDate() - 6);
         let thisWeekTotal = 0, prevWeekTotal = 0;
         hotelApiData.forEach(r => {
             const rd = new Date(r.date);
-            if (rd >= thisMonday && rd <= todayD) thisWeekTotal += (r.revenue.total || 0);
-            const prevSunday = new Date(thisMonday); prevSunday.setDate(prevSunday.getDate() - 1);
-            if (rd >= prevMonday && rd <= prevSunday) prevWeekTotal += (r.revenue.total || 0);
+            if (rd >= weekStartDate && rd <= latestDataDate) thisWeekTotal += (r.revenue.total || 0);
+            if (rd >= prevWeekStart && rd <= prevWeekEnd) prevWeekTotal += (r.revenue.total || 0);
         });
         setKpi('kpiWeek', 'kpiWeekSub', thisWeekTotal, pctDelta(thisWeekTotal, prevWeekTotal), '전주 대비');
 
