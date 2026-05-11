@@ -569,8 +569,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
 
-                    const tbody = document.getElementById('payrollTableBody');
-                    if (tbody) tbody.innerHTML = ''; // Clear empty placeholder
+                    const container = document.getElementById('payrollTablesContainer');
+                    if (container) {
+                        container.innerHTML = `
+                            <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: #60A5FA;">
+                                <i class="fa-solid fa-calendar-check"></i> 엑셀 로드 임시 내역
+                            </h3>
+                            <table class="erp-table">
+                                <thead>
+                                    <tr>
+                                        <th>사번</th>
+                                        <th>직급</th>
+                                        <th>이름</th>
+                                        <th>기본급</th>
+                                        <th>식대</th>
+                                        <th>연장/야간수당</th>
+                                        <th>4대보험료</th>
+                                        <th>소득세/지방소득세</th>
+                                        <th>실수령액</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tempPayrollTbody"></tbody>
+                            </table>
+                        `;
+                    }
+                    const tbody = document.getElementById('tempPayrollTbody');
                     
                     let hrEmployees = [];
                     try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e){}
@@ -602,7 +625,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         const hi = row[cHi] || 0;
                         const ei = row[cEi] || 0;
                         const tax = row[cTax] || 0;
-                        const net = row[cNet] || ((Number(base)+Number(meal)+Number(ot)) - (Number(np)+Number(hi)+Number(ei)+Number(tax)));
+                        
+                        const insSum = Number(np) + Number(hi) + Number(ei);
+                        const net = row[cNet] || ((Number(base)+Number(meal)+Number(ot)) - (insSum+Number(tax)));
 
                         const rowHTML = `
                             <tr>
@@ -612,14 +637,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <td class="text-right">${fmt(base)}</td>
                                 <td class="text-right">${fmt(meal)}</td>
                                 <td class="text-right">${fmt(ot)}</td>
-                                <td class="text-right">${fmt(np, true)}</td>
-                                <td class="text-right">${fmt(hi, true)}</td>
-                                <td class="text-right">${fmt(ei, true)}</td>
+                                <td class="text-right">${fmt(insSum, true)}</td>
                                 <td class="text-right">${fmt(tax, true)}</td>
                                 <td class="text-right highlight">${fmt(net)}</td>
                             </tr>
                         `;
-                        tbody.insertAdjacentHTML('beforeend', rowHTML);
+                        if (tbody) tbody.insertAdjacentHTML('beforeend', rowHTML);
                     }
 
                     showSaveToast('급여 엑셀 데이터가 성공적으로 로드되었습니다.');
@@ -643,17 +666,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const pNetDisplay       = document.getElementById('pNetDisplay');
     const payrollTbody      = document.querySelector('#tab-payroll table tbody');
 
-    const payrollInputIds = ['pBase','pMeal','pOT','pNP','pHI','pEI','pTax'];
+    const payrollInputIds = ['pBase','pMeal','pOT','pInsurance','pTax'];
 
     function calcNet() {
         const base = Number(document.getElementById('pBase')?.value) || 0;
         const meal = Number(document.getElementById('pMeal')?.value) || 0;
         const ot   = Number(document.getElementById('pOT')?.value)   || 0;
-        const np   = Number(document.getElementById('pNP')?.value)   || 0;
-        const hi   = Number(document.getElementById('pHI')?.value)   || 0;
-        const ei   = Number(document.getElementById('pEI')?.value)   || 0;
+        const ins  = Number(document.getElementById('pInsurance')?.value) || 0;
         const tax  = Number(document.getElementById('pTax')?.value)  || 0;
-        const net  = base + meal + ot - np - hi - ei - tax;
+        const net  = base + meal + ot - ins - tax;
         if (pNetDisplay) pNetDisplay.textContent = net.toLocaleString('ko-KR') + ' 원';
         return net;
     }
@@ -708,11 +729,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const base = Number(document.getElementById('pBase')?.value) || 0;
             const meal = Number(document.getElementById('pMeal')?.value) || 0;
             const ot   = Number(document.getElementById('pOT')?.value)   || 0;
-            const np   = Number(document.getElementById('pNP')?.value)   || 0;
-            const hi   = Number(document.getElementById('pHI')?.value)   || 0;
-            const ei   = Number(document.getElementById('pEI')?.value)   || 0;
+            const ins  = Number(document.getElementById('pInsurance')?.value) || 0;
             const tax  = Number(document.getElementById('pTax')?.value)  || 0;
-            const net  = base + meal + ot - np - hi - ei - tax;
+            const net  = base + meal + ot - ins - tax;
 
             const fmt = (n, neg=false) => (neg ? '-' : '') + n.toLocaleString('ko-KR');
 
@@ -730,9 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="text-right">${fmt(base)}</td>
                     <td class="text-right">${fmt(meal)}</td>
                     <td class="text-right">${fmt(ot)}</td>
-                    <td class="text-right">${fmt(np, true)}</td>
-                    <td class="text-right">${fmt(hi, true)}</td>
-                    <td class="text-right">${fmt(ei, true)}</td>
+                    <td class="text-right">${fmt(ins, true)}</td>
                     <td class="text-right">${fmt(tax, true)}</td>
                     <td class="text-right highlight">${fmt(net)}</td>
                 `;
@@ -926,21 +943,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPayrollTable() {
-        const tbody = document.getElementById('payrollTableBody');
-        if (!tbody) return;
+        const container = document.getElementById('payrollTablesContainer');
+        if (!container) return;
         
         let employees = [];
         try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(_) {}
         
-        // Filter employees that have basic payroll info
-        const payrollEmps = employees.filter(e => e.base_salary && parseInt(e.base_salary) > 0);
-        if (payrollEmps.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 30px;">등록된 급여 정보가 없습니다. 급여대장 엑셀 업로드 또는 간편 입력을 사용하세요.</td></tr>';
+        // Group payroll history by month
+        const monthlyData = {};
+        employees.forEach(emp => {
+            if (emp.payroll_history && Array.isArray(emp.payroll_history)) {
+                emp.payroll_history.forEach(ph => {
+                    if (!ph.month) return;
+                    if (!monthlyData[ph.month]) monthlyData[ph.month] = [];
+                    monthlyData[ph.month].push({ ...emp, ...ph }); // Combine emp basic info + payroll record
+                });
+            }
+        });
+
+        // Sort months descending
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a));
+        
+        // Take top 3 months
+        const recentMonths = sortedMonths.slice(0, 3);
+        
+        if (recentMonths.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: #94A3B8;">등록된 급여 정보가 없습니다. 급여대장 엑셀 업로드 또는 간편 입력을 사용하세요.</div>';
             return;
         }
 
-        payrollEmps.sort((a, b) => parseInt(a.emp_id, 10) - parseInt(b.emp_id, 10));
-        tbody.innerHTML = '';
+        container.innerHTML = '';
         
         const fmt = (n, neg=false) => {
             let num = Number(n) || 0;
@@ -948,22 +980,59 @@ document.addEventListener('DOMContentLoaded', () => {
             return num.toLocaleString('ko-KR');
         };
 
-        payrollEmps.forEach(emp => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${emp.emp_id || '-'}</td>
-                <td>${emp.rank || '-'}</td>
-                <td>${emp.name || '-'}</td>
-                <td class="text-right">${fmt(emp.base_salary)}</td>
-                <td class="text-right">${fmt(emp.meal_allowance)}</td>
-                <td class="text-right">${fmt(emp.ot_allowance)}</td>
-                <td class="text-right">${fmt(emp.national_pension, true)}</td>
-                <td class="text-right">${fmt(emp.health_insurance, true)}</td>
-                <td class="text-right">${fmt(emp.employment_ins, true)}</td>
-                <td class="text-right">${fmt(emp.income_tax, true)}</td>
-                <td class="text-right highlight">${fmt(emp.net_salary)}</td>
+        recentMonths.forEach(month => {
+            const emps = monthlyData[month];
+            emps.sort((a, b) => parseInt(a.emp_id, 10) - parseInt(b.emp_id, 10));
+            
+            const monthSection = document.createElement('div');
+            monthSection.style.marginBottom = '30px';
+            
+            // "****년 **월분 급여내역"
+            monthSection.innerHTML = `
+                <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: #60A5FA;">
+                    <i class="fa-solid fa-calendar-check"></i> ${month}분 급여내역
+                </h3>
+                <table class="erp-table">
+                    <thead>
+                        <tr>
+                            <th>사번</th>
+                            <th>직급</th>
+                            <th>이름</th>
+                            <th>기본급</th>
+                            <th>식대</th>
+                            <th>연장/야간수당</th>
+                            <th>4대보험료</th>
+                            <th>소득세/지방소득세</th>
+                            <th>실수령액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             `;
-            tbody.appendChild(tr);
+            
+            const tbody = monthSection.querySelector('tbody');
+            emps.forEach(emp => {
+                const tr = document.createElement('tr');
+                
+                // Calculate combined 4대보험
+                const insSum = (Number(emp.national_pension) || 0) + (Number(emp.health_insurance) || 0) + (Number(emp.employment_ins) || 0);
+                
+                tr.innerHTML = `
+                    <td>${emp.emp_id || '-'}</td>
+                    <td>${emp.rank || '-'}</td>
+                    <td>${emp.name || '-'}</td>
+                    <td class="text-right">${fmt(emp.base_salary)}</td>
+                    <td class="text-right">${fmt(emp.meal_allowance)}</td>
+                    <td class="text-right">${fmt(emp.ot_allowance)}</td>
+                    <td class="text-right">${fmt(insSum, true)}</td>
+                    <td class="text-right">${fmt(emp.income_tax, true)}</td>
+                    <td class="text-right highlight">${fmt(emp.net_salary)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            container.appendChild(monthSection);
         });
     }
 

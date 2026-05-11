@@ -224,31 +224,11 @@
                             <button class="btn-secondary" id="btnEditPayroll"><i class="fa-solid fa-pen"></i> 간편 수정</button>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="erp-table">
-                            <thead>
-                                <tr>
-                                    <th>사번</th>
-                                    <th>직급</th>
-                                    <th>이름</th>
-                                    <th>기본급</th>
-                                    <th>식대</th>
-                                    <th>연장/야간수당</th>
-                                    <th>국민연금</th>
-                                    <th>건강보험</th>
-                                    <th>고용보험</th>
-                                    <th>소득세/지방소득세</th>
-                                    <th>실수령액</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payrollTableBody">
-                                <tr>
-                                    <td colspan="11" style="text-align: center; padding: 30px;">
-                                        더존 양식의 엑셀 급여대장을 불러오면 급여 정보가 표기됩니다.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="table-responsive" id="payrollTablesContainer">
+                        <!-- JS에서 최근 3개월 급여대장 테이블들을 렌더링합니다 -->
+                        <div style="text-align: center; padding: 30px; color: #94A3B8;">
+                            급여 정보를 불러오는 중입니다...
+                        </div>
                     </div>
                 </div>
 
@@ -778,16 +758,8 @@
                 <p style="font-size:0.8rem; color:#94A3B8; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px; margin:0;">공제 항목 — 음수(자동 처리)</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
                     <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">국민연금 (원)</label>
-                        <input id="pNP" type="number" placeholder="135000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">건강보험 (원)</label>
-                        <input id="pHI" type="number" placeholder="106350" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">고용보험 (원)</label>
-                        <input id="pEI" type="number" placeholder="27000" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+                        <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">4대보험료 (원)</label>
+                        <input id="pInsurance" type="number" placeholder="268350" style="padding:11px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); color:#F8FAFC; font-family:inherit; outline:none; width:100%; box-sizing:border-box;" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px;">
                         <label style="font-size:0.83rem; color:#94A3B8; font-weight:600;">갑근세/주민세 (원)</label>

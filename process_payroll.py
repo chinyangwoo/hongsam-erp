@@ -97,7 +97,26 @@ def main():
             name = pdata.pop("name_extracted", None)
             if name and name in emp_map:
                 idx = emp_map[name]
-                hongsam_employees[idx].update(pdata)
+                emp = hongsam_employees[idx]
+                
+                if 'payroll_history' not in emp:
+                    emp['payroll_history'] = []
+                
+                month_str = ""
+                if "1월" in f: month_str = "2026년 1월"
+                elif "2월" in f: month_str = "2026년 2월"
+                elif "3월" in f: month_str = "2026년 3월"
+                elif "4월" in f: month_str = "2026년 4월"
+                
+                pdata['month'] = month_str
+                
+                # Update if exists, otherwise append
+                existing = [x for x in emp['payroll_history'] if x.get('month') == month_str]
+                if existing:
+                    existing[0].update(pdata)
+                else:
+                    emp['payroll_history'].append(pdata)
+                
                 total_updated += 1
             else:
                 pass
