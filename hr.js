@@ -1068,6 +1068,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 monthSection.style.display = 'block';
                 tabBtn.style.background = '#3B82F6';
                 tabBtn.style.color = '#FFFFFF';
+                
+                // 선택한 월에 맞게 KPI 갱신
+                updatePayrollKPIs(month);
             };
 
             tabsContainer.appendChild(tabBtn);
@@ -1078,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(contentContainer);
     }
 
-    async function updatePayrollKPIs() {
+    async function updatePayrollKPIs(targetMonth = null) {
         let employees = [];
         try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(_) {}
         
@@ -1093,12 +1096,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         const sortedMonths = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a));
-        const recentMonth = sortedMonths[0]; // e.g. "2026년 4월"
-        if (!recentMonth) return;
+        const activeMonth = targetMonth || sortedMonths[0]; // e.g. "2026년 4월"
+        if (!activeMonth) return;
 
         let totalPayroll = 0;
 
-        monthlyData[recentMonth].forEach(emp => {
+        (monthlyData[activeMonth] || []).forEach(emp => {
             const gross = Number(emp.base_salary||0) + Number(emp.meal_allowance||0) + Number(emp.ot_allowance||0);
             totalPayroll += gross;
         });
@@ -1106,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. 해당 월 급여지급총액
         const titleEl = document.getElementById('totalPayrollTitle');
         if (titleEl) {
-            titleEl.textContent = `${recentMonth} 급여지급총액`;
+            titleEl.textContent = `${activeMonth} 급여지급총액`;
         }
         
         const elTotalList = document.querySelectorAll('.kpi-card');
@@ -1126,7 +1129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(HOTEL_API);
             if (res.ok) {
                 const data = await res.json();
-                let mMatch = recentMonth.match(/(\d{4})년 (\d{1,2})월/);
+                let mMatch = activeMonth.match(/(\d{4})년 (\d{1,2})월/);
                 if (mMatch) {
                     const y = mMatch[1];
                     const m = mMatch[2].padStart(2, '0');
@@ -1139,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
-            let mMatch = recentMonth.match(/(\d{4})년 (\d{1,2})월/);
+            let mMatch = activeMonth.match(/(\d{4})년 (\d{1,2})월/);
             if (mMatch) {
                 const y = mMatch[1];
                 const m = mMatch[2].padStart(2, '0');
@@ -1150,13 +1153,28 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) {}
 
         const totalSales = hotelMonthRev + spaMonthRev;
-        const ratio = totalSales > 0 ? ((totalPayroll / totalSales) * 100).toFixed(1) : 0;
+        const ratioNum = totalSales > 0 ? (totalPayroll / totalSales) * 100 : 0;
+        const ratio = ratioNum.toFixed(1);
         
         const ratioAmountEl = document.getElementById('payrollRatioAmount');
         const ratioBarEl = document.getElementById('payrollRatioBar');
+        const diffDescEl = document.getElementById('payrollRatioDiff');
         
         if (ratioAmountEl) ratioAmountEl.textContent = ratio + '%';
         if (ratioBarEl) ratioBarEl.style.width = ratio + '%';
+
+        if (diffDescEl) {
+            const IDEAL_RATIO = 30.0;
+            const diff = ratioNum - IDEAL_RATIO;
+            const diffAbs = Math.abs(diff).toFixed(1);
+            if (ratioNum === 0) {
+                diffDescEl.innerHTML = `매출 데이터 없음`;
+            } else if (diff > 0) {
+                diffDescEl.innerHTML = `적정 인건비중(${IDEAL_RATIO}%) 대비 <span style="color:#EF4444; font-weight:bold;">${diffAbs}% 초과</span>`;
+            } else {
+                diffDescEl.innerHTML = `적정 인건비중(${IDEAL_RATIO}%) 대비 <span style="color:#10B981; font-weight:bold;">${diffAbs}% 감소</span>`;
+            }
+        }
     }
 
     loadSavedEmployees();
