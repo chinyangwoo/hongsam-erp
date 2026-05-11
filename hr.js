@@ -1141,16 +1141,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) {}
 
         try {
-            const revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
-            let mMatch = activeMonth.match(/(\d{4})년 (\d{1,2})월/);
-            if (mMatch) {
-                const y = mMatch[1];
-                const m = mMatch[2].padStart(2, '0');
-                Object.keys(revDb).forEach(k => {
-                    if (k.startsWith(`${y}-${m}`)) spaMonthRev += (revDb[k].total || 0);
-                });
+            const revRes = await fetch('http://43.203.237.63:3001/api/db/erp_revenue_db');
+            if (revRes.ok) {
+                const revDb = await revRes.json();
+                let mMatch = activeMonth.match(/(\d{4})년 (\d{1,2})월/);
+                if (mMatch) {
+                    const y = mMatch[1];
+                    const m = mMatch[2].padStart(2, '0');
+                    Object.keys(revDb).forEach(k => {
+                        if (k.startsWith(`${y}-${m}`)) {
+                            const tick = Number(revDb[k].spaTickRev) || 0;
+                            const fb = Number(revDb[k].spaFbRev) || 0;
+                            spaMonthRev += (tick + fb) * 10000;
+                        }
+                    });
+                }
             }
-        } catch(e) {}
+        } catch(e) {
+            console.warn("Failed to fetch spa revenue:", e);
+        }
 
         const totalSales = hotelMonthRev + spaMonthRev;
         const ratioNum = totalSales > 0 ? (totalPayroll / totalSales) * 100 : 0;
