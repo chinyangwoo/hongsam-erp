@@ -974,20 +974,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = '';
         
+        const tabsContainer = document.createElement('div');
+        tabsContainer.style.display = 'flex';
+        tabsContainer.style.gap = '10px';
+        tabsContainer.style.marginBottom = '20px';
+        tabsContainer.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+        tabsContainer.style.paddingBottom = '10px';
+
+        const contentContainer = document.createElement('div');
+        
         const fmt = (n, neg=false) => {
             let num = Number(n) || 0;
             if(neg && num > 0) num = -num;
             return num.toLocaleString('ko-KR');
         };
 
-        recentMonths.forEach(month => {
+        recentMonths.forEach((month, index) => {
+            // Tab Button
+            const tabBtn = document.createElement('button');
+            tabBtn.textContent = month;
+            tabBtn.style.padding = '8px 16px';
+            tabBtn.style.borderRadius = '8px';
+            tabBtn.style.border = 'none';
+            tabBtn.style.cursor = 'pointer';
+            tabBtn.style.fontWeight = '600';
+            tabBtn.style.transition = 'all 0.2s ease';
+            
+            if (index === 0) {
+                tabBtn.style.background = '#3B82F6';
+                tabBtn.style.color = '#FFFFFF';
+            } else {
+                tabBtn.style.background = 'rgba(255,255,255,0.05)';
+                tabBtn.style.color = '#94A3B8';
+            }
+
+            // Month Section
             const emps = monthlyData[month];
             emps.sort((a, b) => parseInt(a.emp_id, 10) - parseInt(b.emp_id, 10));
             
             const monthSection = document.createElement('div');
-            monthSection.style.marginBottom = '30px';
+            monthSection.style.display = index === 0 ? 'block' : 'none';
             
-            // "****년 **월분 급여내역"
             monthSection.innerHTML = `
                 <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: #60A5FA;">
                     <i class="fa-solid fa-calendar-check"></i> ${month}분 급여내역
@@ -995,15 +1022,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <table class="erp-table">
                     <thead>
                         <tr>
-                            <th>사번</th>
-                            <th>직급</th>
-                            <th>이름</th>
-                            <th>기본급</th>
-                            <th>식대</th>
-                            <th>연장/야간수당</th>
-                            <th>4대보험료</th>
-                            <th>소득세/지방소득세</th>
-                            <th>실수령액</th>
+                            <th style="text-align: center;">사번</th>
+                            <th style="text-align: center;">직급</th>
+                            <th style="text-align: center;">이름</th>
+                            <th class="text-right">기본급</th>
+                            <th class="text-right">식대</th>
+                            <th class="text-right">연장/야간수당</th>
+                            <th class="text-right">4대보험료</th>
+                            <th class="text-right">소득세/지방소득세</th>
+                            <th class="text-right">실수령액</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1019,9 +1046,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const insSum = (Number(emp.national_pension) || 0) + (Number(emp.health_insurance) || 0) + (Number(emp.employment_ins) || 0);
                 
                 tr.innerHTML = `
-                    <td>${emp.emp_id || '-'}</td>
-                    <td>${emp.rank || '-'}</td>
-                    <td>${emp.name || '-'}</td>
+                    <td style="text-align: center;">${emp.emp_id || '-'}</td>
+                    <td style="text-align: center;">${emp.rank || '-'}</td>
+                    <td style="text-align: center;">${emp.name || '-'}</td>
                     <td class="text-right">${fmt(emp.base_salary)}</td>
                     <td class="text-right">${fmt(emp.meal_allowance)}</td>
                     <td class="text-right">${fmt(emp.ot_allowance)}</td>
@@ -1032,8 +1059,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 tbody.appendChild(tr);
             });
             
-            container.appendChild(monthSection);
+            tabBtn.onclick = () => {
+                Array.from(contentContainer.children).forEach(child => child.style.display = 'none');
+                Array.from(tabsContainer.children).forEach(btn => {
+                    btn.style.background = 'rgba(255,255,255,0.05)';
+                    btn.style.color = '#94A3B8';
+                });
+                monthSection.style.display = 'block';
+                tabBtn.style.background = '#3B82F6';
+                tabBtn.style.color = '#FFFFFF';
+            };
+
+            tabsContainer.appendChild(tabBtn);
+            contentContainer.appendChild(monthSection);
         });
+
+        container.appendChild(tabsContainer);
+        container.appendChild(contentContainer);
     }
 
     loadSavedEmployees();
