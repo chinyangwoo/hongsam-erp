@@ -1173,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ratioBarEl) ratioBarEl.style.width = ratio + '%';
 
         if (diffDescEl) {
-            const IDEAL_RATIO = 30.0;
+            const IDEAL_RATIO = 40.0;
             const diff = ratioNum - IDEAL_RATIO;
             const diffAbs = Math.abs(diff).toFixed(1);
             if (ratioNum === 0) {
