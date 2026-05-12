@@ -224,60 +224,78 @@
 
     <!-- Modal: Customer Detail -->
     <div class="modal-overlay" id="customerModal">
-        <div class="modal-content glassmorphism" style="width: 800px; max-width: 95vw;">
-            <div class="modal-header">
-                <h2>고객 상세 정보</h2>
+        <div class="modal-content glassmorphism" style="width: 850px; max-width: 95vw; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); padding: 0;">
+            
+            <!-- Modern Header with gradient line -->
+            <div style="height: 6px; background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);"></div>
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; margin: 0; color: #F8FAFC;"><i class="fa-regular fa-address-card" style="color: #8B5CF6;"></i> 고객 상세 프로필</h2>
                 <button class="btn-close" id="closeCustomerModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="modal-body" style="display:flex; gap:24px; padding:24px; flex-wrap:wrap;">
-                <!-- Left: Info -->
-                <div style="flex:1; min-width:300px;">
-                    <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
-                        <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#3B82F6,#8B5CF6); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white;">
+            <div class="modal-body" style="display:flex; gap:32px; padding:32px; flex-wrap:wrap; background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.05), transparent 50%);">
+                
+                <!-- Left: Profile & KPI -->
+                <div style="flex:1; min-width:300px; display:flex; flex-direction:column; gap:24px;">
+                    
+                    <!-- Profile Card -->
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 24px; text-align: center; position: relative; overflow: hidden;">
+                        <div style="position:absolute; top:-20px; left:-20px; width:100px; height:100px; background:#3B82F6; filter:blur(50px); opacity:0.3; pointer-events: none;"></div>
+                        <div style="position:absolute; bottom:-20px; right:-20px; width:100px; height:100px; background:#EC4899; filter:blur(50px); opacity:0.3; pointer-events: none;"></div>
+                        
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white; margin: 0 auto 16px auto; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); border: 3px solid rgba(255,255,255,0.1); position: relative; z-index: 2;">
                             <i class="fa-solid fa-user"></i>
                         </div>
-                        <div>
-                            <h3 style="font-size:1.4rem; font-weight:700; margin:0;" id="modalCustName">김고객</h3>
-                            <p style="color:#94A3B8; margin-top:4px;" id="modalCustPhone">010-0000-0000</p>
-                            <span id="modalCustRank" class="badge-vip" style="margin-top:8px; display:inline-block;">VIP</span>
-                        </div>
+                        <h3 style="font-size: 1.6rem; font-weight: 700; margin: 0 0 4px 0; color: #F8FAFC; position: relative; z-index: 2;" id="modalCustName">김고객</h3>
+                        <p style="color: #94A3B8; font-size: 0.95rem; margin: 0 0 12px 0; position: relative; z-index: 2;" id="modalCustPhone">010-0000-0000</p>
+                        <div id="modalCustRank" class="badge-vip" style="display:inline-block; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; position: relative; z-index: 2;">VIP</div>
                     </div>
                     
-                    <div style="background:rgba(0,0,0,0.2); border-radius:12px; padding:16px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                            <span style="color:#94A3B8;">누적 방문 횟수</span>
-                            <span style="font-weight:700;" id="modalCustVisits">12회</span>
+                    <!-- Mini KPIs -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px;">
+                            <p style="font-size: 0.75rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; margin: 0 0 6px 0;">누적 방문</p>
+                            <div style="font-size: 1.4rem; font-weight: 700; color: #F8FAFC;" id="modalCustVisits">12회</div>
                         </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                            <span style="color:#94A3B8;">누적 결제 금액</span>
-                            <span style="font-weight:700; color:#10B981;" id="modalCustSpend">1,500,000 원</span>
+                        <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px;">
+                            <p style="font-size: 0.75rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; margin: 0 0 6px 0;">최근 방문일</p>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: #F8FAFC; margin-top: 4px;" id="modalCustLastVisit">2026-05-01</div>
                         </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:#94A3B8;">최근 방문일</span>
-                            <span style="font-weight:700;" id="modalCustLastVisit">2026-05-01</span>
+                        <div style="grid-column: 1 / -1; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 16px; padding: 16px;">
+                            <p style="font-size: 0.75rem; color: #10B981; font-weight: 600; text-transform: uppercase; margin: 0 0 6px 0;">누적 결제 금액</p>
+                            <div style="font-size: 1.6rem; font-weight: 700; color: #10B981;" id="modalCustSpend">1,500,000 <span style="font-size:1rem; font-weight:500;">원</span></div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Right: Visit History / Memo -->
-                <div style="flex:1.5; min-width:350px; display:flex; flex-direction:column; gap:16px;">
-                    <div>
-                        <h4 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:#F8FAFC;">이용 내역 요약</h4>
-                        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;" id="modalCustHistory">
-                            <!-- JS 렌더링 -->
-                        </ul>
+                <!-- Right: History & Memo -->
+                <div style="flex:1.5; min-width:350px; display:flex; flex-direction:column; gap:24px;">
+                    
+                    <!-- Timeline History -->
+                    <div style="flex: 1; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 24px; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin:0;"><i class="fa-solid fa-clock-rotate-left" style="color: #64748B; margin-right: 8px;"></i> 최근 이용 내역</h4>
+                            <span style="font-size: 0.75rem; color: #3B82F6; cursor: pointer; background: rgba(59,130,246,0.1); padding: 4px 10px; border-radius: 12px; font-weight: 600;">전체 보기</span>
+                        </div>
+                        <div style="flex: 1; max-height: 180px; overflow-y: auto; padding-right: 8px;" class="custom-scrollbar">
+                            <ul style="list-style: none; padding: 0; margin: 0; position: relative; border-left: 2px solid rgba(255,255,255,0.1); margin-left: 10px;" id="modalCustHistory">
+                                <!-- JS Rendered Timeline -->
+                            </ul>
+                        </div>
                     </div>
-                    <div style="flex:1;">
-                        <h4 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:#F8FAFC;">고객 특이사항 (Memo)</h4>
-                        <textarea class="styled-input" id="modalCustMemo" rows="4" placeholder="고객 특이사항을 입력하세요..." style="height:100px; resize:none;"></textarea>
+
+                    <!-- Memo -->
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 24px;">
+                        <h4 style="font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin: 0 0 12px 0;"><i class="fa-solid fa-pen-to-square" style="color: #F59E0B; margin-right: 8px;"></i> 관리자 메모 (특이사항)</h4>
+                        <textarea class="styled-input" id="modalCustMemo" rows="4" placeholder="고객 알러지, 선호 사항 등 특이사항을 기록하세요..." style="height: 100px; resize: none; width: 100%; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 16px; font-size: 0.95rem; line-height: 1.5; color: #E2E8F0; outline: none; box-sizing: border-box; transition: border-color 0.2s;"></textarea>
                     </div>
                 </div>
+                
             </div>
             
-            <div class="modal-footer">
-                <button class="btn-secondary" id="closeCustomerModalBtn">닫기</button>
-                <button class="btn-primary" id="saveCustomerMemoBtn">메모 저장</button>
+            <div class="modal-footer" style="padding: 20px 32px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn-secondary" id="closeCustomerModalBtn" style="border-radius: 10px; padding: 10px 24px;">닫기</button>
+                <button class="btn-primary" id="saveCustomerMemoBtn" style="border-radius: 10px; padding: 10px 24px; background: linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-check"></i> 정보 업데이트</button>
             </div>
         </div>
     </div>

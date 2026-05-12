@@ -102,9 +102,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const historyEl = document.getElementById('modalCustHistory');
         if (c.history && c.history.length > 0) {
-            historyEl.innerHTML = c.history.map(h => `<li style="padding:8px 12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#E2E8F0; font-size:0.85rem;"><i class="fa-solid fa-clock-rotate-left" style="color:#64748B; margin-right:8px;"></i>${h}</li>`).join('');
+            historyEl.innerHTML = c.history.map(h => {
+                const match = h.match(/(.*?)\s*\((.*?)\)/);
+                const desc = match ? match[1].trim() : h;
+                const date = match ? match[2].trim() : '';
+                return `
+                    <li style="position: relative; padding-left: 24px; margin-bottom: 20px;">
+                        <div style="position: absolute; left: -5px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #3B82F6; box-shadow: 0 0 0 4px rgba(59,130,246,0.2);"></div>
+                        <div style="font-weight: 600; color: #F8FAFC; font-size: 0.95rem; line-height: 1.4;">${desc}</div>
+                        <div style="color: #94A3B8; font-size: 0.8rem; margin-top: 4px;"><i class="fa-regular fa-calendar" style="margin-right: 4px;"></i>${date}</div>
+                    </li>
+                `;
+            }).join('');
         } else {
-            historyEl.innerHTML = '<li style="color:#64748B; font-size:0.85rem;">이용 내역이 없습니다.</li>';
+            historyEl.innerHTML = '<li style="position: relative; padding-left: 24px; color: #64748B; font-size: 0.9rem;">이용 내역이 없습니다.</li>';
         }
         
         modal.classList.add('show');
