@@ -24,6 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // 인사기록카드 탭의 검색창도 숨김 (본인 것만 보이므로)
         const actionBar = document.querySelector('#tab-personnel .action-bar');
         if (actionBar) actionBar.style.display = 'none';
+        
+        // 페이지 제목을 '내 인사정보'로 변경
+        const h1 = document.querySelector('.top-header h1');
+        if (h1) h1.textContent = '내 인사정보';
+        
+        // 근태관리/급여관리 탭은 관리자 전용이므로 숨김
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            const target = btn.getAttribute('data-target');
+            if (target === 'tab-attendance' || target === 'tab-payroll') {
+                btn.style.display = 'none';
+            }
+        });
     }
 
     // --- INIT EMPLOYEE DB ---
