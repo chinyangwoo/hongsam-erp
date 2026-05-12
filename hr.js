@@ -333,6 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         // 압축된 Base64로 저장
                         if (photoPreview) photoPreview.src = canvas.toDataURL('image/jpeg', 0.8);
                     };
+                    img.onerror = function() {
+                        alert('이미지를 불러올 수 없습니다. 지원되지 않는 형식(HEIC 등)이거나 손상된 파일일 수 있습니다. JPG나 PNG 파일을 사용해 주세요.');
+                    };
                     img.src = evt.target.result;
                 }
                 reader.readAsDataURL(file);
