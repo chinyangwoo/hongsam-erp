@@ -297,13 +297,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionsDiv = document.getElementById('dvActions');
 
         if (doc.status === 'pending') {
-            guideText.textContent = '귀하의 결재가 필요한 문서입니다.';
-            actionsDiv.style.display = 'flex';
+            const user = getCurrentUser();
+            const uid = user.id;
+            // 현재 사용자가 실제 결재자인지 확인
+            const isStep1Approver = (doc.step1_id === uid && doc.step1_status === 'pending');
+            const isStep2Approver = (doc.step1_status === 'approved' && doc.step2_id === uid && doc.step2_status === 'pending');
+            const isLegacyApprover = (!doc.step1_id && parseInt(uid, 10) <= 9);
+            
+            if (isStep1Approver || isStep2Approver || isLegacyApprover) {
+                guideText.textContent = '귀하의 결재가 필요한 문서입니다.';
+                actionsDiv.style.display = 'flex';
+            } else {
+                guideText.textContent = '이 문서는 결재 대기 중입니다. (귀하는 결재 권한이 없습니다)';
+                actionsDiv.style.display = 'none';
+            }
         } else if (doc.status === 'approved') {
             guideText.textContent = '이 문서는 결재가 완료되었습니다. (승인일: ' + (doc.approveDate || '-') + ')';
             actionsDiv.style.display = 'none';
         } else if (doc.status === 'rejected') {
             guideText.textContent = '이 문서는 반려되었습니다. 사유: ' + (doc.rejectReason || '-');
+            actionsDiv.style.display = 'none';
+        } else if (doc.status === 'hold') {
+            guideText.textContent = '이 문서는 보류 상태입니다.';
             actionsDiv.style.display = 'none';
         }
 

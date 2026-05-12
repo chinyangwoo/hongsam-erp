@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // XSS 방지 유틸리티
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     const chatInput = document.getElementById('chatInput');
     const btnSendMsg = document.getElementById('btnSendMsg');
     const chatMessagesArea = document.getElementById('chatMessagesArea');
@@ -98,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         innerHTML += `
             <div class="msg-content-block">
                 <div class="msg-meta">
-                    ${!isSelf ? `<span class="m-name">${msgData.senderName}</span>` : ''}
-                    <span class="m-time">${msgData.timeStr}</span>
+                    ${!isSelf ? `<span class="m-name">${escapeHtml(msgData.senderName)}</span>` : ''}
+                    <span class="m-time">${escapeHtml(msgData.timeStr)}</span>
                 </div>
         `;
 
@@ -107,12 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
             innerHTML += `
                 <div class="msg-bubble broadcast">
                     <strong class="b-title"><i class="fa-solid fa-bullhorn"></i> 긴급 공지 (Broadcast)</strong>
-                    <p>${msgData.text.replace(/\n/g, '<br>')}</p>
+                    <p>${escapeHtml(msgData.text).replace(/\n/g, '<br>')}</p>
                 </div>
             `;
         } else {
             innerHTML += `
-                <div class="msg-bubble">${msgData.text.replace(/\n/g, '<br>')}</div>
+                <div class="msg-bubble">${escapeHtml(msgData.text).replace(/\n/g, '<br>')}</div>
             `;
         }
 

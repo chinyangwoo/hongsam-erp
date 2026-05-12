@@ -43,8 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
             li.innerHTML = `<i class="fa-solid ${cat.id === currentCat && !cat.restricted ? 'fa-folder-open' : cat.icon}"></i> ${cat.label} <span class="folder-cnt">(${cnt})</span>`;
             li.addEventListener('click', () => {
                 if (cat.restricted) {
-                    const ok = confirm('해당 폴더는 최고관리자(마스터/호스트) 전용 보안 폴더입니다.\n열람하시겠습니까?');
-                    if (!ok) return;
+                    const curUser = localStorage.getItem('currentUser') || '';
+                    const curNum = parseInt(curUser, 10);
+                    const isAllowed = curUser === '001' || (curNum >= 1 && curNum <= 9) || (curNum >= 10 && curNum <= 19);
+                    if (!isAllowed) {
+                        alert('해당 폴더는 팀장급 이상만 열람 가능한 보안 폴더입니다.\n접근 권한이 없습니다.');
+                        return;
+                    }
                 }
                 currentCat  = cat.id;
                 currentPage = 1;

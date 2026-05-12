@@ -15,10 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 현재 로그인 유저 ──
     function getCurrentUser() {
-        try {
-            const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            return { name: u.name || '익명', dept: u.department || '', id: u.id || '000' };
-        } catch { return { name: '익명', dept: '', id: '000' }; }
+        const empId = localStorage.getItem('currentUser') || '000';
+        const empName = localStorage.getItem('currentUserName') || '익명';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e) {}
+        const rec = employees.find(e => e.emp_id === empId);
+        return {
+            id: empId,
+            name: rec ? rec.name : empName,
+            dept: rec ? (rec.department || '') : '',
+        };
     }
 
     // ── DB 초기 시드 (최초 1회) ──
@@ -209,11 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('postViewMeta').innerHTML = `<span><i class="fa-regular fa-clock"></i> ${fullDate(post.date)}</span><span style="margin-left:10px;"><i class="fa-regular fa-eye"></i> 조회 ${post.views}</span>`;
         document.getElementById('postViewContent').innerHTML = escapeHtml(post.content).replace(/\n/g, '<br>');
 
-        // 수정/삭제 버튼 — 본인 글 또는 001(대표) 만 표시
+        // 수정/삭제 버튼 — 본인 글 또는 admin(001) 만 표시
         const user = getCurrentUser();
         const isOwner = (user.name === post.author) || (user.id === '001');
+        const isAdmin = user.id === '001';
         document.getElementById('btnEditPost').style.display = isOwner ? 'flex' : 'none';
-        document.getElementById('btnDeletePost').style.display = isOwner ? 'flex' : 'none';
+        document.getElementById('btnDeletePost').style.display = (isOwner || isAdmin) ? 'flex' : 'none';
 
         renderComments(post);
         document.getElementById('postModal').classList.add('show');
