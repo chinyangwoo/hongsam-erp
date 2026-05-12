@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let employees = initHREmployees();
         if (!isAdminRole && currentUser.empId) {
-            employees = employees.filter(e => e.emp_id === currentUser.empId);
+            employees = employees.filter(e => parseInt(e.emp_id, 10) === parseInt(currentUser.empId, 10));
         }
         employees.forEach(emp => {
             addEmployeeCard(emp);
@@ -1044,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tbody.innerHTML = '';
         employees.forEach(emp => {
-            if (!isAdminRole && emp.emp_id !== currentUser.empId) return; // 비관리자는 본인 휴가만
+            if (!isAdminRole && parseInt(emp.emp_id, 10) !== parseInt(currentUser.empId, 10)) return; // 비관리자는 본인 휴가만
             
             const total = parseInt(emp.total_vacation) || 15;
             const used = parseInt(emp.used_vacation) || 0;
@@ -1125,7 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Group payroll history by month
         const monthlyData = {};
         employees.forEach(emp => {
-            if (!isAdminRole && emp.emp_id !== currentUser.empId) return; // 비관리자는 본인 급여만
+            if (!isAdminRole && parseInt(emp.emp_id, 10) !== parseInt(currentUser.empId, 10)) return; // 비관리자는 본인 급여만
             if (emp.payroll_history && Array.isArray(emp.payroll_history)) {
                 emp.payroll_history.forEach(ph => {
                     if (!ph.month) return;
