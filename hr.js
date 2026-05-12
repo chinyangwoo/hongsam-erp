@@ -1377,24 +1377,26 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPayrollTable();  // 급여 테이블 렌더링
     updatePayrollKPIs();   // KPI 계산 및 표기
 
-    // ─── 정적 카드에도 수정/삭제 버튼 추가 ───
-    document.querySelectorAll('.employee-card').forEach(card => {
-        if (!card.querySelector('.emp-card-actions')) {
-            const empIdEl = card.querySelector('.emp-id');
-            const empNameEl = card.querySelector('.emp-name');
-            if (empIdEl) {
-                const eid = empIdEl.textContent.trim();
-                const ename = empNameEl ? empNameEl.childNodes[0].textContent.trim() : '';
-                const actions = document.createElement('div');
-                actions.className = 'emp-card-actions';
-                actions.innerHTML = `
-                    <button title="수정" onclick="event.stopPropagation(); editEmployee('${eid}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${eid}','${ename}')"><i class="fa-solid fa-trash"></i></button>
-                `;
-                card.appendChild(actions);
+    // ─── 정적 카드에도 수정/삭제 버튼 추가 (관리자만) ───
+    if (isAdminRole) {
+        document.querySelectorAll('.employee-card').forEach(card => {
+            if (!card.querySelector('.emp-card-actions')) {
+                const empIdEl = card.querySelector('.emp-id');
+                const empNameEl = card.querySelector('.emp-name');
+                if (empIdEl) {
+                    const eid = empIdEl.textContent.trim();
+                    const ename = empNameEl ? empNameEl.childNodes[0].textContent.trim() : '';
+                    const actions = document.createElement('div');
+                    actions.className = 'emp-card-actions';
+                    actions.innerHTML = `
+                        <button title="수정" onclick="event.stopPropagation(); editEmployee('${eid}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${eid}','${ename}')"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    card.appendChild(actions);
+                }
             }
-        }
-    });
+        });
+    }
 
     // ─── 급여관리 하단 차트 렌더링 ───
     function renderPayrollCharts() {
