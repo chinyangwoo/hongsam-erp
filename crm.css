@@ -1,0 +1,64 @@
+/* CRM Specific Styles */
+.dashboard-grid {
+    display: grid;
+    gap: 24px;
+}
+
+.p-6 {
+    padding: 24px;
+}
+
+/* Status Badges for CRM */
+.badge-vvip {
+    background: rgba(139, 92, 246, 0.15);
+    color: #A78BFA;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-vip {
+    background: rgba(245, 158, 11, 0.15);
+    color: #FBBF24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-normal {
+    background: rgba(255, 255, 255, 0.1);
+    color: #E2E8F0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 6px 14px;
+}
+
+.search-box i {
+    color: #94A3B8;
+    margin-right: 8px;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    color: #F8FAFC;
+    outline: none;
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.9rem;
+}

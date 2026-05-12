@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="홍삼한방타운 ERP - 고객관리/CRM">
+    <meta property="og:description" content="홍삼한방타운 통합 ERP 시스템 - 고객관리, VIP, 마케팅">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <title>홍삼한방타운 - 고객관리/CRM</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="crm.css?v=1">
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼한방타운 ERP</span>
+            </a>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+            <a href="crm.html" class="nav-item active">
+                <i class="fa-solid fa-users-gear"></i> 고객관리/CRM</a>
+            <a href="reservation.html" class="nav-item">
+                <i class="fa-solid fa-concierge-bell"></i> 예약/대관 관리</a>
+            <a href="accounting.html" class="nav-item">
+                <i class="fa-solid fa-calculator"></i> 회계/재무</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+            <a href="facility.html" class="nav-item">
+                <i class="fa-solid fa-building"></i> 시설현황</a>
+            <a href="simulation.html" class="nav-item">
+                <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="localStorage.removeItem('isLoggedIn'); localStorage.removeItem('currentUser'); window.location.href='login.html';"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header section -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>고객관리 / CRM</h1>
+                <p>VIP 회원 관리 및 맞춤형 마케팅 캠페인</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-primary" id="btnNewCustomer">
+                    <i class="fa-solid fa-user-plus"></i> 신규 고객 등록
+                </button>
+                <button class="btn-secondary" id="btnSendCampaign">
+                    <i class="fa-solid fa-paper-plane"></i> 마케팅 발송
+                </button>
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                <div class="notification-bell">
+                    <i class="fa-regular fa-bell"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- CRM Container -->
+        <div class="dashboard-container">
+            
+            <!-- KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon blue"><i class="fa-solid fa-users"></i></div>
+                    <div class="kpi-details">
+                        <h3>총 등록 고객 (DB)</h3>
+                        <p class="amount">14,208 <span style="font-size:1rem; font-weight:500;">명</span></p>
+                        <p class="trend positive"><i class="fa-solid fa-arrow-up"></i> 124 (전월대비)</p>
+                    </div>
+                </div>
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon orange"><i class="fa-solid fa-crown"></i></div>
+                    <div class="kpi-details">
+                        <h3>VIP 등급 회원</h3>
+                        <p class="amount">842 <span style="font-size:1rem; font-weight:500;">명</span></p>
+                        <p class="trend positive"><i class="fa-solid fa-arrow-up"></i> 12 (전월대비)</p>
+                    </div>
+                </div>
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon green"><i class="fa-solid fa-won-sign"></i></div>
+                    <div class="kpi-details">
+                        <h3>VIP 매출 비중 (이번달)</h3>
+                        <p class="amount">38.4 <span style="font-size:1rem; font-weight:500;">%</span></p>
+                        <p class="trend positive"><i class="fa-solid fa-arrow-up"></i> 2.1% (전월대비)</p>
+                    </div>
+                </div>
+                <div class="kpi-card glassmorphism">
+                    <div class="kpi-icon purple"><i class="fa-solid fa-comments"></i></div>
+                    <div class="kpi-details">
+                        <h3>접수된 고객의견(VOC)</h3>
+                        <p class="amount">12 <span style="font-size:1rem; font-weight:500;">건</span></p>
+                        <p class="trend negative"><i class="fa-solid fa-arrow-down"></i> 3 (전월대비)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-top: 24px;">
+                <!-- Left: Customer List -->
+                <div class="glassmorphism p-6" style="border-radius:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h2 style="font-size:1.1rem; font-weight:700;"><i class="fa-solid fa-list" style="color:#3B82F6;"></i> 고객 DB 조회</h2>
+                        <div class="search-box" style="width:250px;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="crmSearch" placeholder="이름, 연락처 검색...">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>고객명</th>
+                                    <th>연락처</th>
+                                    <th>회원등급</th>
+                                    <th>누적 방문</th>
+                                    <th>누적 결제액</th>
+                                    <th>최근 방문일</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customerTableBody">
+                                <!-- JS Rendered -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination (Mock) -->
+                    <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+                        <button class="btn-secondary" style="padding:6px 12px;">&lt;</button>
+                        <button class="btn-primary" style="padding:6px 12px;">1</button>
+                        <button class="btn-secondary" style="padding:6px 12px;">2</button>
+                        <button class="btn-secondary" style="padding:6px 12px;">3</button>
+                        <button class="btn-secondary" style="padding:6px 12px;">&gt;</button>
+                    </div>
+                </div>
+
+                <!-- Right: Marketing & Stats -->
+                <div style="display:flex; flex-direction:column; gap:24px;">
+                    <!-- VIP Growth Chart -->
+                    <div class="glassmorphism p-6" style="border-radius:16px;">
+                        <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:16px;"><i class="fa-solid fa-chart-line" style="color:#10B981;"></i> 신규 회원 가입 추이</h2>
+                        <div id="memberChart" style="height:250px;"></div>
+                    </div>
+
+                    <!-- Marketing Campaign -->
+                    <div class="glassmorphism p-6" style="border-radius:16px;">
+                        <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:16px;"><i class="fa-solid fa-bullhorn" style="color:#F59E0B;"></i> 타겟 마케팅 (SMS/LMS)</h2>
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <select class="styled-input" id="campaignTarget">
+                                <option value="all">전체 수신동의 고객 (10,120명)</option>
+                                <option value="vip">VIP/VVIP 고객 (842명)</option>
+                                <option value="inactive">최근 6개월 미방문 (3,240명)</option>
+                                <option value="spa">스파 이용 이력 고객 (5,600명)</option>
+                            </select>
+                            <input type="text" class="styled-input" placeholder="캠페인 제목" value="[홍삼한방타운] VIP 고객 한정 스파 50% 할인 쿠폰">
+                            <textarea class="styled-input" rows="4" placeholder="메시지 내용 입력...">[홍삼한방타운]
+항상 저희 홍삼한방타운을 이용해 주시는 VIP 고객님께 감사드립니다.
+고객님만을 위한 스파 50% 할인 쿠폰이 발급되었습니다.
+예약 문의: 063-433-0000</textarea>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.8rem; color:#94A3B8;">예상 비용: <strong style="color:#60A5FA;">12,630 원</strong></span>
+                                <button class="btn-primary" onclick="alert('캠페인이 성공적으로 예약 발송되었습니다.')"><i class="fa-solid fa-paper-plane"></i> 발송하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Custom View logic -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="app.js?v=10"></script>
+    <script src="crm.js?v=1"></script>
+</body>
+</html>
