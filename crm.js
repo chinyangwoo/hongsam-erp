@@ -1,21 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Mock Data for CRM
-    const customers = [
-        { name: '김회장', phone: '010-9999-8888', rank: 'VVIP', visits: 42, totalSpend: 12500000, lastVisit: '2026-05-10' },
-        { name: '이대표', phone: '010-1234-5678', rank: 'VIP', visits: 15, totalSpend: 3400000, lastVisit: '2026-05-02' },
-        { name: '박진안', phone: '010-2345-6789', rank: '일반', visits: 3, totalSpend: 450000, lastVisit: '2026-04-20' },
-        { name: '최전주', phone: '010-3456-7890', rank: '일반', visits: 1, totalSpend: 150000, lastVisit: '2026-05-11' },
-        { name: '정무주', phone: '010-4567-8901', rank: 'VIP', visits: 12, totalSpend: 2800000, lastVisit: '2026-05-05' },
-        { name: '강임실', phone: '010-5678-9012', rank: '일반', visits: 5, totalSpend: 750000, lastVisit: '2026-04-15' },
-        { name: '조장수', phone: '010-6789-0123', rank: 'VVIP', visits: 35, totalSpend: 9800000, lastVisit: '2026-05-12' },
-        { name: '윤남원', phone: '010-7890-1234', rank: '일반', visits: 2, totalSpend: 300000, lastVisit: '2026-03-22' }
-    ];
+    // 1. Data Initialization & LocalStorage Sync
+    const CRM_DB_KEY = 'hongsam_crm_db';
+    let customers = [];
+    
+    try {
+        const stored = localStorage.getItem(CRM_DB_KEY);
+        if (stored) {
+            customers = JSON.parse(stored);
+        } else {
+            // Initial mock data if empty
+            customers = [
+                { id: 'c1', name: '김회장', phone: '010-9999-8888', rank: 'VVIP', visits: 42, totalSpend: 12500000, lastVisit: '2026-05-10', memo: '스파 2층 선호. 차량 번호 12가3456', history: ['스파 프라이빗룸 (2026-05-10)', 'VIP 연간 회원권 갱신 (2026-01-05)'] },
+                { id: 'c2', name: '이대표', phone: '010-1234-5678', rank: 'VIP', visits: 15, totalSpend: 3400000, lastVisit: '2026-05-02', memo: '', history: ['호텔 스위트룸 숙박 (2026-05-01)'] },
+                { id: 'c3', name: '박진안', phone: '010-2345-6789', rank: '일반', visits: 3, totalSpend: 450000, lastVisit: '2026-04-20', memo: '알러지 있음 (땅콩)', history: ['스파 일반권 (2026-04-20)', '스파 일반권 (2025-11-12)'] },
+                { id: 'c4', name: '최전주', phone: '010-3456-7890', rank: '일반', visits: 1, totalSpend: 150000, lastVisit: '2026-05-11', memo: '', history: ['스파 커플권 (2026-05-11)'] },
+                { id: 'c5', name: '정무주', phone: '010-4567-8901', rank: 'VIP', visits: 12, totalSpend: 2800000, lastVisit: '2026-05-05', memo: '주말 예약 선호', history: ['스파 프라이빗룸 (2026-05-05)'] },
+                { id: 'c6', name: '강임실', phone: '010-5678-9012', rank: '일반', visits: 5, totalSpend: 750000, lastVisit: '2026-04-15', memo: '', history: ['식음료 카페 이용 (2026-04-15)'] },
+                { id: 'c7', name: '조장수', phone: '010-6789-0123', rank: 'VVIP', visits: 35, totalSpend: 9800000, lastVisit: '2026-05-12', memo: '와인 서비스 필요', history: ['호텔 펜트하우스 (2026-05-12)'] },
+                { id: 'c8', name: '윤남원', phone: '010-7890-1234', rank: '일반', visits: 2, totalSpend: 300000, lastVisit: '2026-03-22', memo: '', history: ['스파 일반권 (2026-03-22)'] }
+            ];
+            localStorage.setItem(CRM_DB_KEY, JSON.stringify(customers));
+        }
+    } catch(e) { console.error("CRM DB Error:", e); }
 
-    const tbody = document.getElementById('customerTableBody');
-    if(tbody) {
+    // 2. Render Customer Table
+    function renderTable(data) {
+        const tbody = document.getElementById('customerTableBody');
+        if(!tbody) return;
+        
         let html = '';
-        customers.forEach(c => {
+        data.forEach(c => {
             let badge = 'badge-normal';
             if(c.rank === 'VVIP') badge = 'badge-vvip';
             else if(c.rank === 'VIP') badge = 'badge-vip';
@@ -26,16 +41,150 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="color:#CBD5E1;">${c.phone}</td>
                     <td><span class="${badge}">${c.rank}</span></td>
                     <td style="text-align:center;">${c.visits}회</td>
-                    <td style="text-align:right;">${c.totalSpend.toLocaleString()}원</td>
+                    <td style="text-align:right;">${(c.totalSpend||0).toLocaleString()}원</td>
                     <td style="color:#94A3B8;">${c.lastVisit}</td>
-                    <td><button class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;">상세</button></td>
+                    <td><button class="btn-secondary btn-detail" data-id="${c.id}" style="padding:4px 10px; font-size:0.75rem;">상세</button></td>
                 </tr>
             `;
         });
         tbody.innerHTML = html;
+        
+        // Add listeners to detail buttons
+        document.querySelectorAll('.btn-detail').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                openCustomerModal(id);
+            });
+        });
+    }
+    
+    renderTable(customers);
+
+    // 3. Search Logic
+    const searchInput = document.getElementById('crmSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = customers.filter(c => 
+                c.name.toLowerCase().includes(query) || 
+                c.phone.includes(query)
+            );
+            renderTable(filtered);
+        });
     }
 
-    // Chart
+    // 4. Modal Logic
+    const modal = document.getElementById('customerModal');
+    const btnClose1 = document.getElementById('closeCustomerModal');
+    const btnClose2 = document.getElementById('closeCustomerModalBtn');
+    const btnSaveMemo = document.getElementById('saveCustomerMemoBtn');
+    let currentEditingId = null;
+
+    function openCustomerModal(id) {
+        const c = customers.find(x => x.id === id);
+        if(!c) return;
+        
+        currentEditingId = id;
+        document.getElementById('modalCustName').innerText = c.name;
+        document.getElementById('modalCustPhone').innerText = c.phone;
+        
+        const rankEl = document.getElementById('modalCustRank');
+        rankEl.innerText = c.rank;
+        rankEl.className = '';
+        if(c.rank === 'VVIP') rankEl.classList.add('badge-vvip');
+        else if(c.rank === 'VIP') rankEl.classList.add('badge-vip');
+        else rankEl.classList.add('badge-normal');
+        
+        document.getElementById('modalCustVisits').innerText = c.visits + '회';
+        document.getElementById('modalCustSpend').innerText = (c.totalSpend||0).toLocaleString() + ' 원';
+        document.getElementById('modalCustLastVisit').innerText = c.lastVisit;
+        document.getElementById('modalCustMemo').value = c.memo || '';
+        
+        const historyEl = document.getElementById('modalCustHistory');
+        if (c.history && c.history.length > 0) {
+            historyEl.innerHTML = c.history.map(h => `<li style="padding:8px 12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#E2E8F0; font-size:0.85rem;"><i class="fa-solid fa-clock-rotate-left" style="color:#64748B; margin-right:8px;"></i>${h}</li>`).join('');
+        } else {
+            historyEl.innerHTML = '<li style="color:#64748B; font-size:0.85rem;">이용 내역이 없습니다.</li>';
+        }
+        
+        modal.classList.add('show');
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        currentEditingId = null;
+    }
+
+    if(btnClose1) btnClose1.addEventListener('click', closeModal);
+    if(btnClose2) btnClose2.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+    if(btnSaveMemo) {
+        btnSaveMemo.addEventListener('click', () => {
+            if(!currentEditingId) return;
+            const newMemo = document.getElementById('modalCustMemo').value;
+            const idx = customers.findIndex(x => x.id === currentEditingId);
+            if(idx !== -1) {
+                customers[idx].memo = newMemo;
+                localStorage.setItem(CRM_DB_KEY, JSON.stringify(customers));
+                
+                // Toast notification
+                const t = document.createElement('div');
+                t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; background:rgba(16,185,129,0.95); color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4); animation: fadeIn 0.3s ease;`;
+                t.innerHTML = `<i class="fa-solid fa-check-circle"></i> 고객 메모가 저장되었습니다.`;
+                document.body.appendChild(t);
+                setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 2500);
+            }
+            closeModal();
+        });
+    }
+
+    // 5. Marketing SMS Logic
+    const btnExecuteCampaign = document.getElementById('btnExecuteCampaign');
+    const campaignTarget = document.getElementById('campaignTarget');
+    const campaignCost = document.getElementById('campaignCost');
+    
+    // Dynamic cost calculation based on target
+    if(campaignTarget && campaignCost) {
+        campaignTarget.addEventListener('change', (e) => {
+            let cost = 0;
+            const v = e.target.value;
+            if (v === 'all') cost = 10120 * 15; // 15원/건
+            else if (v === 'vip') cost = 842 * 15;
+            else if (v === 'inactive') cost = 3240 * 15;
+            else if (v === 'spa') cost = 5600 * 15;
+            campaignCost.innerText = cost.toLocaleString() + ' 원';
+        });
+    }
+
+    if(btnExecuteCampaign) {
+        btnExecuteCampaign.addEventListener('click', () => {
+            btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 발송 중...';
+            btnExecuteCampaign.disabled = true;
+            
+            setTimeout(() => {
+                // Restore button
+                btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 발송 완료';
+                btnExecuteCampaign.classList.replace('btn-primary', 'btn-secondary');
+                
+                // Show Toast
+                const t = document.createElement('div');
+                t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; background:rgba(59,130,246,0.95); color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4); animation: fadeIn 0.3s ease;`;
+                t.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> 성공적으로 타겟 마케팅 캠페인이 발송되었습니다.`;
+                document.body.appendChild(t);
+                setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 3000);
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 발송하기';
+                    btnExecuteCampaign.classList.replace('btn-secondary', 'btn-primary');
+                    btnExecuteCampaign.disabled = false;
+                }, 3000);
+            }, 1200);
+        });
+    }
+
+    // 6. Chart (Highcharts)
     if (document.getElementById('memberChart')) {
         Highcharts.chart('memberChart', {
             chart: {
