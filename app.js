@@ -60,67 +60,117 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // --- Admin-Only Navigation Control ---
-        // admin 계정 목록 (사번 기준)
-        const ADMIN_IDS = ['001']; // 대표이사만 admin
+        // ══════════════════════════════════════════════════════
+        // 역할 기반 권한 제어 (ID 범위별)
+        // ══════════════════════════════════════════════════════
+        // ADMIN    : 001 — 모든 권한 (편집/삭제 포함)
+        // 임원급   : 001~009 (마스터/호스트) — 전 메뉴 열람, 편집/삭제 불가
+        // 팀장급   : 010~019 (큐레이터) — HR 제외 전 메뉴 열람, 편집/삭제 불가
+        // 팀원급   : 020~099 (크루) — 트래픽/재고/시설만 열람
+        // ══════════════════════════════════════════════════════
+
+        const empNum = parseInt(currentUser, 10);
+        const ADMIN_IDS = ['001'];
         let isAdmin = ADMIN_IDS.includes(currentUser);
-        if (empRecord && empRecord.is_admin) {
-            isAdmin = true;
+        if (empRecord && empRecord.is_admin) isAdmin = true;
+
+        // 역할 결정
+        let userRole = 'crew'; // 기본값: 팀원급
+        if (isAdmin) {
+            userRole = 'admin';
+        } else if (empNum >= 1 && empNum <= 9) {
+            userRole = 'executive'; // 임원급
+        } else if (empNum >= 10 && empNum <= 19) {
+            userRole = 'leader'; // 팀장급
+        } else {
+            userRole = 'crew'; // 팀원급 (020~099)
         }
-        
-        // admin이 아닌 사용자에게는 보안 모듈 메뉴 숨기기
+
+        // 역할별 접근 가능 메뉴 정의
+        const roleMenuAccess = {
+            admin: 'all', // 모든 메뉴 + 편집/삭제
+            executive: [ // 임원급: 모든 메뉴 열람 (편집/삭제 불가)
+                'index.html', 'traffic.html', 'hr.html', 'sales.html',
+                'inventory.html', 'facility.html', 'simulation.html',
+                'board.html', 'messenger.html', 'document.html', 'approval.html'
+            ],
+            leader: [ // 팀장급: HR 제외 전 메뉴 열람 (편집/삭제 불가)
+                'index.html', 'traffic.html', 'sales.html',
+                'inventory.html', 'facility.html', 'simulation.html',
+                'board.html', 'messenger.html', 'document.html', 'approval.html'
+            ],
+            crew: [ // 팀원급: 트래픽, 재고, 시설만
+                'traffic.html', 'inventory.html', 'facility.html',
+                'board.html', 'messenger.html'
+            ]
+        };
+
+        // 전체 메뉴 목록 (사이드바 nav-item에 해당하는 페이지들)
+        const allMenuPages = [
+            { url: 'index.html', name: '통합 대시보드' },
+            { url: 'traffic.html', name: '트래픽 모니터링' },
+            { url: 'hr.html', name: 'HR/근태 관리' },
+            { url: 'sales.html', name: '영업관리' },
+            { url: 'inventory.html', name: '재고관리' },
+            { url: 'facility.html', name: '시설현황' },
+            { url: 'simulation.html', name: '경영시뮬레이션' },
+            { url: 'board.html', name: '전사 게시판' },
+            { url: 'messenger.html', name: '사내 메신저' },
+            { url: 'document.html', name: '문서 관리' },
+            { url: 'approval.html', name: '전자결재' }
+        ];
+
+        // --- 1) 시스템 보안: ADMIN 전용 ---
         document.querySelectorAll('.nav-admin-only').forEach(el => {
             el.style.display = isAdmin ? '' : 'none';
         });
-        
-        // admin이 아닌 사용자가 security.html에 직접 접속 시도 시 차단
         if (!isAdmin && window.location.pathname.includes('security.html')) {
-            alert('접근 권한이 없습니다. 관리자(대표이사)만 접근할 수 있는 메뉴입니다.');
+            alert('접근 권한이 없습니다. 관리자(ADMIN)만 접근할 수 있는 메뉴입니다.');
             window.location.replace('index.html');
         }
 
-        // admin이 아닌 사용자가 hr.html에 직접 접속 시도 시 차단
-        if (!isAdmin && window.location.pathname.includes('hr.html')) {
-            alert('접근 권한이 없습니다. HR/인사/근태 관리는 관리자(ADMIN)만 열람할 수 있습니다.');
-            window.location.replace('index.html');
-        }
+        // --- 2) 역할 기반 메뉴 접근 제어 ---
+        if (userRole !== 'admin') {
+            const allowedPages = roleMenuAccess[userRole];
 
-        // --- 세부 모듈별 열람 권한 제어 ---
-        if (empRecord && !isAdmin && empRecord.permissions && Array.isArray(empRecord.permissions)) {
-            const menuMapping = [
-                { url: 'index.html', permIndex: 0, name: '통합 대시보드' },
-                { url: 'hr.html', permIndex: 1, name: 'HR/근태 관리' },
-                { url: 'sales.html', permIndex: 2, name: '영업 및 캘린더' },
-                { url: 'inventory.html', permIndex: 3, name: '재고 및 공무' },
-                { url: 'traffic.html', permIndex: 4, name: '트래픽 모니터링' },
-                { url: 'document.html', permIndex: 5, name: '문서 관리' },
-                { url: 'approval.html', permIndex: 6, name: '전자결재' },
-                { url: 'facility.html', permIndex: 7, name: '시설현황' },
-                { url: 'simulation.html', permIndex: 8, name: '경영시뮬레이션' }
-            ];
-
-            menuMapping.forEach(mapping => {
-                const perm = empRecord.permissions[mapping.permIndex];
-                if (perm && perm.read === false) {
-                    // 메뉴 숨기기
-                    const navItem = document.querySelector(`.nav-item[href="${mapping.url}"]`);
+            allMenuPages.forEach(menu => {
+                if (!allowedPages.includes(menu.url)) {
+                    // 사이드바 메뉴 숨기기
+                    const navItem = document.querySelector(`.nav-item[href="${menu.url}"]`);
                     if (navItem) navItem.style.display = 'none';
 
                     // URL 직접 접속 차단
-                    if (window.location.pathname.includes(mapping.url)) {
-                        alert(`[${mapping.name}] 접근 권한이 없습니다.`);
-                        // 메인화면 접근 권한도 없으면 로그아웃 처리 후 로그인 페이지로 튕겨냄
-                        if (mapping.url === 'index.html') {
-                            localStorage.removeItem('isLoggedIn');
-                            localStorage.removeItem('currentUser');
-                            window.location.replace('login.html');
-                        } else {
-                            window.location.replace('index.html');
-                        }
+                    if (window.location.pathname.includes(menu.url)) {
+                        alert(`[${menu.name}] 접근 권한이 없습니다.\n귀하의 권한 등급: ${userRole === 'executive' ? '임원급' : userRole === 'leader' ? '팀장급' : '팀원급'}`);
+                        // 팀원급은 대시보드 접근 불가 → 트래픽으로 리다이렉트
+                        const fallback = allowedPages.includes('index.html') ? 'index.html' : allowedPages[0];
+                        window.location.replace(fallback);
                     }
                 }
             });
         }
+
+        // --- 3) 편집/삭제 권한 제어 (임원급, 팀장급) ---
+        if (userRole === 'executive' || userRole === 'leader') {
+            // 편집/삭제 버튼을 전역적으로 비활성화 (페이지 로드 후)
+            document.querySelectorAll('.btn-edit, .btn-delete, [data-action="edit"], [data-action="delete"]').forEach(btn => {
+                btn.style.display = 'none';
+            });
+            // 읽기전용 뱃지 표시 추가
+            const headerTitle = document.querySelector('.header-title');
+            if (headerTitle && !headerTitle.querySelector('.readonly-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'readonly-badge';
+                badge.innerHTML = '<i class="fa-solid fa-eye"></i> 열람전용';
+                badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.15);color:#F59E0B;font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:6px;border:1px solid rgba(245,158,11,0.3);margin-left:12px;vertical-align:middle;';
+                const h1 = headerTitle.querySelector('h1');
+                if (h1) h1.appendChild(badge);
+            }
+        }
+
+        // 전역 변수로 역할 노출 (다른 모듈에서 참조 가능)
+        window.erpUserRole = userRole;
+        window.erpIsAdmin = isAdmin;
     }
 
     // Inject Password Change Button & Modal dynamically
