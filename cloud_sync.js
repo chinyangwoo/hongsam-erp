@@ -73,8 +73,9 @@
                 });
 
                 console.log("[Phase 2] Cloud Data Integration Complete.");
-                if (uiNeedsRefresh) {
-                    console.log("[Cloud Sync] 새 데이터 발견. 화면 업데이트를 위해 새로고침 합니다.");
+                if (uiNeedsRefresh && !sessionStorage.getItem('cloud_sync_done')) {
+                    sessionStorage.setItem('cloud_sync_done', '1');
+                    console.log("[Cloud Sync] 새 데이터 발견. 화면 업데이트를 위해 1회 새로고침 합니다.");
                     window.location.reload();
                 }
             }
