@@ -1,9 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const role = currentUser.role || '크루';
-    const empNum = parseInt(currentUser.empId, 10);
-    const isAdminRole = (role === '마스터' || role === '호스트' || (empNum >= 1 && empNum <= 9) || currentUser.is_admin);
+    const currentUserStr = localStorage.getItem('currentUser') || '';
+    const empNum = parseInt(currentUserStr, 10);
+    
+    let isAdminRole = false;
+    const ADMIN_IDS = ['001'];
+    if (ADMIN_IDS.includes(currentUserStr)) {
+        isAdminRole = true;
+    } else if (empNum >= 1 && empNum <= 9) {
+        isAdminRole = true;
+    }
+    
+    // Check HR DB for is_admin flag
+    try {
+        const empDb = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
+        const rec = empDb.find(e => parseInt(e.emp_id, 10) === empNum);
+        if (rec && rec.is_admin) isAdminRole = true;
+    } catch(e) {}
 
     if (!isAdminRole) {
         // 일반 사원이면 관리자 전용 요소 숨김 처리
@@ -53,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = ''; // clear grid
         
         let employees = initHREmployees();
-        if (!isAdminRole && currentUser.empId) {
-            employees = employees.filter(e => parseInt(e.emp_id, 10) === parseInt(currentUser.empId, 10));
+        if (!isAdminRole && currentUserStr) {
+            employees = employees.filter(e => parseInt(e.emp_id, 10) === empNum);
         }
         employees.forEach(emp => {
             addEmployeeCard(emp);
@@ -1044,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tbody.innerHTML = '';
         employees.forEach(emp => {
-            if (!isAdminRole && parseInt(emp.emp_id, 10) !== parseInt(currentUser.empId, 10)) return; // 비관리자는 본인 휴가만
+            if (!isAdminRole && parseInt(emp.emp_id, 10) !== empNum) return; // 비관리자는 본인 휴가만
             
             const total = parseInt(emp.total_vacation) || 15;
             const used = parseInt(emp.used_vacation) || 0;
@@ -1125,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Group payroll history by month
         const monthlyData = {};
         employees.forEach(emp => {
-            if (!isAdminRole && parseInt(emp.emp_id, 10) !== parseInt(currentUser.empId, 10)) return; // 비관리자는 본인 급여만
+            if (!isAdminRole && parseInt(emp.emp_id, 10) !== empNum) return; // 비관리자는 본인 급여만
             if (emp.payroll_history && Array.isArray(emp.payroll_history)) {
                 emp.payroll_history.forEach(ph => {
                     if (!ph.month) return;
