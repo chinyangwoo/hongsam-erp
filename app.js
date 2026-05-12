@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
-            crew: [ // 팀원급: 트래픽, 재고, 시설만
+            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재
                 'traffic.html', 'inventory.html', 'facility.html',
-                'board.html', 'messenger.html'
+                'board.html', 'messenger.html', 'approval.html'
             ]
         };
 
