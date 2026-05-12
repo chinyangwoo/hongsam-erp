@@ -441,12 +441,37 @@
     `;
     document.head.appendChild(style);
 
-    // ── 페이지 로드 시 저장된 직원 복원 ──────────────────────
+    // ── 페이지 로드 시 저장된 직원 복원 (권한 체크 포함) ──────
     window.addEventListener('load', () => {
         try {
             const KEY  = 'hongsam_employees';
-            const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-            if (data.length > 0) refreshPersonnelGrid(data);
+            let data = JSON.parse(localStorage.getItem(KEY) || '[]');
+            if (data.length === 0) return;
+
+            // ── 권한 체크: hr.js의 canViewAll 로직과 동기화 ──
+            const curUser = localStorage.getItem('currentUser') || '';
+            const curNum = parseInt(curUser, 10);
+            let viewAll = false;
+            
+            // Admin(001)
+            if (curUser === '001') { viewAll = true; }
+            // 임원급(002~009)
+            else if (curNum >= 1 && curNum <= 9) { viewAll = true; }
+            // 팀장급(010~019)
+            else if (curNum >= 10 && curNum <= 19) { viewAll = true; }
+            
+            // is_admin 플래그 체크
+            try {
+                const rec = data.find(e => parseInt(e.emp_id, 10) === curNum);
+                if (rec && rec.is_admin) viewAll = true;
+            } catch(_) {}
+            
+            // 크루(본인만): 본인 사번과 일치하는 데이터만 표시
+            if (!viewAll && curUser) {
+                data = data.filter(e => parseInt(e.emp_id, 10) === curNum);
+            }
+            
+            refreshPersonnelGrid(data);
         } catch (_) {}
     });
 
