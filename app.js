@@ -94,13 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
-            leader: [ // 팀장급: HR 제외 전 메뉴 열람 (편집/삭제 불가)
-                'index.html', 'traffic.html', 'sales.html',
+            leader: [ // 팀장급: 모든 메뉴 열람 (본인 인사정보 포함)
+                'index.html', 'traffic.html', 'hr.html', 'sales.html',
                 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
-            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재
-                'traffic.html', 'inventory.html', 'facility.html',
+            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재, 인사(본인)
+                'traffic.html', 'hr.html', 'inventory.html', 'facility.html',
                 'board.html', 'messenger.html', 'approval.html'
             ]
         };

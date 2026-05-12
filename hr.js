@@ -1,5 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const role = currentUser.role || '크루';
+    const empNum = parseInt(currentUser.empId, 10);
+    const isAdminRole = (role === '마스터' || role === '호스트' || (empNum >= 1 && empNum <= 9) || currentUser.is_admin);
+
+    if (!isAdminRole) {
+        // 일반 사원이면 관리자 전용 요소 숨김 처리
+        document.querySelectorAll('.admin-only-element').forEach(el => el.style.display = 'none');
+        // 인사기록카드 탭의 검색창도 숨김 (본인 것만 보이므로)
+        const actionBar = document.querySelector('#tab-personnel .action-bar');
+        if (actionBar) actionBar.style.display = 'none';
+    }
+
     // --- INIT EMPLOYEE DB ---
     function initHREmployees() {
         const KEY = 'hongsam_employees';
@@ -39,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!grid) return;
         grid.innerHTML = ''; // clear grid
         
-        const employees = initHREmployees();
+        let employees = initHREmployees();
+        if (!isAdminRole && currentUser.empId) {
+            employees = employees.filter(e => e.emp_id === currentUser.empId);
+        }
         employees.forEach(emp => {
             addEmployeeCard(emp);
         });
@@ -551,18 +567,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 권한 수집
-            const isAdmin = document.getElementById('newEmpAdmin')?.checked || false;
+            const adminCheckbox = document.getElementById('newEmpAdmin');
+            const isAdminGranted = adminCheckbox?.checked || false;
             const permRows = document.querySelectorAll('#newEmpForm .perm-table tbody tr');
             const perms = [];
             permRows.forEach(row => {
                 const cells = row.querySelectorAll('input[type="checkbox"]');
                 perms.push({
-                    read: isAdmin ? true : (cells[0]?.checked || false),
-                    write: isAdmin ? true : (cells[1]?.checked || false),
+                    read: isAdminGranted ? true : (cells[0]?.checked || false),
+                    write: isAdminGranted ? true : (cells[1]?.checked || false),
                 });
             });
             empData.permissions = perms;
-            empData.is_admin = isAdmin;
+            empData.is_admin = isAdminGranted;
 
             // localStorage 저장
             const KEY = 'hongsam_employees';
@@ -624,15 +641,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusText = emp.status === '재직' ? '정상근무' : emp.status;
         const imgSrc = emp.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`;
 
+        let actionsHtml = '';
+        if (isAdminRole) {
+            actionsHtml = `
+            <div class="emp-card-actions">
+                <button title="수정" onclick="event.stopPropagation(); editEmployee('${emp.emp_id}')"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${emp.emp_id}','${emp.name}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            `;
+        }
+
         const card = document.createElement('div');
         card.className = 'employee-card glassmorphism';
         card.setAttribute('data-emp-id', emp.emp_id);
         card.style.cursor = 'pointer';
         card.innerHTML = `
-            <div class="emp-card-actions">
-                <button title="수정" onclick="event.stopPropagation(); editEmployee('${emp.emp_id}')"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-del" title="삭제" onclick="event.stopPropagation(); deleteEmployee('${emp.emp_id}','${emp.name}')"><i class="fa-solid fa-trash"></i></button>
-            </div>
+            ${actionsHtml}
             <div class="emp-photo"><img src="${imgSrc}" alt="Photo"></div>
             <div class="emp-info">
                 <h3 class="emp-name">${emp.name} <span class="emp-id">${emp.emp_id}</span></h3>
@@ -1020,6 +1044,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tbody.innerHTML = '';
         employees.forEach(emp => {
+            if (!isAdminRole && emp.emp_id !== currentUser.empId) return; // 비관리자는 본인 휴가만
+            
             const total = parseInt(emp.total_vacation) || 15;
             const used = parseInt(emp.used_vacation) || 0;
             const remain = total - used;
@@ -1044,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="font-size:0.75rem; color:#94A3B8; text-align:right; margin-top:6px; font-weight:600;">사용률: ${rateFormatted}%</div>
                 </td>
                 <td>
-                    <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:6px; cursor:pointer; color:white;" onclick="editLeave('${emp.emp_id}','${emp.name}',${total},${used})"><i class="fa-solid fa-pen"></i> 수정</button>
+                    ${isAdminRole ? `<button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:6px; cursor:pointer; color:white;" onclick="editLeave('${emp.emp_id}','${emp.name}',${total},${used})"><i class="fa-solid fa-pen"></i> 수정</button>` : `<span style="color:#64748B; font-size:0.8rem;">권한없음</span>`}
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1099,6 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Group payroll history by month
         const monthlyData = {};
         employees.forEach(emp => {
+            if (!isAdminRole && emp.emp_id !== currentUser.empId) return; // 비관리자는 본인 급여만
             if (emp.payroll_history && Array.isArray(emp.payroll_history)) {
                 emp.payroll_history.forEach(ph => {
                     if (!ph.month) return;
