@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isAdminRole && currentUserStr) {
             employees = employees.filter(e => parseInt(e.emp_id, 10) === empNum);
         }
+        
+        if (employees.length === 0) {
+            grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #94A3B8; width: 100%;">등록된 인사 정보가 없습니다.</div>';
+            return;
+        }
+
         employees.forEach(emp => {
             addEmployeeCard(emp);
         });
@@ -1119,14 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showSaveToast(`${empName} 사원의 연차 정보가 수정되었습니다. (배정:${total}일, 사용:${used}일, 잔여:${remain}일)`);
     };
 
-    // ─── 페이지 로드 시 localStorage의 사원을 그리드에 렌더 ───
-    function loadSavedEmployees() {
-        const KEY = 'hongsam_employees';
-        try {
-            const employees = JSON.parse(localStorage.getItem(KEY) || '[]');
-            employees.forEach(emp => addEmployeeCard(emp));
-        } catch (_) {}
-    }
+
 
     function renderPayrollTable() {
         const container = document.getElementById('payrollTablesContainer');
@@ -1373,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadSavedEmployees();
+
     renderVacationTable(); // 초기 연차현황 렌더링
     renderPayrollTable();  // 급여 테이블 렌더링
     updatePayrollKPIs();   // KPI 계산 및 표기
