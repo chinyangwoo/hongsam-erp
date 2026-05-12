@@ -90,16 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const roleMenuAccess = {
             admin: 'all', // 모든 메뉴 + 편집/삭제
             executive: [ // 임원급: 모든 메뉴 열람 (편집/삭제 불가)
-                'index.html', 'traffic.html', 'hr.html', 'sales.html',
+                'index.html', 'traffic.html', 'hr.html', 'sales.html', 'reservation.html',
                 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
             leader: [ // 팀장급: 모든 메뉴 열람 (본인 인사정보 포함)
-                'index.html', 'traffic.html', 'hr.html', 'sales.html',
+                'index.html', 'traffic.html', 'hr.html', 'sales.html', 'reservation.html',
                 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
-            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재, 인사(본인)
+            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재, 인사(본인) — 예약관리 불가
                 'traffic.html', 'hr.html', 'inventory.html', 'facility.html',
                 'board.html', 'messenger.html', 'approval.html'
             ]
@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { url: 'traffic.html', name: '트래픽 모니터링' },
             { url: 'hr.html', name: 'HR/근태 관리' },
             { url: 'sales.html', name: '영업관리' },
+            { url: 'reservation.html', name: '예약/대관 관리' },
             { url: 'inventory.html', name: '재고관리' },
             { url: 'facility.html', name: '시설현황' },
             { url: 'simulation.html', name: '경영시뮬레이션' },
