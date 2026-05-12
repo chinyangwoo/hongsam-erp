@@ -300,7 +300,8 @@
                     <div class="table-header">
                         <h2><i class="fa-solid fa-calendar-days" style="color:#6366F1; margin-right:8px;"></i>개인별 월간 출결 현황 (보안업체 연동)</h2>
                         <div style="display:flex; gap:10px;">
-                            <button class="btn-primary" id="btnSyncSecurity" style="background: linear-gradient(135deg, #10B981, #059669); border:none;"><i class="fa-solid fa-satellite-dish"></i> 캡스/세콤 서버 연동</button>
+                            <label for="attendanceExcelUpload" class="btn-primary" style="background: linear-gradient(135deg, #10B981, #059669); border:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size: 0.9rem; padding: 10px 16px;"><i class="fa-solid fa-file-excel"></i> 출퇴근 엑셀 업로드</label>
+                            <input type="file" id="attendanceExcelUpload" accept=".xlsx, .xls" style="display:none;">
                             <button class="btn-text" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV 내보내기</button>
                         </div>
                     </div>
@@ -321,8 +322,8 @@
                                 <tr>
                                     <td colspan="7" style="text-align: center; padding: 40px; color: #94A3B8;">
                                         <i class="fa-solid fa-server" style="font-size: 2rem; color: #64748B; margin-bottom: 15px;"></i><br>
-                                        접근통제 보안업체(ADT캡스/에스원 등) 연동 데이터가 아직 동기화되지 않았습니다.<br>
-                                        우측 상단의 <strong>[캡스/세콤 서버 연동]</strong> 버튼을 눌러 API를 호출해 주세요.
+                                        근태 기록이 아직 업로드되지 않았습니다.<br>
+                                        우측 상단의 <strong>[출퇴근 엑셀 업로드]</strong> 버튼을 눌러 보안업체 근태 엑셀을 업로드해 주세요.
                                     </td>
                                 </tr>
                             </tbody>

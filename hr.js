@@ -48,77 +48,183 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call it immediately on load
     renderAllEmployees();
 
-    // --- SECURITY API SYNC (CAPS) ---
-    const btnSyncSecurity = document.getElementById('btnSyncSecurity');
-    if (btnSyncSecurity) {
-        btnSyncSecurity.addEventListener('click', () => {
-            btnSyncSecurity.disabled = true;
-            const originalHTML = btnSyncSecurity.innerHTML;
-            btnSyncSecurity.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> API 서버 연결 중...';
-            
-            setTimeout(() => {
-                const tbody = document.getElementById('attendanceTableBody');
-                if (!tbody) return;
-                
-                tbody.innerHTML = ''; // clear placeholder
-                
-                // Construct mock attendance log dynamically based on current employees
-                let employees = [];
-                try { employees = JSON.parse(localStorage.getItem('hongsam_employees')); } catch(_) {}
-                if (!employees || employees.length === 0) employees = initHREmployees();
+    // --- ATTENDANCE EXCEL UPLOAD ---
+    const attendanceExcelUpload = document.getElementById('attendanceExcelUpload');
+    if (attendanceExcelUpload) {
+        attendanceExcelUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-                const today = new Date();
-                const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
-                
-                // Shuffle/randomize to make it look real
-                const logs = employees.map((emp, index) => {
-                    // Make up some times
-                    let inHour = 8;
-                    let inMin = 30 + Math.floor(Math.random() * 45); // 08:30 to 09:14
-                    let outHour = 18;
-                    let outMin = Math.floor(Math.random() * 30);
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = window.XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rows = window.XLSX.utils.sheet_to_json(firstSheet, {header: 1});
                     
-                    let statusHtml;
-                    if (inHour === 9 && inMin > 0) {
-                        statusHtml = '<span class="status st-pending" style="color:#F59E0B; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">지각</span>';
-                    } else if (index % 5 === 2) {
-                        statusHtml = '<span class="status st-vacation" style="color:#6366F1; background:rgba(99,102,241,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">휴가 (연차)</span>';
-                        inHour = null;
-                        outHour = null;
-                    } else {
-                        statusHtml = '<span class="status st-approved" style="color:#10B981; background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">정상출근</span>';
+                    if (rows.length < 2) {
+                        alert('데이터가 없거나 올바르지 않은 엑셀 형식입니다.');
+                        return;
                     }
 
-                    const inTimeStr = inHour ? `${String(inHour).padStart(2,'0')}:${String(inMin).padStart(2,'0')}:1${index}` : '-';
-                    const outTimeStr = outHour ? `${String(outHour).padStart(2,'0')}:${String(outMin).padStart(2,'0')}:4${index}` : '-';
+                    const headers = rows[0].map(h => h ? h.toString().replace(/\s+/g,'') : '');
+                    
+                    const findCol = (keywords) => {
+                        for(let k of keywords) {
+                            let idx = headers.findIndex(h => h.includes(k));
+                            if(idx !== -1) return idx;
+                        }
+                        return -1;
+                    };
 
-                    return `
-                        <tr>
-                            <td>${dateStr}</td>
-                            <td>${emp.emp_id}</td>
-                            <td>${emp.name}</td>
-                            <td>${emp.department || '-'}</td>
-                            <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${inTimeStr}</td>
-                            <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${outTimeStr}</td>
-                            <td>${statusHtml}</td>
-                        </tr>
-                    `;
-                });
+                    const cDate = findCol(['날짜', '일자', 'Date']);
+                    const cId = findCol(['사번', 'ID']);
+                    const cName = findCol(['성명', '이름', '사원명']);
+                    const cDept = findCol(['부서', '팀']);
+                    const cIn = findCol(['출근', '지문', '시작', 'In']);
+                    const cOut = findCol(['퇴근', '종료', 'Out']);
 
-                tbody.innerHTML = logs.join('');
-                
-                // Provide UI feedback
-                btnSyncSecurity.innerHTML = '<i class="fa-solid fa-check"></i> 동기화 완료';
-                btnSyncSecurity.style.background = 'linear-gradient(135deg, #3B82F6, #2563EB)';
-                
-                showSaveToast('보안서버(캡스)에서 오늘자 출퇴근 기록을 성공적으로 동기화했습니다.');
-                
-                setTimeout(() => {
-                    btnSyncSecurity.disabled = false;
-                    btnSyncSecurity.innerHTML = originalHTML;
-                    btnSyncSecurity.style.background = '';
-                }, 4000);
-            }, 2000); // 2 sec fake delay
+                    if (cId === -1 || cName === -1 || cIn === -1) {
+                        alert('엑셀 양식에서 필수 컬럼(사번, 성명, 출근)을 찾을 수 없습니다.');
+                        return;
+                    }
+
+                    const tbody = document.getElementById('attendanceTableBody');
+                    if (!tbody) return;
+                    tbody.innerHTML = '';
+
+                    let statPresent = 0;
+                    let statLate = 0;
+                    let statAbsent = 0;
+                    let statVacation = 0;
+
+                    let hrEmployees = [];
+                    try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e){}
+
+                    const today = new Date();
+                    const defaultDateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+
+                    let htmlString = '';
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length === 0 || !row[cId] || !row[cName]) continue;
+
+                        const empId = String(row[cId]).trim();
+                        const name = row[cName] || '';
+                        let dept = cDept !== -1 ? (row[cDept] || '') : '';
+                        
+                        if (!dept) {
+                            const empInfo = hrEmployees.find(e => e.emp_id === empId);
+                            if (empInfo) dept = empInfo.department;
+                        }
+
+                        let dateStr = cDate !== -1 ? (row[cDate] || defaultDateStr) : defaultDateStr;
+                        
+                        let inTimeRaw = row[cIn] || '';
+                        let outTimeRaw = cOut !== -1 ? (row[cOut] || '') : '';
+                        
+                        let inTimeStr = inTimeRaw.toString().trim();
+                        let outTimeStr = outTimeRaw.toString().trim();
+
+                        let statusHtml = '';
+                        
+                        // 상태 자동 판별 로직
+                        if (inTimeStr === '' || inTimeStr.includes('결근')) {
+                            statusHtml = '<span class="status st-pending" style="color:#EF4444; background:rgba(239,68,68,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">결근</span>';
+                            statAbsent++;
+                            inTimeStr = '-';
+                        } else if (inTimeStr.includes('휴가') || inTimeStr.includes('연차')) {
+                            statusHtml = '<span class="status st-vacation" style="color:#6366F1; background:rgba(99,102,241,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">휴가</span>';
+                            statVacation++;
+                        } else {
+                            // 지각 판별 (9시 정각 이후 출근 시 지각)
+                            let isLate = false;
+                            const timeMatch = inTimeStr.match(/(\d{1,2})[:시]\s*(\d{1,2})/);
+                            if (timeMatch) {
+                                const hour = parseInt(timeMatch[1], 10);
+                                const min = parseInt(timeMatch[2], 10);
+                                if (hour > 9 || (hour === 9 && min > 0)) {
+                                    isLate = true;
+                                }
+                            } else if (inTimeStr.includes('지각')) {
+                                isLate = true;
+                            }
+                            
+                            if (isLate) {
+                                statusHtml = '<span class="status st-pending" style="color:#F59E0B; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">지각</span>';
+                                statLate++;
+                            } else {
+                                statusHtml = '<span class="status st-approved" style="color:#10B981; background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">정상출근</span>';
+                                statPresent++;
+                            }
+                        }
+                        
+                        if (!outTimeStr) outTimeStr = '-';
+
+                        htmlString += `
+                            <tr>
+                                <td>${dateStr}</td>
+                                <td>${empId}</td>
+                                <td>${name}</td>
+                                <td>${dept || '-'}</td>
+                                <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${inTimeStr}</td>
+                                <td class="time-stamp" style="font-family:monospace; color:#E2E8F0;">${outTimeStr}</td>
+                                <td>${statusHtml}</td>
+                            </tr>
+                        `;
+                    }
+                    
+                    if (htmlString === '') {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">업로드된 데이터가 없습니다.</td></tr>';
+                    } else {
+                        tbody.innerHTML = htmlString;
+                    }
+
+                    // 상단 요약 카드 수치 업데이트
+                    const total = statPresent + statLate + statAbsent + statVacation;
+                    if (document.getElementById('attPresent')) document.getElementById('attPresent').innerText = statPresent;
+                    if (document.getElementById('attLate')) document.getElementById('attLate').innerText = statLate;
+                    if (document.getElementById('attAbsent')) document.getElementById('attAbsent').innerText = statAbsent;
+                    if (document.getElementById('attVacation')) document.getElementById('attVacation').innerText = statVacation;
+                    
+                    // 도넛 차트 업데이트 (CSS background conic-gradient 동적 변경)
+                    const dcNum = document.querySelector('.donut-center .dc-num');
+                    if (dcNum) dcNum.innerText = total;
+                    
+                    if (total > 0) {
+                        const pDeg = (statPresent / total) * 360;
+                        const aDeg = pDeg + (statAbsent / total) * 360;
+                        const lDeg = aDeg + (statLate / total) * 360;
+                        const chartDiv = document.getElementById('attDonutChart');
+                        if (chartDiv) {
+                            chartDiv.style.background = `conic-gradient(#10B981 0deg ${pDeg}deg, #EF4444 ${pDeg}deg ${aDeg}deg, #F59E0B ${aDeg}deg ${lDeg}deg, #6366F1 ${lDeg}deg 360deg)`;
+                        }
+                    }
+
+                    // 범례 통계 텍스트도 업데이트
+                    const legends = document.querySelectorAll('#tab-attendance .att-chart-box .att-legend .att-legend-item');
+                    if (legends && legends.length >= 4) {
+                        legends[0].innerHTML = `<div class="att-legend-dot" style="background:#10B981;"></div> 출근 ${statPresent}`;
+                        legends[1].innerHTML = `<div class="att-legend-dot" style="background:#EF4444;"></div> 결근 ${statAbsent}`;
+                        legends[2].innerHTML = `<div class="att-legend-dot" style="background:#F59E0B;"></div> 지각 ${statLate}`;
+                        legends[3].innerHTML = `<div class="att-legend-dot" style="background:#6366F1;"></div> 휴가 ${statVacation}`;
+                    }
+
+                    if (typeof showSaveToast === 'function') {
+                        showSaveToast(`근태 엑셀 데이터 연동 완료 (총 ${rows.length - 1}건)`);
+                    } else {
+                        alert('근태 엑셀 데이터가 성공적으로 반영되었습니다.');
+                    }
+                    attendanceExcelUpload.value = ''; // 초기화
+
+                } catch (err) {
+                    console.error(err);
+                    alert('엑셀 파일 처리 중 오류가 발생했습니다: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
         });
     }
 
