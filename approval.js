@@ -12,10 +12,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 현재 로그인 유저 ──
     function getCurrentUser() {
-        try {
-            const u = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            return { name: u.name || '진양우', dept: u.department || '대표', id: u.id || '001' };
-        } catch { return { name: '진양우', dept: '대표', id: '001' }; }
+        const empId = localStorage.getItem('currentUser') || '001';
+        const empName = localStorage.getItem('currentUserName') || '사원';
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e) {}
+        const rec = employees.find(e => e.emp_id === empId);
+        return {
+            id: empId,
+            name: rec ? rec.name : empName,
+            dept: rec ? (rec.department || '미배정') : '미배정',
+            rank: rec ? (rec.rank || '크루') : '크루'
+        };
+    }
+
+    // ── 조직도 기반 결재선 자동 생성 ──
+    function getApprovalLine(empId) {
+        const num = parseInt(empId, 10);
+        let employees = [];
+        try { employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch(e) {}
+        const drafter = employees.find(e => e.emp_id === empId);
+        const drafterTeam = drafter ? drafter.department : '';
+
+        if (num >= 20 && num <= 99) {
+            // 크루 → 1차: 같은팀 큐레이터, 2차: 호스트
+            const curator = employees.find(e => {
+                const n = parseInt(e.emp_id, 10);
+                return n >= 10 && n <= 19 && e.department === drafterTeam;
+            });
+            const host = employees.find(e => {
+                const n = parseInt(e.emp_id, 10);
+                return n >= 2 && n <= 9;
+            });
+            return {
+                step1: curator ? { id: curator.emp_id, name: curator.name, role: '큐레이터' } : (host ? { id: host.emp_id, name: host.name, role: '호스트' } : null),
+                step2: curator ? (host ? { id: host.emp_id, name: host.name, role: '호스트' } : { id: '001', name: '진양우', role: '마스터' }) : { id: '001', name: '진양우', role: '마스터' }
+            };
+        } else if (num >= 10 && num <= 19) {
+            // 큐레이터 → 1차: 호스트, 2차: 마스터
+            const host = employees.find(e => { const n = parseInt(e.emp_id, 10); return n >= 2 && n <= 9; });
+            return {
+                step1: host ? { id: host.emp_id, name: host.name, role: '호스트' } : { id: '001', name: '진양우', role: '마스터' },
+                step2: host ? { id: '001', name: '진양우', role: '마스터' } : null
+            };
+        } else if (num >= 2 && num <= 9) {
+            // 호스트 → 1차: 마스터
+            return { step1: { id: '001', name: '진양우', role: '마스터' }, step2: null };
+        }
+        return { step1: null, step2: null };
     }
 
     // ── 시드 데이터 ──
@@ -102,18 +145,36 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(DB_KEY, JSON.stringify(docs));
     }
 
-    // ── 뷰별 필터 ──
+    // ── 뷰별 필터 (로그인 사용자 기준) ──
     function getFilteredDocs() {
         const docs = loadDocs();
+        const user = getCurrentUser();
+        const uid = user.id;
         const kw = (document.getElementById('apSearchInput').value || '').toLowerCase().trim();
         let filtered;
         switch (currentView) {
-            case 'pending':     filtered = docs.filter(d => d.status === 'pending'); break;
-            case 'approved-in': filtered = docs.filter(d => d.status === 'approved'); break;
-            case 'in-progress': filtered = docs.filter(d => d.status === 'pending'); break;
-            case 'rejected':    filtered = docs.filter(d => d.status === 'rejected'); break;
-            case 'completed':   filtered = docs.filter(d => d.status === 'approved'); break;
-            default:            filtered = docs;
+            case 'pending': // 내가 결재해야 할 문서
+                filtered = docs.filter(d => {
+                    if (d.step1_id === uid && d.step1_status === 'pending') return true;
+                    if (d.step1_status === 'approved' && d.step2_id === uid && d.step2_status === 'pending') return true;
+                    // 하위호환: 구 데이터
+                    if (!d.step1_id && d.status === 'pending') return parseInt(uid,10) <= 9;
+                    return false;
+                });
+                break;
+            case 'approved-in': // 내가 결재한 완료 문서
+                filtered = docs.filter(d => d.status === 'approved' && (d.step1_id === uid || d.step2_id === uid));
+                break;
+            case 'in-progress': // 내가 기안한 진행중 문서
+                filtered = docs.filter(d => d.authorId === uid && (d.status === 'pending' || d.status === 'hold'));
+                break;
+            case 'rejected': // 내가 기안한 반려/보류 문서
+                filtered = docs.filter(d => d.authorId === uid && (d.status === 'rejected' || d.status === 'hold'));
+                break;
+            case 'completed': // 내가 기안한 완료 문서
+                filtered = docs.filter(d => d.authorId === uid && d.status === 'approved');
+                break;
+            default: filtered = docs;
         }
         if (kw) {
             filtered = filtered.filter(d =>
@@ -127,9 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 상태 배지 ──
     function statusBadge(doc) {
-        if (doc.status === 'pending') return '<span class="status status-pending">내 결재 대기중</span>';
-        if (doc.status === 'approved') return '<span class="status status-approved">결재 완료</span>';
-        if (doc.status === 'rejected') return '<span class="status status-rejected">반려</span>';
+        if (doc.status === 'pending') return '<span class="status status-pending">결재 대기</span>';
+        if (doc.status === 'hold') return '<span class="status status-hold" style="color:#F59E0B;">보류</span>';
+        if (doc.status === 'approved') return '<span class="status status-approved">승인 완료</span>';
+        if (doc.status === 'rejected') return '<span class="status status-rejected">각하</span>';
         return '';
     }
 
@@ -298,41 +360,76 @@ document.addEventListener('DOMContentLoaded', () => {
     // ══════════════════════════════════════════
     //  결재 승인 / 반려
     // ══════════════════════════════════════════
-    document.getElementById('btnApproveDoc').addEventListener('click', () => {
+    // 단계별 결재 처리 헬퍼
+    function processApproval(action) {
         if (!viewingDocId) return;
         const docs = loadDocs();
         const doc = docs.find(d => d.id === viewingDocId);
-        if (!doc || doc.status !== 'pending') return;
-
-        doc.status = 'approved';
+        if (!doc) return;
+        const user = getCurrentUser();
+        const uid = user.id;
         const now = new Date();
-        doc.approveDate = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
-        saveDocs(docs);
+        const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
 
-        alert('✅ 결재가 승인되었습니다.\n문서번호: ' + doc.docNum);
+        // 1차 결재자인 경우
+        if (doc.step1_id === uid && doc.step1_status === 'pending') {
+            if (action === 'approve') {
+                doc.step1_status = 'approved';
+                doc.step1_date = dateStr;
+                if (doc.step2_id) { doc.step2_status = 'pending'; }
+                else { doc.status = 'approved'; doc.approveDate = dateStr; }
+                alert('✅ 1차 결재(검토) 승인 완료');
+            } else if (action === 'hold') {
+                const reason = prompt('보류 사유를 입력하세요:');
+                if (!reason) return;
+                doc.step1_status = 'hold'; doc.status = 'hold';
+                doc.step1_comment = reason; doc.step1_date = dateStr;
+                alert('⏸ 보류 처리되었습니다.');
+            } else {
+                const reason = prompt('각하 사유를 입력하세요:');
+                if (!reason) return;
+                doc.step1_status = 'rejected'; doc.status = 'rejected';
+                doc.rejectReason = reason; doc.step1_date = dateStr;
+                alert('❌ 각하 처리되었습니다.');
+            }
+        }
+        // 2차 결재자인 경우
+        else if (doc.step2_id === uid && doc.step1_status === 'approved' && doc.step2_status === 'pending') {
+            if (action === 'approve') {
+                doc.step2_status = 'approved'; doc.status = 'approved';
+                doc.step2_date = dateStr; doc.approveDate = dateStr;
+                alert('✅ 최종 결재 승인 완료');
+            } else if (action === 'hold') {
+                const reason = prompt('보류 사유를 입력하세요:');
+                if (!reason) return;
+                doc.step2_status = 'hold'; doc.status = 'hold';
+                doc.step2_comment = reason; doc.step2_date = dateStr;
+                alert('⏸ 보류 처리되었습니다.');
+            } else {
+                const reason = prompt('각하 사유를 입력하세요:');
+                if (!reason) return;
+                doc.step2_status = 'rejected'; doc.status = 'rejected';
+                doc.rejectReason = reason; doc.step2_date = dateStr;
+                alert('❌ 각하 처리되었습니다.');
+            }
+        }
+        // 하위호환 (구 데이터)
+        else if (!doc.step1_id && doc.status === 'pending') {
+            if (action === 'approve') { doc.status = 'approved'; doc.approveDate = dateStr; alert('✅ 승인 완료'); }
+            else if (action === 'hold') { const r = prompt('보류 사유:'); if(!r) return; doc.status = 'hold'; doc.rejectReason = r; alert('⏸ 보류'); }
+            else { const r = prompt('각하 사유:'); if(!r) return; doc.status = 'rejected'; doc.rejectReason = r; alert('❌ 각하'); }
+        }
+        saveDocs(docs);
         document.getElementById('docViewer').style.display = 'none';
         viewingDocId = null;
         renderDocList();
-    });
+    }
 
-    document.getElementById('btnRejectDoc').addEventListener('click', () => {
-        if (!viewingDocId) return;
-        const docs = loadDocs();
-        const doc = docs.find(d => d.id === viewingDocId);
-        if (!doc || doc.status !== 'pending') return;
-
-        const reason = prompt('반려 사유를 입력하세요:');
-        if (!reason) return;
-
-        doc.status = 'rejected';
-        doc.rejectReason = reason;
-        saveDocs(docs);
-
-        alert('문서가 반려 처리되었습니다.\n사유: ' + reason);
-        document.getElementById('docViewer').style.display = 'none';
-        viewingDocId = null;
-        renderDocList();
-    });
+    document.getElementById('btnApproveDoc').addEventListener('click', () => processApproval('approve'));
+    document.getElementById('btnRejectDoc').addEventListener('click', () => processApproval('reject'));
+    // 보류 버튼 (HTML에 동적 추가)
+    const holdBtn = document.getElementById('btnHoldDoc');
+    if (holdBtn) holdBtn.addEventListener('click', () => processApproval('hold'));
 
     // ══════════════════════════════════════════
     //  새 기안 상신
@@ -359,17 +456,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showDraftModal() {
+        const user = getCurrentUser();
+        // 001 대표는 기안 불가
+        if (user.id === '001') {
+            alert('대표이사는 결재 승인만 가능합니다.\n기안은 각 팀에서 상신하여 주십시오.');
+            return;
+        }
         document.getElementById('draftSubject').value = '';
         document.getElementById('draftContent').value = '';
         document.getElementById('draftType').value = '지출결의서';
-        const drafterRole = document.getElementById('drafterRole');
-        if (drafterRole) drafterRole.value = 'crew';
+        // 기안자 정보 자동 채우기
+        const drafterInfo = document.getElementById('drafterInfo');
+        if (drafterInfo) drafterInfo.value = `${user.name} (${user.dept})`;
+        // 결재선 자동 생성
+        const line = getApprovalLine(user.id);
         const approver1 = document.getElementById('approver1');
         const approver2 = document.getElementById('approver2');
-        if(!approver1 || !approver2) return;
-
-        approver1.value = '팀장(큐레이터)';
-        approver2.value = '총지배인(호스트)';
+        if (approver1) approver1.value = line.step1 ? `${line.step1.name} (${line.step1.role})` : '- (해당없음)';
+        if (approver2) approver2.value = line.step2 ? `${line.step2.name} (${line.step2.role})` : '- (해당없음)';
         if (draftFileInput) draftFileInput.value = '';
         if (fileNameDisplay) {
             fileNameDisplay.textContent = '선택된 파일 없음';
@@ -384,16 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnCancelDraftBtn').addEventListener('click', hideDraftModal);
     draftModal.addEventListener('click', e => { if (e.target === draftModal) hideDraftModal(); });
 
-    // 결재선 자동 업데이트
-    if (drafterRole) {
-        drafterRole.addEventListener('change', (e) => {
-            const role = e.target.value;
-            if (role === 'crew') { approver1.value = '팀장(큐레이터)'; approver2.value = '총지배인(호스트)'; }
-            else if (role === 'curator') { approver1.value = '총지배인(호스트)'; approver2.value = '진양우 (대표)'; }
-            else if (role === 'host') { approver1.value = '- (생략)'; approver2.value = '진양우 (대표)'; }
-            else if (role === 'master') { approver1.value = '- (생략)'; approver2.value = '- (생략)'; }
-        });
-    }
+    // (결재선은 showDraftModal에서 자동 생성)
 
     // 기안 제출
     document.getElementById('btnSubmitDraft').addEventListener('click', () => {
@@ -417,18 +512,36 @@ document.addEventListener('DOMContentLoaded', () => {
             attachNames = Array.from(draftFileInput.files).map(f => f.name);
         }
 
+        const line = getApprovalLine(user.id);
+
         docs.push({
             id: maxId + 1,
             docNum: newDocNum,
             type: draftType,
             title: subject,
             content: content,
+            authorId: user.id,
             author: user.name,
             authorDept: user.dept,
-            reviewer: approver1.value.replace(/ \(.*\)/, ''),
-            reviewerDept: approver1.value.replace(/.*\(/, '').replace(/\)/, ''),
-            approver: approver2.value.replace(/ \(.*\)/, ''),
-            approverDept: approver2.value.replace(/.*\(/, '').replace(/\)/, ''),
+            // 1차 결재
+            step1_id: line.step1 ? line.step1.id : null,
+            step1_name: line.step1 ? line.step1.name : null,
+            step1_role: line.step1 ? line.step1.role : null,
+            step1_status: 'pending',
+            step1_date: null,
+            step1_comment: null,
+            // 2차 결재
+            step2_id: line.step2 ? line.step2.id : null,
+            step2_name: line.step2 ? line.step2.name : null,
+            step2_role: line.step2 ? line.step2.role : null,
+            step2_status: line.step2 ? 'waiting' : null,
+            step2_date: null,
+            step2_comment: null,
+            // 기존 호환 필드
+            reviewer: line.step1 ? line.step1.name : '-',
+            reviewerDept: line.step1 ? line.step1.role : '',
+            approver: line.step2 ? line.step2.name : (line.step1 ? line.step1.name : '-'),
+            approverDept: line.step2 ? line.step2.role : '',
             date: dateStr,
             status: 'pending',
             reviewDate: null,
