@@ -91,15 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
             admin: 'all', // 모든 메뉴 + 편집/삭제
             executive: [ // 임원급: 모든 메뉴 열람 (편집/삭제 불가)
                 'index.html', 'traffic.html', 'hr.html', 'sales.html', 'reservation.html',
-                'inventory.html', 'facility.html', 'simulation.html',
+                'accounting.html', 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
             leader: [ // 팀장급: 모든 메뉴 열람 (본인 인사정보 포함)
                 'index.html', 'traffic.html', 'hr.html', 'sales.html', 'reservation.html',
-                'inventory.html', 'facility.html', 'simulation.html',
+                'accounting.html', 'inventory.html', 'facility.html', 'simulation.html',
                 'board.html', 'messenger.html', 'document.html', 'approval.html'
             ],
-            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재, 인사(본인) — 예약관리 불가
+            crew: [ // 팀원급: 트래픽, 재고, 시설, 전자결재, 인사(본인) — 예약/회계 불가
                 'traffic.html', 'hr.html', 'inventory.html', 'facility.html',
                 'board.html', 'messenger.html', 'approval.html'
             ]
@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { url: 'hr.html', name: 'HR/근태 관리' },
             { url: 'sales.html', name: '영업관리' },
             { url: 'reservation.html', name: '예약/대관 관리' },
+            { url: 'accounting.html', name: '회계/재무' },
             { url: 'inventory.html', name: '재고관리' },
             { url: 'facility.html', name: '시설현황' },
             { url: 'simulation.html', name: '경영시뮬레이션' },

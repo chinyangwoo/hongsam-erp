@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="홍삼한방타운 ERP - 통합 경영관리 시스템">
+    <meta property="og:description" content="홍삼한방타운 통합 ERP 시스템 - 회계/재무 관리">
+    <meta property="og:image" content="http://43.203.237.63/og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://43.203.237.63/">
+    <title>홍삼한방타운 - 회계/재무 관리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="accounting.css?v=1">
+    <link rel="stylesheet" href="mobile.css?v=1">
+</head>
+<body class="dark-theme">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo" style="text-decoration:none; color:inherit;">
+                <i class="fa-solid fa-spa"></i>
+                <span>홍삼한방타운 ERP</span>
+            </a>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-section">MAIN</div>
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-pie"></i> 통합 대시보드</a>
+            <a href="traffic.html" class="nav-item">
+                <i class="fa-solid fa-video"></i> 트래픽 모니터링</a>
+            <a href="hr.html" class="nav-item">
+                <i class="fa-solid fa-users"></i> HR/근태 관리</a>
+            <a href="sales.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i> 영업관리</a>
+            <a href="reservation.html" class="nav-item">
+                <i class="fa-solid fa-concierge-bell"></i> 예약/대관 관리</a>
+            <a href="accounting.html" class="nav-item active">
+                <i class="fa-solid fa-calculator"></i> 회계/재무</a>
+            <a href="inventory.html" class="nav-item">
+                <i class="fa-solid fa-box-open"></i> 재고관리</a>
+            <a href="facility.html" class="nav-item">
+                <i class="fa-solid fa-building"></i> 시설현황</a>
+            <a href="simulation.html" class="nav-item">
+                <i class="fa-solid fa-chart-bar"></i> 경영시뮬레이션</a>            
+            <div class="nav-section">MONITORING & COMM</div>
+            <a href="board.html" class="nav-item">
+                <i class="fa-regular fa-clipboard"></i> 전사 게시판</a>
+            <a href="messenger.html" class="nav-item badge-container">
+                <i class="fa-solid fa-comment-dots"></i> 사내 메신저 
+                <span class="badge">3</span>
+            </a>
+            <a href="document.html" class="nav-item">
+                <i class="fa-regular fa-folder-open"></i> 문서 관리</a>
+            <a href="approval.html" class="nav-item">
+                <i class="fa-solid fa-file-signature"></i> 전자결재</a>
+            <a href="security.html" class="nav-item nav-admin-only">
+                <i class="fa-solid fa-shield-halved"></i> 시스템 보안</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=CEO&background=0D8ABC&color=fff&rounded=true&bold=true" alt="User" class="avatar">
+                <div class="details">
+                    <span class="name">진양우 (001)</span>
+                    <span class="role">대표이사 (마스터)</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="localStorage.removeItem('isLoggedIn'); localStorage.removeItem('currentUser'); window.location.href='login.html';"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-header">
+            <div class="header-title">
+                <h1>회계/재무 관리</h1>
+                <p>현금출납부 · 수입/지출결의 · 손익계산서</p>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="테마 변경">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-container" style="padding-bottom: 80px;">
+
+            <!-- KPI Cards -->
+            <div class="acc-kpi-grid">
+                <div class="acc-kpi-card c-income">
+                    <div class="kpi-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금월 총 수입</div>
+                        <div class="kpi-value" id="kpiIncome">₩0</div>
+                        <div class="kpi-sub">승인 완료 기준</div>
+                    </div>
+                </div>
+                <div class="acc-kpi-card c-expense">
+                    <div class="kpi-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금월 총 지출</div>
+                        <div class="kpi-value" id="kpiExpense">₩0</div>
+                        <div class="kpi-sub">승인 완료 기준</div>
+                    </div>
+                </div>
+                <div class="acc-kpi-card c-profit">
+                    <div class="kpi-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">금월 영업이익</div>
+                        <div class="kpi-value" id="kpiProfit">₩0</div>
+                        <div class="kpi-sub">수입 - 지출</div>
+                    </div>
+                </div>
+                <div class="acc-kpi-card c-cash">
+                    <div class="kpi-icon"><i class="fa-solid fa-vault"></i></div>
+                    <div class="kpi-body">
+                        <div class="kpi-label">현금 잔액</div>
+                        <div class="kpi-value" id="kpiCash">₩0</div>
+                        <div class="kpi-sub">누적 잔액</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="acc-tabs">
+                <button class="acc-tab active" data-target="panelCashbook">
+                    <i class="fa-solid fa-book"></i> 현금출납부
+                </button>
+                <button class="acc-tab" data-target="panelVoucher">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> 수입/지출 결의서
+                    <span class="tab-badge">0</span>
+                </button>
+                <button class="acc-tab" data-target="panelPnL">
+                    <i class="fa-solid fa-chart-pie"></i> 손익계산서
+                </button>
+            </div>
+
+            <!-- ═══════════════════════════════════
+                 Panel 1: 현금출납부
+                 ═══════════════════════════════════ -->
+            <div class="acc-panel active" id="panelCashbook">
+                <div class="acc-section">
+                    <div class="acc-section-header">
+                        <h2><i class="fa-solid fa-book" style="color:#3B82F6;"></i> 현금출납부</h2>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <div class="acc-filter-bar">
+                                <input type="month" id="cbMonthFilter">
+                                <select id="cbTypeFilter">
+                                    <option value="all">전체</option>
+                                    <option value="income">수입</option>
+                                    <option value="expense">지출</option>
+                                </select>
+                            </div>
+                            <button class="acc-btn-export" id="btnExportCsv">
+                                <i class="fa-solid fa-file-csv"></i> CSV 내보내기
+                            </button>
+                            <button class="acc-btn-new acc-admin-only" id="btnNewAcc">
+                                <i class="fa-solid fa-plus"></i> 결의서 작성
+                            </button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="acc-table">
+                            <thead>
+                                <tr>
+                                    <th>날짜</th>
+                                    <th>구분</th>
+                                    <th>카테고리</th>
+                                    <th>적요 (내용)</th>
+                                    <th>부서</th>
+                                    <th class="text-right">금액 (원)</th>
+                                    <th class="text-right">잔액 (원)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cbTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════
+                 Panel 2: 수입/지출 결의서
+                 ═══════════════════════════════════ -->
+            <div class="acc-panel" id="panelVoucher">
+                <div class="acc-section">
+                    <div class="acc-section-header">
+                        <h2><i class="fa-solid fa-file-invoice-dollar" style="color:#F59E0B;"></i> 수입/지출 결의서</h2>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <div class="acc-filter-bar">
+                                <select id="vcTypeFilter">
+                                    <option value="all">전체</option>
+                                    <option value="income">수입결의</option>
+                                    <option value="expense">지출결의</option>
+                                </select>
+                                <select id="vcStatusFilter">
+                                    <option value="all">상태 전체</option>
+                                    <option value="approved">승인완료</option>
+                                    <option value="pending">결재대기</option>
+                                    <option value="rejected">반려</option>
+                                    <option value="draft">임시저장</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="acc-table">
+                            <thead>
+                                <tr>
+                                    <th>문서번호</th>
+                                    <th>일자</th>
+                                    <th>구분</th>
+                                    <th>적요</th>
+                                    <th>부서</th>
+                                    <th class="text-right">금액 (원)</th>
+                                    <th class="text-center">상태</th>
+                                    <th>작성자</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vcTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════
+                 Panel 3: 손익계산서
+                 ═══════════════════════════════════ -->
+            <div class="acc-panel" id="panelPnL">
+                <div class="acc-section">
+                    <div class="acc-section-header">
+                        <h2><i class="fa-solid fa-chart-pie" style="color:#8B5CF6;"></i> 월별 손익계산서</h2>
+                        <div class="acc-filter-bar">
+                            <input type="month" id="pnlMonthFilter">
+                        </div>
+                    </div>
+                    <div class="acc-section-body">
+                        <!-- Summary Cards -->
+                        <div class="acc-pnl-summary-grid">
+                            <div class="acc-pnl-summary-card">
+                                <div class="label">총 수입 (매출)</div>
+                                <div class="value" id="pnlTotalIncome" style="color:#10B981;">₩0</div>
+                            </div>
+                            <div class="acc-pnl-summary-card">
+                                <div class="label">총 비용 (지출)</div>
+                                <div class="value" id="pnlTotalExpense" style="color:#EF4444;">₩0</div>
+                            </div>
+                            <div class="acc-pnl-summary-card">
+                                <div class="label">당기순이익</div>
+                                <div class="value" id="pnlNetProfit" style="color:#3B82F6;">₩0</div>
+                            </div>
+                        </div>
+
+                        <!-- P&L Breakdown -->
+                        <div class="acc-pnl-section">
+                            <div class="acc-pnl-header"><i class="fa-solid fa-arrow-up" style="color:#10B981;"></i> 매출 (수입)</div>
+                            <div id="pnlIncomeBody"></div>
+                            <div class="acc-pnl-total" id="pnlIncomeTotal"></div>
+                        </div>
+
+                        <div class="acc-pnl-section">
+                            <div class="acc-pnl-header"><i class="fa-solid fa-arrow-down" style="color:#EF4444;"></i> 비용 (지출)</div>
+                            <div id="pnlExpenseBody"></div>
+                            <div class="acc-pnl-total" id="pnlExpenseTotal"></div>
+                        </div>
+
+                        <div class="acc-pnl-total" id="pnlProfitTotal" style="font-size:1.15rem; background:rgba(59,130,246,0.06); border-radius:10px; padding:18px 20px; margin-top:20px;"></div>
+
+                        <!-- Chart -->
+                        <div style="margin-top:28px;">
+                            <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-chart-column" style="color:#8B5CF6;"></i> 카테고리별 수입/지출 비교
+                            </h3>
+                            <div style="height:320px;">
+                                <canvas id="pnlChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════
+         상세 보기 모달
+         ═══════════════════════════════════════════════ -->
+    <div class="acc-modal-overlay" id="viewAccModal">
+        <div class="acc-modal-content">
+            <div class="acc-modal-header">
+                <h2><i class="fa-solid fa-circle-info" style="color:#3B82F6; margin-right:8px;"></i>결의서 상세</h2>
+                <button style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.1rem;" data-close-modal="viewAccModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="acc-modal-body">
+                <ul style="list-style:none; padding:0; margin:0;">
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-regular fa-calendar" style="width:18px;"></i> 일자</strong><span id="viewDate"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-tag" style="width:18px;"></i> 구분</strong><span id="viewType"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-layer-group" style="width:18px;"></i> 카테고리</strong><span id="viewCategory"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-pen" style="width:18px;"></i> 적요</strong><span id="viewDesc"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-building" style="width:18px;"></i> 부서</strong><span id="viewDept"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-won-sign" style="width:18px;"></i> 금액</strong><span id="viewAmount" style="font-weight:700;"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-flag" style="width:18px;"></i> 상태</strong><span id="viewStatus"></span></li>
+                    <li style="margin-bottom:14px; display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-user" style="width:18px;"></i> 작성자</strong><span id="viewWriter"></span></li>
+                    <li style="display:flex;"><strong style="color:var(--text-secondary); width:100px; flex-shrink:0;"><i class="fa-solid fa-note-sticky" style="width:18px;"></i> 비고</strong><span id="viewMemo" style="background:rgba(0,0,0,.15); padding:10px 14px; border-radius:8px; flex:1; line-height:1.6;"></span></li>
+                </ul>
+            </div>
+            <div class="acc-modal-footer">
+                <button class="acc-btn-secondary" data-close-modal="viewAccModal">닫기</button>
+                <button class="acc-btn-primary acc-admin-only" id="btnEditAcc"><i class="fa-solid fa-pen"></i> 수정</button>
+                <button class="acc-btn-danger acc-admin-only" id="btnDeleteAcc"><i class="fa-solid fa-trash"></i> 삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         등록/수정 폼 모달
+         ═══════════════════════════════════════════════ -->
+    <div class="acc-modal-overlay" id="formAccModal">
+        <div class="acc-modal-content" style="width:600px;">
+            <div class="acc-modal-header">
+                <h2 id="formAccTitle"><i class="fa-solid fa-file-circle-plus" style="color:#3B82F6;"></i> 새 결의서 작성</h2>
+                <button style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:1.1rem;" data-close-modal="formAccModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="acc-modal-body">
+                <div class="acc-form-row">
+                    <div class="acc-form-group">
+                        <label>구분</label>
+                        <select id="fAccType">
+                            <option value="expense">지출</option>
+                            <option value="income">수입</option>
+                        </select>
+                    </div>
+                    <div class="acc-form-group">
+                        <label>상태</label>
+                        <select id="fAccStatus">
+                            <option value="pending">결재대기</option>
+                            <option value="approved">승인완료</option>
+                            <option value="rejected">반려</option>
+                            <option value="draft">임시저장</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="acc-form-row">
+                    <div class="acc-form-group">
+                        <label>날짜</label>
+                        <input type="date" id="fAccDate">
+                    </div>
+                    <div class="acc-form-group">
+                        <label>카테고리</label>
+                        <select id="fAccCategory">
+                            <option value="인건비">인건비</option>
+                            <option value="식음료/자재">식음료/자재</option>
+                            <option value="공과금">공과금</option>
+                            <option value="마케팅">마케팅</option>
+                            <option value="시설유지">시설유지</option>
+                            <option value="보험/세금">보험/세금</option>
+                            <option value="매출수입">매출수입</option>
+                            <option value="여행사수입">여행사수입</option>
+                            <option value="대관수입">대관수입</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="acc-form-group">
+                    <label>적요 (내용)</label>
+                    <input type="text" id="fAccDesc" placeholder="예: 루프탑 수건 추가 발주">
+                </div>
+                <div class="acc-form-row">
+                    <div class="acc-form-group">
+                        <label>부서</label>
+                        <select id="fAccDept">
+                            <option value="지원팀">지원팀</option>
+                            <option value="운영팀">운영팀</option>
+                            <option value="식음료팀">식음료팀</option>
+                            <option value="공무팀">공무팀</option>
+                            <option value="경영진">경영진</option>
+                        </select>
+                    </div>
+                    <div class="acc-form-group">
+                        <label>금액 (원)</label>
+                        <input type="number" id="fAccAmount" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="acc-form-group">
+                    <label>비고 / 메모</label>
+                    <textarea id="fAccMemo" rows="3" placeholder="추가 설명이나 증빙 메모"></textarea>
+                </div>
+            </div>
+            <div class="acc-modal-footer">
+                <button class="acc-btn-secondary" data-close-modal="formAccModal">취소</button>
+                <button class="acc-btn-danger" id="btnDeleteInForm" style="display:none;"><i class="fa-solid fa-trash"></i> 삭제</button>
+                <button class="acc-btn-primary" id="btnSaveAcc"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="accToast"></div>
+
+    <!-- Scripts -->
+    <script src="cloud_sync.js?v=1"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="socket_client.js?v=1"></script>
+    <script src="app.js?v=9"></script>
+    <script src="accounting.js?v=1"></script>
+</body>
+</html>
