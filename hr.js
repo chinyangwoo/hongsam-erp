@@ -309,6 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.onload = function(evt) {
                     const img = new Image();
                     img.onload = function() {
+                        // 500KB 이하의 파일은 리사이징하지 않고 원본 그대로 사용 (애니메이션 GIF 및 고화질 유지)
+                        if (file.size <= 500 * 1024) {
+                            if (photoPreview) photoPreview.src = evt.target.result;
+                            return;
+                        }
+
+                        // 500KB 초과 시 150x150 이하로 리사이징하여 localStorage 용량 초과 방지
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         const MAX_SIZE = 150;
@@ -330,8 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // PNG로 저장하여 투명 배경 유지 (150x150이므로 용량 문제 없음)
-                        if (photoPreview) photoPreview.src = canvas.toDataURL('image/png');
+                        // 원본 파일의 포맷을 최대한 유지 (GIF는 브라우저 Canvas 지원 한계로 PNG로 변환됨)
+                        let exportType = file.type;
+                        if (exportType !== 'image/jpeg' && exportType !== 'image/webp') {
+                            exportType = 'image/png'; // PNG 포맷으로 투명도 유지
+                        }
+                        
+                        if (photoPreview) photoPreview.src = canvas.toDataURL(exportType, 0.85);
                     };
                     img.onerror = function() {
                         alert('이미지를 불러올 수 없습니다. 지원되지 않는 형식(HEIC 등)이거나 손상된 파일일 수 있습니다. JPG나 PNG 파일을 사용해 주세요.');
