@@ -1501,4 +1501,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     // Wait for the user to visit tab-payroll to render
+
+    // ═══════════════════════════════════════════════════════════
+    // 인사기록카드 PDF 다운로드 (html2canvas + jsPDF)
+    // ═══════════════════════════════════════════════════════════
+    const btnExportPdf = document.getElementById('btnExportPdf');
+    if (btnExportPdf) {
+        btnExportPdf.addEventListener('click', async () => {
+            const modal = document.querySelector('#profileModal .modal-content');
+            if (!modal) return;
+
+            const empName = document.getElementById('profName')?.innerText || '사원';
+            const empId = document.getElementById('profId')?.innerText || '';
+
+            // 버튼 상태 변경
+            btnExportPdf.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 생성중...';
+            btnExportPdf.disabled = true;
+
+            try {
+                // html2canvas로 모달 캡처
+                const canvas = await html2canvas(modal, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#0F172A',
+                    logging: false
+                });
+
+                // jsPDF A4 세로
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                // 이미지 비율 맞추기
+                const imgWidth = pageWidth - 20; // 10mm 마진
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                // 여러 페이지 처리
+                if (imgHeight <= pageHeight - 20) {
+                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, imgHeight);
+                } else {
+                    let yOffset = 0;
+                    let pageNum = 0;
+                    const sliceHeight = (pageHeight - 20) * (canvas.width / imgWidth);
+
+                    while (yOffset < canvas.height) {
+                        if (pageNum > 0) pdf.addPage();
+
+                        const sliceCanvas = document.createElement('canvas');
+                        sliceCanvas.width = canvas.width;
+                        sliceCanvas.height = Math.min(sliceHeight, canvas.height - yOffset);
+                        const ctx = sliceCanvas.getContext('2d');
+                        ctx.drawImage(canvas, 0, yOffset, canvas.width, sliceCanvas.height, 0, 0, sliceCanvas.width, sliceCanvas.height);
+
+                        const sliceImgHeight = (sliceCanvas.height * imgWidth) / sliceCanvas.width;
+                        pdf.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', 10, 10, imgWidth, sliceImgHeight);
+
+                        yOffset += sliceHeight;
+                        pageNum++;
+                    }
+                }
+
+                // 다운로드
+                const dateStr = new Date().toISOString().slice(0, 10);
+                pdf.save(`인사기록카드_${empName}_${empId}_${dateStr}.pdf`);
+                showSaveToast(`${empName}님의 인사기록카드 PDF가 다운로드되었습니다.`);
+
+            } catch (err) {
+                console.error('PDF 생성 오류:', err);
+                alert('PDF 생성 중 오류가 발생했습니다: ' + err.message);
+            } finally {
+                btnExportPdf.innerHTML = '<i class="fa-solid fa-file-pdf"></i> PDF';
+                btnExportPdf.disabled = false;
+            }
+        });
+    }
 });
