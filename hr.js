@@ -3,22 +3,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUserStr = localStorage.getItem('currentUser') || '';
     const empNum = parseInt(currentUserStr, 10);
     
+    // ══════════════════════════════════════════════════════
+    // HR 모듈 역할 분리
+    // isAdminRole : 001 또는 is_admin 플래그 → 편집/삭제 가능
+    // canViewAll  : 임원(002~009), 팀장(010~019) → 전체 열람 (편집 불가)
+    // 그 외(크루) : 본인 인사카드만 열람
+    // ══════════════════════════════════════════════════════
     let isAdminRole = false;
+    let canViewAll = false;
+    
     const ADMIN_IDS = ['001'];
     if (ADMIN_IDS.includes(currentUserStr)) {
         isAdminRole = true;
+        canViewAll = true;
     } else if (empNum >= 1 && empNum <= 9) {
-        isAdminRole = true;
+        // 임원급 (002~009): 전체 열람은 가능, 편집/삭제 불가
+        canViewAll = true;
+    } else if (empNum >= 10 && empNum <= 19) {
+        // 팀장급 (010~019): 전체 열람 가능, 편집/삭제 불가
+        canViewAll = true;
     }
     
     // Check HR DB for is_admin flag
     try {
         const empDb = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
         const rec = empDb.find(e => parseInt(e.emp_id, 10) === empNum);
-        if (rec && rec.is_admin) isAdminRole = true;
+        if (rec && rec.is_admin) {
+            isAdminRole = true;
+            canViewAll = true;
+        }
     } catch(e) {}
 
-    if (!isAdminRole) {
+    // 크루(본인만 열람) 전용 UI 처리
+    if (!canViewAll) {
         // 일반 사원이면 관리자 전용 요소 숨김 처리
         document.querySelectorAll('.admin-only-element').forEach(el => el.style.display = 'none');
         // 인사기록카드 탭의 검색창도 숨김 (본인 것만 보이므로)
@@ -36,6 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.display = 'none';
             }
         });
+    } else if (!isAdminRole) {
+        // 임원/팀장: 전체 열람은 가능하지만 편집 불가
+        document.querySelectorAll('.admin-only-element').forEach(el => el.style.display = 'none');
     }
 
     // --- INIT EMPLOYEE DB ---
@@ -78,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = ''; // clear grid
         
         let employees = initHREmployees();
-        if (!isAdminRole && currentUserStr) {
+        if (!canViewAll && currentUserStr) {
             employees = employees.filter(e => parseInt(e.emp_id, 10) === empNum);
         }
         
