@@ -330,8 +330,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // 압축된 Base64로 저장
-                        if (photoPreview) photoPreview.src = canvas.toDataURL('image/jpeg', 0.8);
+                        // PNG로 저장하여 투명 배경 유지 (150x150이므로 용량 문제 없음)
+                        if (photoPreview) photoPreview.src = canvas.toDataURL('image/png');
                     };
                     img.onerror = function() {
                         alert('이미지를 불러올 수 없습니다. 지원되지 않는 형식(HEIC 등)이거나 손상된 파일일 수 있습니다. JPG나 PNG 파일을 사용해 주세요.');
