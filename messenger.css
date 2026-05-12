@@ -404,3 +404,158 @@
 .btn-send:hover {
     background: #2563EB;
 }
+
+/* ── DM Active State ── */
+.dm-item.dm-active {
+    background: rgba(59,130,246,0.12) !important;
+    border-right: 3px solid var(--accent-blue);
+}
+
+/* ── Status Dot in DM ── */
+.dm-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+.dm-avatar .status-dot {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-surface);
+}
+.dm-avatar .status-dot.online { background: #10B981; }
+.dm-avatar .status-dot.offline { background: #64748B; }
+
+/* ── DM Unread Badge ── */
+.dm-badge {
+    background: #EF4444;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    flex-shrink: 0;
+}
+
+/* ── Chat Empty State ── */
+.chat-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    gap: 12px;
+}
+.chat-empty-state i {
+    font-size: 3rem;
+    opacity: 0.3;
+}
+.chat-empty-state p {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+.chat-empty-state span {
+    font-size: 0.85rem;
+    opacity: 0.6;
+}
+
+/* ── Header Status Dot ── */
+.ch-member-count .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.ch-member-count .status-dot.online { background: #10B981; }
+.ch-member-count .status-dot.offline { background: #64748B; }
+
+/* ── Toast ── */
+@keyframes msgToastSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+#msgToast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(59,130,246,0.92); color: white;
+    padding: 14px 28px; border-radius: 12px;
+    font-weight: 600; font-size: 0.9rem;
+    z-index: 99999; display: none;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#msgToast.show {
+    display: block !important;
+    animation: msgToastSlideUp 0.3s ease;
+}
+
+/* ── Group Create Modal ── */
+.msg-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; opacity: 0; visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+.msg-modal-overlay.show { opacity: 1; visibility: visible; }
+.msg-modal-content {
+    background: rgba(15,23,42,0.95); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; width: 420px; max-width: 95vw;
+    overflow-y: auto; display: flex; flex-direction: column;
+    transform: translateY(20px); transition: transform 0.3s;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+.msg-modal-overlay.show .msg-modal-content { transform: translateY(0); }
+.msg-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.msg-modal-header h2 { font-size: 1.1rem; font-weight: 700; color: #F8FAFC; }
+.msg-modal-body { padding: 24px; }
+.msg-modal-footer {
+    padding: 14px 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: flex-end; gap: 10px;
+}
+.msg-form-group { margin-bottom: 16px; }
+.msg-form-group label {
+    font-size: 0.85rem; color: var(--text-secondary);
+    margin-bottom: 8px; display: block; font-weight: 600;
+}
+.msg-form-group input {
+    width: 100%; padding: 12px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    outline: none; font-family: inherit;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+.msg-form-group input:focus { border-color: var(--accent-blue); }
+
+.msg-btn-primary {
+    background: linear-gradient(135deg, #3B82F6, #6366F1);
+    color: white; border: none;
+    padding: 10px 22px; border-radius: 10px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+    font-size: 0.88rem;
+}
+.msg-btn-secondary {
+    background: rgba(255,255,255,0.07);
+    color: #94A3B8;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 22px; border-radius: 10px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+}
