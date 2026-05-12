@@ -307,7 +307,33 @@ document.addEventListener('DOMContentLoaded', () => {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    if (photoPreview) photoPreview.src = evt.target.result;
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_SIZE = 150;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // 압축된 Base64로 저장
+                        if (photoPreview) photoPreview.src = canvas.toDataURL('image/jpeg', 0.8);
+                    };
+                    img.src = evt.target.result;
                 }
                 reader.readAsDataURL(file);
             }
@@ -319,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newEmpModal.classList.remove('show');
             const form = document.getElementById('newEmpForm');
             if(form) form.reset();
-            if(photoPreview) photoPreview.src = 'https://via.placeholder.com/150';
+            if(photoPreview) photoPreview.src = 'https://ui-avatars.com/api/?name=New&background=random';
         }
     }
 
@@ -399,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 사진 데이터 (base64)
             const photo = document.getElementById('photoPreview');
-            if (photo && photo.src && !photo.src.includes('ui-avatars.com')) {
+            if (photo && photo.src && !photo.src.includes('ui-avatars.com') && !photo.src.includes('via.placeholder.com')) {
                 empData.photo = photo.src;
             }
 
