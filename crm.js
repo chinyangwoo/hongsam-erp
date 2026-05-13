@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3-1. New Customer Registration
     const newCustModal = document.getElementById('newCustomerModal');
-    const btnNewCustomer = document.getElementById('btnNewCustomer');
     const closeNewCustModal = document.getElementById('closeNewCustModal');
     const cancelNewCustBtn = document.getElementById('cancelNewCustBtn');
     const saveNewCustBtn = document.getElementById('saveNewCustBtn');
@@ -90,7 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function closeNewCustModalFn() { newCustModal.classList.remove('show'); }
 
-    if (btnNewCustomer) btnNewCustomer.addEventListener('click', openNewCustModal);
+    // 모든 신규등록 버튼에 이벤트 바인딩 (상단 헤더 + 테이블 옆)
+    document.querySelectorAll('.btn-open-new-customer').forEach(btn => {
+        btn.addEventListener('click', openNewCustModal);
+    });
     if (closeNewCustModal) closeNewCustModal.addEventListener('click', closeNewCustModalFn);
     if (cancelNewCustBtn) cancelNewCustBtn.addEventListener('click', closeNewCustModalFn);
     if (newCustModal) newCustModal.addEventListener('click', (e) => { if (e.target === newCustModal) closeNewCustModalFn(); });
