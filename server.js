@@ -61,6 +61,98 @@ app.get('/api/ping', (req, res) => {
     res.json({ status: 'ok', serverTime: new Date().toISOString() });
 });
 
+// ═══════════════════════════════════════════════════════════
+// SMS/LMS 발송 API (알리고 중계 플랫폼 연동)
+// 환경변수: ALIGO_API_KEY, ALIGO_USER_ID, ALIGO_SENDER
+// ═══════════════════════════════════════════════════════════
+const ALIGO_API_KEY = process.env.ALIGO_API_KEY || '';
+const ALIGO_USER_ID = process.env.ALIGO_USER_ID || '';
+const ALIGO_SENDER = process.env.ALIGO_SENDER || '0634330000';
+
+app.post('/api/sms/send', async (req, res) => {
+    const { receivers, message, title } = req.body;
+
+    if (!receivers || !Array.isArray(receivers) || receivers.length === 0) {
+        return res.status(400).json({ success: false, error: '수신자 목록이 비어 있습니다.' });
+    }
+    if (!message) {
+        return res.status(400).json({ success: false, error: '메시지 내용이 없습니다.' });
+    }
+
+    // API Key 미설정 시 시뮬레이션 모드
+    if (!ALIGO_API_KEY || !ALIGO_USER_ID) {
+        console.log(`[SMS 시뮬레이션] ${receivers.length}명에게 발송 시뮬레이션:`, message.substring(0, 50) + '...');
+        // 발송 이력 저장
+        const db = loadDB();
+        if (!db.sms_history) db.sms_history = [];
+        db.sms_history.push({
+            id: 'SMS-' + Date.now(),
+            timestamp: new Date().toISOString(),
+            receivers: receivers.length,
+            message: message,
+            title: title || '',
+            mode: 'simulation',
+            status: 'simulated'
+        });
+        saveDB(db);
+        return res.json({
+            success: true,
+            mode: 'simulation',
+            sentCount: receivers.length,
+            message: `시뮬레이션 모드: ${receivers.length}명 발송 처리됨 (실제 발송 아님). 알리고 API Key를 설정하면 실제 발송됩니다.`
+        });
+    }
+
+    // 실제 알리고 API 발송
+    try {
+        const axios = require('axios');
+        const FormData = require('form-data');
+        const form = new FormData();
+        form.append('key', ALIGO_API_KEY);
+        form.append('user_id', ALIGO_USER_ID);
+        form.append('sender', ALIGO_SENDER);
+        form.append('receiver', receivers.map(r => r.replace(/-/g, '')).join(','));
+        form.append('msg', message);
+        form.append('msg_type', message.length > 90 ? 'LMS' : 'SMS');
+        if (title) form.append('title', title);
+
+        const response = await axios.post('https://apis.aligo.in/send/', form, {
+            headers: form.getHeaders()
+        });
+
+        // 발송 이력 저장
+        const db = loadDB();
+        if (!db.sms_history) db.sms_history = [];
+        db.sms_history.push({
+            id: 'SMS-' + Date.now(),
+            timestamp: new Date().toISOString(),
+            receivers: receivers.length,
+            message: message,
+            title: title || '',
+            mode: 'live',
+            status: response.data.result_code === '1' ? 'success' : 'failed',
+            apiResponse: response.data
+        });
+        saveDB(db);
+
+        res.json({
+            success: response.data.result_code === '1',
+            mode: 'live',
+            sentCount: receivers.length,
+            apiResult: response.data
+        });
+    } catch (error) {
+        console.error('[SMS 발송 오류]', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// SMS 발송 이력 조회
+app.get('/api/sms/history', (req, res) => {
+    const db = loadDB();
+    res.json(db.sms_history || []);
+});
+
 // --- Socket.io 실시간 통신 (Phase 3) ---
 // 접속 중인 사용자 (emp_id를 키값으로 관리)
 const onlineUsers = new Map();

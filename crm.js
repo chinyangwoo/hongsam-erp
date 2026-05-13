@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Data Initialization & LocalStorage Sync
     const CRM_DB_KEY = 'hongsam_crm_db';
+    const API_BASE = 'http://43.203.237.63:3001/api';
     let customers = [];
     
     try {
@@ -230,43 +231,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const campaignTarget = document.getElementById('campaignTarget');
     const campaignCost = document.getElementById('campaignCost');
     
-    // Dynamic cost calculation based on target
+    // Dynamic cost calculation based on target (LMS 25원 기준)
     if(campaignTarget && campaignCost) {
+        const costMap = { all: 10120, vip: 842, inactive: 3240, spa: 5600 };
         campaignTarget.addEventListener('change', (e) => {
-            let cost = 0;
-            const v = e.target.value;
-            if (v === 'all') cost = 10120 * 15; // 15원/건
-            else if (v === 'vip') cost = 842 * 15;
-            else if (v === 'inactive') cost = 3240 * 15;
-            else if (v === 'spa') cost = 5600 * 15;
-            campaignCost.innerText = cost.toLocaleString() + ' 원';
+            const count = costMap[e.target.value] || 0;
+            const unitPrice = 25; // LMS 기준
+            campaignCost.innerText = (count * unitPrice).toLocaleString() + ' 원';
         });
     }
 
     if(btnExecuteCampaign) {
-        btnExecuteCampaign.addEventListener('click', () => {
+        btnExecuteCampaign.addEventListener('click', async () => {
+            const target = campaignTarget ? campaignTarget.value : 'all';
+            const messageEl = document.querySelector('#campaignTarget ~ textarea, .styled-input[rows]');
+            const message = messageEl ? messageEl.value.trim() : '';
+
+            if (!message) { alert('메시지 내용을 입력해 주세요.'); return; }
+
+            // 타겟별 수신자 필터링
+            let receivers = [];
+            if (target === 'vip') receivers = customers.filter(c => c.rank === 'VIP' || c.rank === 'VVIP').map(c => c.phone);
+            else if (target === 'inactive') receivers = customers.filter(c => {
+                const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                return new Date(c.lastVisit) < sixMonthsAgo;
+            }).map(c => c.phone);
+            else receivers = customers.map(c => c.phone);
+
+            if (receivers.length === 0) { alert('발송 대상이 없습니다.'); return; }
+
+            const unitPrice = message.length > 90 ? 25 : 8.4;
+            const estCost = Math.round(receivers.length * unitPrice);
+            if (!confirm(`📱 ${receivers.length}명에게 ${message.length > 90 ? 'LMS' : 'SMS'} 발송\n예상 비용: ${estCost.toLocaleString()}원\n\n계속하시겠습니까?`)) return;
+
             btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 발송 중...';
             btnExecuteCampaign.disabled = true;
-            
-            setTimeout(() => {
-                // Restore button
-                btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 발송 완료';
-                btnExecuteCampaign.classList.replace('btn-primary', 'btn-secondary');
-                
-                // Show Toast
+
+            try {
+                const res = await fetch(`${API_BASE}/sms/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        receivers: receivers,
+                        message: '(광고) ' + message + '\n무료수신거부 080-XXX-XXXX',
+                        title: '[홍삼한방타운]'
+                    })
+                });
+                const result = await res.json();
+
                 const t = document.createElement('div');
-                t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; background:rgba(59,130,246,0.95); color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4); animation: fadeIn 0.3s ease;`;
-                t.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> 성공적으로 타겟 마케팅 캠페인이 발송되었습니다.`;
+                t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4);`;
+
+                if (result.success) {
+                    t.style.background = 'rgba(16,185,129,0.95)';
+                    const modeText = result.mode === 'simulation' ? ' (시뮬레이션)' : '';
+                    t.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${result.sentCount}명 발송 완료${modeText}`;
+                } else {
+                    t.style.background = 'rgba(239,68,68,0.95)';
+                    t.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> 발송 실패: ${result.error || '알 수 없는 오류'}`;
+                }
                 document.body.appendChild(t);
-                setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 3000);
-                
-                // Reset after 3 seconds
+                setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 4000);
+            } catch (err) {
+                alert('서버 통신 오류: ' + err.message);
+            } finally {
                 setTimeout(() => {
                     btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 발송하기';
-                    btnExecuteCampaign.classList.replace('btn-secondary', 'btn-primary');
                     btnExecuteCampaign.disabled = false;
-                }, 3000);
-            }, 1200);
+                }, 2000);
+            }
         });
     }
 
