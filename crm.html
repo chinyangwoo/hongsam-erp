@@ -152,11 +152,14 @@
             <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-top: 24px;">
                 <!-- Left: Customer List -->
                 <div class="glassmorphism p-6" style="border-radius:16px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
                         <h2 style="font-size:1.1rem; font-weight:700;"><i class="fa-solid fa-list" style="color:#3B82F6;"></i> 고객 DB 조회</h2>
-                        <div class="search-box" style="width:250px;">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="crmSearch" placeholder="이름, 연락처 검색...">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="search-box" style="width:220px;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="crmSearch" placeholder="이름, 연락처 검색...">
+                            </div>
+                            <button class="btn-primary" id="btnNewCustomer" style="padding:8px 16px; font-size:0.85rem; border-radius:10px; white-space:nowrap;"><i class="fa-solid fa-user-plus"></i> 신규등록</button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -221,6 +224,45 @@
 
         </div>
     </main>
+
+    <!-- Modal: New Customer Registration -->
+    <div class="modal-overlay" id="newCustomerModal">
+        <div class="modal-content glassmorphism" style="width: 520px; max-width: 95vw; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); padding: 0;">
+            <div style="height: 6px; background: linear-gradient(90deg, #10B981, #3B82F6);"></div>
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 24px 32px;">
+                <h2 style="font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; color: #F8FAFC;"><i class="fa-solid fa-user-plus" style="color: #10B981;"></i> 신규 고객 등록</h2>
+                <button class="btn-close" id="closeNewCustModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 28px 32px; display: flex; flex-direction: column; gap: 18px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: #94A3B8; font-weight: 600; display: block; margin-bottom: 6px;">고객명 <span style="color:#EF4444;">*</span></label>
+                        <input type="text" id="newCustName" placeholder="홍길동" style="width:100%; padding:10px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#F8FAFC; font-size:0.95rem; outline:none; box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: #94A3B8; font-weight: 600; display: block; margin-bottom: 6px;">연락처 <span style="color:#EF4444;">*</span></label>
+                        <input type="tel" id="newCustPhone" placeholder="010-0000-0000" style="width:100%; padding:10px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#F8FAFC; font-size:0.95rem; outline:none; box-sizing:border-box;">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: #94A3B8; font-weight: 600; display: block; margin-bottom: 6px;">회원등급</label>
+                    <select id="newCustRank" style="width:100%; padding:10px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#F8FAFC; font-size:0.95rem; outline:none; box-sizing:border-box; appearance:auto;">
+                        <option value="일반">일반</option>
+                        <option value="VIP">VIP</option>
+                        <option value="VVIP">VVIP</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: #94A3B8; font-weight: 600; display: block; margin-bottom: 6px;">특이사항 (메모)</label>
+                    <textarea id="newCustMemo" rows="3" placeholder="알러지, 선호사항 등을 입력하세요..." style="width:100%; padding:10px 14px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#F8FAFC; font-size:0.95rem; outline:none; resize:none; box-sizing:border-box; line-height:1.5;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 18px 32px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn-secondary" id="cancelNewCustBtn" style="border-radius:10px; padding:10px 22px;">취소</button>
+                <button class="btn-primary" id="saveNewCustBtn" style="border-radius:10px; padding:10px 22px; background: linear-gradient(135deg, #10B981, #059669);"><i class="fa-solid fa-check"></i> 등록하기</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Customer Detail -->
     <div class="modal-overlay" id="customerModal">

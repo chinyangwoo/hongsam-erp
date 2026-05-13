@@ -73,6 +73,79 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 3-1. New Customer Registration
+    const newCustModal = document.getElementById('newCustomerModal');
+    const btnNewCustomer = document.getElementById('btnNewCustomer');
+    const closeNewCustModal = document.getElementById('closeNewCustModal');
+    const cancelNewCustBtn = document.getElementById('cancelNewCustBtn');
+    const saveNewCustBtn = document.getElementById('saveNewCustBtn');
+
+    function openNewCustModal() {
+        document.getElementById('newCustName').value = '';
+        document.getElementById('newCustPhone').value = '';
+        document.getElementById('newCustRank').value = '일반';
+        document.getElementById('newCustMemo').value = '';
+        newCustModal.classList.add('show');
+        setTimeout(() => document.getElementById('newCustName').focus(), 200);
+    }
+    function closeNewCustModalFn() { newCustModal.classList.remove('show'); }
+
+    if (btnNewCustomer) btnNewCustomer.addEventListener('click', openNewCustModal);
+    if (closeNewCustModal) closeNewCustModal.addEventListener('click', closeNewCustModalFn);
+    if (cancelNewCustBtn) cancelNewCustBtn.addEventListener('click', closeNewCustModalFn);
+    if (newCustModal) newCustModal.addEventListener('click', (e) => { if (e.target === newCustModal) closeNewCustModalFn(); });
+
+    // Phone auto-format (010-0000-0000)
+    const phoneInput = document.getElementById('newCustPhone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/[^0-9]/g, '');
+            if (v.length > 3 && v.length <= 7) v = v.slice(0,3) + '-' + v.slice(3);
+            else if (v.length > 7) v = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+            e.target.value = v;
+        });
+    }
+
+    if (saveNewCustBtn) {
+        saveNewCustBtn.addEventListener('click', () => {
+            const name = document.getElementById('newCustName').value.trim();
+            const phone = document.getElementById('newCustPhone').value.trim();
+            const rank = document.getElementById('newCustRank').value;
+            const memo = document.getElementById('newCustMemo').value.trim();
+
+            if (!name) { alert('고객명을 입력해 주세요.'); document.getElementById('newCustName').focus(); return; }
+            if (!phone || phone.length < 12) { alert('연락처를 올바르게 입력해 주세요. (예: 010-0000-0000)'); document.getElementById('newCustPhone').focus(); return; }
+            if (customers.some(c => c.phone === phone)) { alert('이미 등록된 연락처입니다.'); return; }
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+            const newCustomer = {
+                id: 'c' + Date.now(),
+                name: name,
+                phone: phone,
+                rank: rank,
+                visits: 0,
+                totalSpend: 0,
+                lastVisit: dateStr,
+                memo: memo,
+                history: []
+            };
+
+            customers.push(newCustomer);
+            localStorage.setItem(CRM_DB_KEY, JSON.stringify(customers));
+            renderTable(customers);
+            closeNewCustModalFn();
+
+            // Success toast
+            const t = document.createElement('div');
+            t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; background:rgba(16,185,129,0.95); color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4);`;
+            t.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>${name}</strong> 고객이 등록되었습니다.`;
+            document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 2500);
+        });
+    }
+
     // 4. Modal Logic
     const modal = document.getElementById('customerModal');
     const btnClose1 = document.getElementById('closeCustomerModal');
