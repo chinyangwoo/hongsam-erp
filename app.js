@@ -613,10 +613,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elSpaYestExp) elSpaYestExp.innerText = spaYestExp.toLocaleString();
         if (elSpaMonthExp) elSpaMonthExp.innerText = spaMonthExp.toLocaleString();
 
-        // -- 통합 요약 계산 --
+        // -- 통합 요약 계산 (erp_accounting_db 기반) --
         const totalToday = hotelTodayRev + spaTodayRev;
         const totalMonthRev = hotelMonthRev + spaMonthRev;
-        const totalMonthExp = spaMonthExp; // 현재 지출은 스파 위주로 기록
+
+        // 회계 DB에서 실제 월간 지출 집계 (인건비, 공과금, 시설유지보수 등 포함)
+        let acctMonthExp = 0;
+        try {
+            const acctDb = JSON.parse(localStorage.getItem('erp_accounting_db') || '{}');
+            const entries = acctDb.entries || [];
+            const monthPrefix = `${y}-${m}`;
+            entries.forEach(entry => {
+                if (entry.type === '지출' && entry.date && entry.date.startsWith(monthPrefix)) {
+                    acctMonthExp += Math.abs(entry.amount || 0);
+                }
+            });
+        } catch(e) { console.warn('[대시보드] 회계 DB 지출 집계 실패:', e); }
+
+        // 회계 DB에 지출 데이터가 있으면 사용, 없으면 기존 스파 데이터 fallback
+        const totalMonthExp = acctMonthExp > 0 ? acctMonthExp : spaMonthExp;
         const totalProfit = totalMonthRev - totalMonthExp;
 
         const elTotToday = document.getElementById('kpi-total-today');
