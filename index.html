@@ -107,6 +107,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 2. 진안군 미세먼지/대기질 위젯 -->
+                <div id="airQualityWidget" style="display:flex; align-items:center; gap:10px; padding:8px 18px; border-radius:12px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.18); cursor:default; transition:all 0.3s ease;">
+                    <div style="font-size:1.8rem; line-height:1;" id="aqIcon">😷</div>
+                    <div style="display:flex; flex-direction:column; gap:1px;">
+                        <div style="display:flex; align-items:baseline; gap:6px;">
+                            <span id="aqStatus" style="font-size:1.1rem; font-weight:700; color:var(--text-primary); line-height:1;">대기질</span>
+                            <span id="aqValue" style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">불러오는 중</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; font-size:0.72rem; color:var(--text-secondary);">
+                            <span id="pm10Desc" title="미세먼지">미세 --</span>
+                            <span id="pm25Desc" title="초미세먼지">초미세 --</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 교통 상황 위젯 -->
+                <div id="trafficWidget" style="display:flex; align-items:center; gap:10px; padding:8px 18px; border-radius:12px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.18); cursor:default; transition:all 0.3s ease;">
+                    <div style="font-size:1.5rem; line-height:1;" id="trafficIcon">🚗</div>
+                    <div style="display:flex; flex-direction:column; gap:1px;">
+                        <div style="display:flex; align-items:baseline; gap:6px;">
+                            <span style="font-size:1.1rem; font-weight:700; color:var(--text-primary); line-height:1;">전주IC→진안</span>
+                            <span id="trafficStatus" style="font-size:0.8rem; color:#F59E0B; font-weight:600;">원활</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; font-size:0.72rem; color:var(--text-secondary);">
+                            <span id="trafficTime" title="소요시간">예상 35분</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="header-actions">
@@ -127,6 +156,30 @@
                 </div>
             </div>
         </header>
+
+        <!-- 5. SNS 실시간 리뷰 모니터링 (Ticker) -->
+        <div class="sns-ticker-wrap" style="background: rgba(139,92,246,0.1); border-bottom: 1px solid rgba(139,92,246,0.2); padding: 8px 24px; display: flex; align-items: center; overflow: hidden; white-space: nowrap;">
+            <div style="background: linear-gradient(90deg, #8B5CF6, #6366F1); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-right: 16px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                <i class="fa-solid fa-hashtag"></i> 실시간 SNS 반응
+            </div>
+            <div class="sns-ticker" id="snsTicker" style="display: inline-block; font-size: 0.85rem; color: var(--text-primary); animation: ticker 25s linear infinite;">
+                <span><i class="fa-solid fa-blog"></i> <b>블로그</b>: "홍삼스파 노천탕 뷰 미쳤어요! 부모님 모시고 가기 딱 좋음" <strong class="positive">(긍정)</strong></span>
+                <span><i class="fa-brands fa-instagram"></i> <b>인스타그램</b>: "#진안홍삼스파 #주말나들이 사람 좀 많았지만 시설 깔끔해서 굿" <strong class="positive">(긍정)</strong></span>
+                <span><i class="fa-solid fa-blog"></i> <b>블로그</b>: "홍삼빌호텔 숙박 후기. 조식은 무난, 접근성은 최고" <strong class="neutral">(보통)</strong></span>
+                <span><i class="fa-brands fa-instagram"></i> <b>인스타그램</b>: "#홍삼한방타운 때밀이 아저씨 완전 시원함 강추!" <strong class="positive">(긍정)</strong></span>
+                <span><i class="fa-solid fa-blog"></i> <b>네이버영수증</b>: "주말 오후에 갔더니 주차장이 너무 혼잡했습니다" <strong style="color:#EF4444;">(주의)</strong></span>
+            </div>
+        </div>
+        <style>
+            @keyframes ticker {
+                0% { transform: translateX(50vw); }
+                100% { transform: translateX(-100%); }
+            }
+            .sns-ticker span { margin-right: 50px; font-weight: 500; }
+            .sns-ticker span i { color: #8B5CF6; margin-right: 6px; }
+            .sns-ticker span.positive { color: #10B981; font-weight: 700; margin-left: 4px; }
+            .sns-ticker span.neutral { color: var(--text-secondary); font-weight: 700; margin-left: 4px; }
+        </style>
 
         <!-- Container for all dashboard stuff -->
         <div class="dashboard-container">

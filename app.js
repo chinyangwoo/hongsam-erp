@@ -788,3 +788,68 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
 });
+
+    // --- 2. 대기질/미세먼지 연동 (Open-Meteo Air Quality API) ---
+    (function loadJinanAirQuality() {
+        const widget = document.getElementById('airQualityWidget');
+        if (!widget) return;
+        
+        const LAT = 35.791;
+        const LON = 127.425;
+        const apiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}&current=pm10,pm2_5,us_aqi&timezone=Asia/Seoul`;
+        
+        function renderAQ(data) {
+            const pm10 = data.current.pm10;
+            const pm25 = data.current.pm2_5;
+            
+            let status = '좋음';
+            let color = '#10B981'; // Green
+            let icon = '😷';
+            
+            if (pm10 > 80 || pm25 > 35) { status = '나쁨'; color = '#EF4444'; icon = '🤧'; }
+            else if (pm10 > 30 || pm25 > 15) { status = '보통'; color = '#F59E0B'; icon = '😐'; }
+            else { status = '좋음'; color = '#10B981'; icon = '😁'; }
+            
+            document.getElementById('aqStatus').textContent = status;
+            document.getElementById('aqStatus').style.color = color;
+            document.getElementById('aqIcon').textContent = icon;
+            document.getElementById('pm10Desc').innerHTML = `미세 <strong style="color:${color}">${Math.round(pm10)}</strong>`;
+            document.getElementById('pm25Desc').innerHTML = `초미세 <strong style="color:${color}">${Math.round(pm25)}</strong>`;
+            
+            widget.style.display = 'flex';
+        }
+
+        fetch(apiUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.current) {
+                    renderAQ(data);
+                }
+            })
+            .catch(err => console.error('Air Quality Fetch Error:', err));
+    })();
+
+    // --- 3. 교통 상황 연동 (Mock Data - 실제 한국도로공사 API 대체) ---
+    (function loadTrafficMock() {
+        const widget = document.getElementById('trafficWidget');
+        if (!widget) return;
+        
+        // 실제 운영 시에는 한국도로공사(EX) API를 호출하여 소요시간을 계산합니다.
+        // 현재는 시간대별 랜덤 로직으로 시뮬레이션 합니다.
+        const hour = new Date().getHours();
+        const isRushHour = (hour >= 17 && hour <= 19) || (hour >= 8 && hour <= 9);
+        
+        const baseTime = 30; // 전주IC -> 진안 기본 소요시간 (분)
+        const delay = isRushHour ? Math.floor(Math.random() * 20) + 10 : Math.floor(Math.random() * 5);
+        const totalTime = baseTime + delay;
+        
+        let status = '원활';
+        let color = '#10B981';
+        
+        if (delay > 15) { status = '정체'; color = '#EF4444'; }
+        else if (delay > 5) { status = '서행'; color = '#F59E0B'; }
+        
+        document.getElementById('trafficStatus').textContent = status;
+        document.getElementById('trafficStatus').style.color = color;
+        document.getElementById('trafficTime').textContent = `예상 ${totalTime}분`;
+    })();
