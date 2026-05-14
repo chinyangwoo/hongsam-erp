@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="hr.css?v=15">
     <!-- Mobile Responsive Override -->
     <link rel="stylesheet" href="mobile.css?v=1">
+    <link rel="stylesheet" href="print.css?v=1">
 </head>
 <body class="dark-theme">
     
@@ -103,6 +104,9 @@
                 </button>
                 <button class="btn-primary admin-only-element" id="btnAddNewEmployee">
                     <i class="fa-solid fa-user-plus"></i> 신규 사원 등록
+                </button>
+                <button class="btn-print" onclick="window.print()" title="현재 화면 인쇄">
+                    <i class="fa-solid fa-print"></i> 인쇄
                 </button>
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>

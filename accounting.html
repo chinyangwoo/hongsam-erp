@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="style.css?v=16">
     <link rel="stylesheet" href="accounting.css?v=2">
     <link rel="stylesheet" href="mobile.css?v=1">
+    <link rel="stylesheet" href="print.css?v=1">
 </head>
 <body class="dark-theme">
     
@@ -84,6 +85,9 @@
                 <p>현금출납부 · 수입/지출결의 · 손익계산서 · 경영 시뮬레이션</p>
             </div>
             <div class="header-actions">
+                <button class="btn-print" onclick="window.print()" title="현재 화면 인쇄">
+                    <i class="fa-solid fa-print"></i> 인쇄
+                </button>
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
@@ -287,6 +291,9 @@
                                     <option value="expense">지출</option>
                                 </select>
                             </div>
+                            <button class="btn-print" onclick="window.print()" title="현금출납부 인쇄">
+                                <i class="fa-solid fa-print"></i> 인쇄
+                            </button>
                             <button class="acc-btn-export" id="btnExportCsv">
                                 <i class="fa-solid fa-file-csv"></i> CSV 내보내기
                             </button>

@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="style.css?v=16">
     <link rel="stylesheet" href="sales.css?v=12">
     <link rel="stylesheet" href="mobile.css?v=1">
+    <link rel="stylesheet" href="print.css?v=1">
 </head>
 <body class="dark-theme">
     
@@ -90,6 +91,9 @@
                 <p id="salesHeaderDesc">홍삼빌호텔 + 홍삼스파 통합 매출 현황 대시보드</p>
             </div>
             <div class="header-actions">
+                <button class="btn-print" onclick="window.print()" title="현재 화면 인쇄">
+                    <i class="fa-solid fa-print"></i> 인쇄
+                </button>
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>

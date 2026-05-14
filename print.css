@@ -1,0 +1,297 @@
+/* ══════════════════════════════════════════════════════════
+   ERP 통합 인쇄 스타일 (print.css)
+   — 모든 모듈에서 공유하는 인쇄 전용 스타일시트
+   ══════════════════════════════════════════════════════════ */
+
+@media print {
+    /* ── 기본 인쇄 설정 ── */
+    @page {
+        size: A4;
+        margin: 15mm 12mm;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    html, body {
+        background: white !important;
+        color: #111 !important;
+        font-size: 11pt !important;
+        font-family: 'Pretendard', 'Malgun Gothic', '맑은 고딕', sans-serif !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    /* ── 사이드바·헤더·푸터 숨김 ── */
+    .sidebar,
+    .top-header,
+    .sidebar-footer,
+    .nav-menu,
+    .sidebar-header,
+    .header-actions,
+    .theme-toggle,
+    .notification-bell,
+    .logout-btn,
+    .change-pwd-btn,
+    .modal-overlay,
+    .alert-banner,
+    .badge,
+    .btn-primary,
+    .btn-secondary,
+    .btn-excel,
+    .btn-text,
+    .btn-edit,
+    .btn-delete,
+    .btn-close,
+    .btn-file-select,
+    .search-box,
+    .filter-box,
+    .action-bar,
+    .readonly-badge,
+    .nav-admin-only,
+    .admin-only-element,
+    .acc-admin-only,
+    .no-print,
+    #themeToggle,
+    #inventoryAlert,
+    .ap-sidebar,
+    .ap-kpi-bar,
+    .ap-toolbar,
+    .ap-doc-list,
+    .dv-action-bar,
+    .sim-controls,
+    .sim-card-grid,
+    .acc-kpi-grid,
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    /* ── 메인 콘텐츠 전체 확장 ── */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .dashboard-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* ── 인쇄 헤더 (JS로 삽입) ── */
+    .print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 3px solid #111;
+        padding-bottom: 10pt;
+        margin-bottom: 14pt;
+    }
+    .print-header .print-company {
+        font-size: 16pt;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+    .print-header .print-doc-title {
+        font-size: 14pt;
+        font-weight: 700;
+        text-align: center;
+    }
+    .print-header .print-date {
+        font-size: 9pt;
+        color: #555;
+        text-align: right;
+    }
+
+    /* ── Glassmorphism 제거 ── */
+    .glassmorphism,
+    .table-container,
+    .chart-container,
+    .kpi-card,
+    .acc-kpi-card,
+    .site-kpi-block,
+    .ap-kpi-card,
+    .approval-layout {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    /* ── 테이블 인쇄 스타일 ── */
+    table, .erp-table, .emp-monthly-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
+    }
+    table th, .erp-table th, .emp-monthly-table th {
+        background: #eee !important;
+        color: #111 !important;
+        font-weight: 700 !important;
+        padding: 6pt 8pt !important;
+        border: 1px solid #999 !important;
+        text-align: center !important;
+        font-size: 8.5pt !important;
+    }
+    table td, .erp-table td, .emp-monthly-table td {
+        padding: 5pt 8pt !important;
+        border: 1px solid #bbb !important;
+        color: #222 !important;
+        font-size: 8.5pt !important;
+    }
+    table tr:nth-child(even) td {
+        background: #f8f8f8 !important;
+    }
+
+    /* ── 태그/뱃지 인쇄 ── */
+    .tag, .status, span[class*="st-"] {
+        background: transparent !important;
+        color: #333 !important;
+        border: 1px solid #999 !important;
+        font-size: 8pt !important;
+        padding: 1pt 4pt !important;
+        border-radius: 3pt !important;
+    }
+
+    /* ── KPI 카드 인쇄 (가로 배열) ── */
+    .kpi-grid, .acc-kpi-grid {
+        display: flex !important;
+        gap: 10pt !important;
+    }
+    .kpi-card, .acc-kpi-card {
+        border: 1px solid #ccc !important;
+        padding: 8pt !important;
+        border-radius: 4pt !important;
+        flex: 1 !important;
+    }
+    .kpi-value, .kpi-label, .kpi-sub {
+        color: #111 !important;
+    }
+
+    /* ── 차트 인쇄 (canvas는 현재 상태 그대로 인쇄) ── */
+    canvas {
+        max-width: 100% !important;
+    }
+
+    /* ── 전자결재 문서 인쇄 ── */
+    .doc-viewer-modal {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+    .dv-paper {
+        background: white !important;
+        color: #111 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        font-size: 10pt !important;
+    }
+    .dv-paper table {
+        border-collapse: collapse !important;
+    }
+    .dv-paper table th {
+        background: #ddd !important;
+    }
+    .dv-paper table td, .dv-paper table th {
+        border: 1px solid #999 !important;
+        padding: 5pt 8pt !important;
+        color: #111 !important;
+    }
+
+    /* ── 인사기록카드 인쇄 ── */
+    .printable-section {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+        width: 100% !important;
+        max-height: none !important;
+    }
+    .profile-grid {
+        color: #111 !important;
+    }
+    .profile-grid .label {
+        color: #555 !important;
+    }
+    .profile-grid .val {
+        color: #111 !important;
+    }
+
+    /* ── 프린트 버튼 자체 숨기기 ── */
+    .btn-print, [onclick*="print"], [data-action="print"] {
+        display: none !important;
+    }
+
+    /* ── 인쇄 전용 표시 요소 ── */
+    .print-only {
+        display: block !important;
+    }
+
+    /* ── 페이지 넘김 제어 ── */
+    .page-break-before { page-break-before: always !important; }
+    .page-break-after { page-break-after: always !important; }
+    .avoid-break { page-break-inside: avoid !important; break-inside: avoid !important; }
+
+    /* ── 인쇄 풋터 ── */
+    .print-footer {
+        display: block !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 7.5pt;
+        color: #aaa;
+        border-top: 1px solid #ccc;
+        padding-top: 4pt;
+    }
+}
+
+/* ── 화면 표시 시 인쇄 전용 요소 숨김 ── */
+@media screen {
+    .print-only,
+    .print-header,
+    .print-footer {
+        display: none !important;
+    }
+}
+
+/* ── 프린트 버튼 스타일 (화면용) ── */
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(99, 102, 241, 0.12);
+    color: #818CF8;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+.btn-print:hover {
+    background: rgba(99, 102, 241, 0.22);
+    border-color: rgba(99, 102, 241, 0.5);
+    transform: translateY(-1px);
+}
+.btn-print i {
+    font-size: 0.9rem;
+}
