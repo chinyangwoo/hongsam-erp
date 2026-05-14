@@ -10,17 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stored) {
             customers = JSON.parse(stored);
         } else {
-            // Initial mock data if empty
-            customers = [
-                { id: 'c1', name: '김회장', phone: '010-9999-8888', rank: 'VVIP', visits: 42, totalSpend: 12500000, lastVisit: '2026-05-10', memo: '스파 2층 선호. 차량 번호 12가3456', history: ['스파 프라이빗룸 (2026-05-10)', 'VIP 연간 회원권 갱신 (2026-01-05)'] },
-                { id: 'c2', name: '이대표', phone: '010-1234-5678', rank: 'VIP', visits: 15, totalSpend: 3400000, lastVisit: '2026-05-02', memo: '', history: ['호텔 스위트룸 숙박 (2026-05-01)'] },
-                { id: 'c3', name: '박진안', phone: '010-2345-6789', rank: '일반', visits: 3, totalSpend: 450000, lastVisit: '2026-04-20', memo: '알러지 있음 (땅콩)', history: ['스파 일반권 (2026-04-20)', '스파 일반권 (2025-11-12)'] },
-                { id: 'c4', name: '최전주', phone: '010-3456-7890', rank: '일반', visits: 1, totalSpend: 150000, lastVisit: '2026-05-11', memo: '', history: ['스파 커플권 (2026-05-11)'] },
-                { id: 'c5', name: '정무주', phone: '010-4567-8901', rank: 'VIP', visits: 12, totalSpend: 2800000, lastVisit: '2026-05-05', memo: '주말 예약 선호', history: ['스파 프라이빗룸 (2026-05-05)'] },
-                { id: 'c6', name: '강임실', phone: '010-5678-9012', rank: '일반', visits: 5, totalSpend: 750000, lastVisit: '2026-04-15', memo: '', history: ['식음료 카페 이용 (2026-04-15)'] },
-                { id: 'c7', name: '조장수', phone: '010-6789-0123', rank: 'VVIP', visits: 35, totalSpend: 9800000, lastVisit: '2026-05-12', memo: '와인 서비스 필요', history: ['호텔 펜트하우스 (2026-05-12)'] },
-                { id: 'c8', name: '윤남원', phone: '010-7890-1234', rank: '일반', visits: 2, totalSpend: 300000, lastVisit: '2026-03-22', memo: '', history: ['스파 일반권 (2026-03-22)'] }
-            ];
+            // 초기 데이터 없음 — 신규등록 버튼으로 고객 추가
+            customers = [];
             localStorage.setItem(CRM_DB_KEY, JSON.stringify(customers));
         }
     } catch(e) { console.error("CRM DB Error:", e); }
