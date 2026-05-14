@@ -1,5 +1,63 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // ═══════════════════════════════════════════════════════════
+    // 접근권한 제어 (RBAC)
+    // CRM 페이지: 팀장(큐레이터) 이상만 접근 가능
+    // 마케팅 발송: admin(마스터)만 가능
+    // ═══════════════════════════════════════════════════════════
+    const CRM_ALLOWED_RANKS = ['마스터', '호스트', '큐레이터']; // 팀장 이상
+    const CRM_ADMIN_RANKS = ['마스터']; // 마케팅 발송 권한 (admin만)
+
+    const currentUser = localStorage.getItem('currentUser');
+    let currentRank = '';
+    let isAdmin = false;
+
+    // HR DB에서 현재 사용자의 직급 확인
+    try {
+        const employees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]');
+        const empRecord = employees.find(e => e.emp_id === currentUser);
+        if (empRecord && empRecord.rank) {
+            currentRank = empRecord.rank;
+        }
+    } catch (_) {}
+
+    // 사번 001은 항상 마스터(admin) 권한 부여
+    if (currentUser === '001') {
+        currentRank = '마스터';
+    }
+
+    // 접근 권한 체크 — 팀장(큐레이터) 이상만 허용
+    if (!CRM_ALLOWED_RANKS.includes(currentRank)) {
+        document.body.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:center; height:100vh; background:#0F172A; color:white; font-family:'Pretendard',sans-serif;">
+                <div style="text-align:center; max-width:480px; padding:40px;">
+                    <i class="fa-solid fa-lock" style="font-size:4rem; color:#EF4444; margin-bottom:20px; display:block;"></i>
+                    <h1 style="font-size:1.5rem; margin-bottom:12px;">접근 권한이 없습니다</h1>
+                    <p style="color:#94A3B8; line-height:1.6; margin-bottom:24px;">
+                        고객관리(CRM) 페이지는 <strong style="color:#F59E0B;">팀장(큐레이터) 이상</strong> 직급만 접근 가능합니다.<br>
+                        현재 직급: <strong style="color:#EF4444;">${currentRank || '미등록'}</strong>
+                    </p>
+                    <a href="index.html" style="display:inline-block; padding:12px 32px; background:linear-gradient(135deg,#3B82F6,#2563EB); color:white; border-radius:12px; text-decoration:none; font-weight:600;">
+                        <i class="fa-solid fa-arrow-left"></i> 대시보드로 돌아가기
+                    </a>
+                </div>
+            </div>`;
+        return; // 이하 모든 CRM 로직 실행 중단
+    }
+
+    // admin 여부 확인 (마케팅 발송 권한)
+    isAdmin = CRM_ADMIN_RANKS.includes(currentRank);
+
+    // 마케팅 발송 버튼 — admin이 아니면 비활성화
+    const btnExecuteCampaign = document.getElementById('btnExecuteCampaign');
+    if (btnExecuteCampaign && !isAdmin) {
+        btnExecuteCampaign.disabled = true;
+        btnExecuteCampaign.style.opacity = '0.4';
+        btnExecuteCampaign.style.cursor = 'not-allowed';
+        btnExecuteCampaign.title = '마케팅 발송은 관리자(admin)만 가능합니다';
+        btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-lock"></i> 발송 권한 없음';
+    }
+
     // 1. Data Initialization & LocalStorage Sync
     const CRM_DB_KEY = 'hongsam_crm_db';
     const API_BASE = 'http://43.203.237.63:3001/api';
@@ -217,8 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Marketing SMS Logic
-    const btnExecuteCampaign = document.getElementById('btnExecuteCampaign');
+    // 5. Marketing SMS Logic (btnExecuteCampaign은 상단 RBAC에서 이미 참조)
     const campaignTarget = document.getElementById('campaignTarget');
     const campaignCost = document.getElementById('campaignCost');
     const campaignMethod = document.getElementById('campaignMethod');
@@ -240,6 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(btnExecuteCampaign) {
         btnExecuteCampaign.addEventListener('click', async () => {
+            // 발송 권한 재검증 (UI 우회 방지)
+            if (!isAdmin) {
+                alert('⛔ 마케팅 발송 권한이 없습니다.\n관리자(admin) 계정으로 로그인해 주세요.');
+                return;
+            }
             const target = campaignTarget ? campaignTarget.value : 'all';
             const method = campaignMethod ? campaignMethod.value : 'sms';
             const messageEl = document.getElementById('campaignMessage');
