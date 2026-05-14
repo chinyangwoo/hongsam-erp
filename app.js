@@ -620,11 +620,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 회계 DB에서 실제 월간 지출 집계 (인건비, 공과금, 시설유지보수 등 포함)
         let acctMonthExp = 0;
         try {
-            const acctDb = JSON.parse(localStorage.getItem('erp_accounting_db') || '{}');
-            const entries = acctDb.entries || [];
+            const acctRaw = JSON.parse(localStorage.getItem('erp_accounting_db') || '[]');
+            const entries = Array.isArray(acctRaw) ? acctRaw : (acctRaw.entries || []);
             const monthPrefix = `${y}-${m}`;
             entries.forEach(entry => {
-                if (entry.type === '지출' && entry.date && entry.date.startsWith(monthPrefix)) {
+                if (entry.type === 'expense' && entry.date && entry.date.startsWith(monthPrefix) && entry.status !== 'draft') {
                     acctMonthExp += Math.abs(entry.amount || 0);
                 }
             });
