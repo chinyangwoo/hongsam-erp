@@ -230,22 +230,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnExecuteCampaign = document.getElementById('btnExecuteCampaign');
     const campaignTarget = document.getElementById('campaignTarget');
     const campaignCost = document.getElementById('campaignCost');
+    const campaignMethod = document.getElementById('campaignMethod');
     
-    // Dynamic cost calculation based on target (LMS 25원 기준)
-    if(campaignTarget && campaignCost) {
-        const costMap = { all: 10120, vip: 842, inactive: 3240, spa: 5600 };
-        campaignTarget.addEventListener('change', (e) => {
-            const count = costMap[e.target.value] || 0;
-            const unitPrice = 25; // LMS 기준
-            campaignCost.innerText = (count * unitPrice).toLocaleString() + ' 원';
-        });
+    // Dynamic cost calculation based on target + method
+    const costMap = { all: 10120, vip: 842, inactive: 3240, spa: 5600 };
+    const priceMap = { sms: 25, rcs_text: 10, rcs_template: 50 };
+
+    function updateCampaignCost() {
+        if (!campaignTarget || !campaignCost) return;
+        const count = costMap[campaignTarget.value] || 0;
+        const method = campaignMethod ? campaignMethod.value : 'sms';
+        const unitPrice = priceMap[method] || 25;
+        campaignCost.innerText = (count * unitPrice).toLocaleString() + ' 원';
     }
+
+    if (campaignTarget) campaignTarget.addEventListener('change', updateCampaignCost);
+    if (campaignMethod) campaignMethod.addEventListener('change', updateCampaignCost);
 
     if(btnExecuteCampaign) {
         btnExecuteCampaign.addEventListener('click', async () => {
             const target = campaignTarget ? campaignTarget.value : 'all';
-            const messageEl = document.querySelector('#campaignTarget ~ textarea, .styled-input[rows]');
+            const method = campaignMethod ? campaignMethod.value : 'sms';
+            const messageEl = document.getElementById('campaignMessage');
+            const titleEl = document.getElementById('campaignTitle');
             const message = messageEl ? messageEl.value.trim() : '';
+            const title = titleEl ? titleEl.value.trim() : '[홍삼한방타운]';
 
             if (!message) { alert('메시지 내용을 입력해 주세요.'); return; }
 
@@ -260,22 +269,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (receivers.length === 0) { alert('발송 대상이 없습니다.'); return; }
 
-            const unitPrice = message.length > 90 ? 25 : 8.4;
+            const unitPrice = priceMap[method] || 25;
             const estCost = Math.round(receivers.length * unitPrice);
-            if (!confirm(`📱 ${receivers.length}명에게 ${message.length > 90 ? 'LMS' : 'SMS'} 발송\n예상 비용: ${estCost.toLocaleString()}원\n\n계속하시겠습니까?`)) return;
+            const methodLabel = method === 'sms' ? (message.length > 90 ? 'LMS' : 'SMS') : method === 'rcs_text' ? 'RCS 텍스트' : 'RCS 템플릿';
+
+            if (!confirm(`📱 ${receivers.length}명에게 ${methodLabel} 발송\n예상 비용: ${estCost.toLocaleString()}원\n\n계속하시겠습니까?`)) return;
 
             btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 발송 중...';
             btnExecuteCampaign.disabled = true;
 
             try {
-                const res = await fetch(`${API_BASE}/sms/send`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                let apiUrl, bodyData;
+
+                if (method === 'sms') {
+                    // SMS/LMS 발송
+                    apiUrl = `${API_BASE}/sms/send`;
+                    bodyData = {
                         receivers: receivers,
                         message: '(광고) ' + message + '\n무료수신거부 080-XXX-XXXX',
-                        title: '[홍삼한방타운]'
-                    })
+                        title: title
+                    };
+                } else {
+                    // RCS 발송 (텍스트 또는 템플릿)
+                    apiUrl = `${API_BASE}/rcs/send`;
+                    bodyData = {
+                        receivers: receivers,
+                        message: message,
+                        title: title,
+                        fallbackMessage: '(광고) ' + message + '\n무료수신거부 080-XXX-XXXX'
+                    };
+                }
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
                 });
                 const result = await res.json();
 
@@ -283,9 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 t.style.cssText = `position:fixed; bottom:32px; right:32px; z-index:99999; color:white; padding:14px 20px; border-radius:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.4);`;
 
                 if (result.success) {
-                    t.style.background = 'rgba(16,185,129,0.95)';
+                    t.style.background = method.startsWith('rcs') ? 'rgba(139,92,246,0.95)' : 'rgba(16,185,129,0.95)';
                     const modeText = result.mode === 'simulation' ? ' (시뮬레이션)' : '';
-                    t.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${result.sentCount}명 발송 완료${modeText}`;
+                    const typeIcon = method.startsWith('rcs') ? '💎' : '📱';
+                    t.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${typeIcon} ${result.sentCount}명 ${methodLabel} 발송 완료${modeText}`;
                 } else {
                     t.style.background = 'rgba(239,68,68,0.95)';
                     t.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> 발송 실패: ${result.error || '알 수 없는 오류'}`;

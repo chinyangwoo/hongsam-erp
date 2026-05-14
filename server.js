@@ -153,6 +153,100 @@ app.get('/api/sms/history', (req, res) => {
     res.json(db.sms_history || []);
 });
 
+// ═══════════════════════════════════════════════════════════
+// RCS 발송 API (알리고 RCS 중계)
+// 환경변수: ALIGO_RCS_BRAND_KEY
+// ═══════════════════════════════════════════════════════════
+const ALIGO_RCS_BRAND_KEY = process.env.ALIGO_RCS_BRAND_KEY || '';
+
+app.post('/api/rcs/send', async (req, res) => {
+    const { receivers, brandKey, templateId, message, title, buttons, fallbackMessage } = req.body;
+
+    if (!receivers || !Array.isArray(receivers) || receivers.length === 0) {
+        return res.status(400).json({ success: false, error: '수신자 목록이 비어 있습니다.' });
+    }
+
+    // API Key 또는 RCS Brand Key 미설정 시 시뮬레이션 모드
+    if (!ALIGO_API_KEY || !ALIGO_USER_ID || (!brandKey && !ALIGO_RCS_BRAND_KEY)) {
+        console.log(`[RCS 시뮬레이션] ${receivers.length}명에게 RCS 발송 시뮬레이션`);
+        const db = loadDB();
+        if (!db.sms_history) db.sms_history = [];
+        db.sms_history.push({
+            id: 'RCS-' + Date.now(),
+            timestamp: new Date().toISOString(),
+            receivers: receivers.length,
+            message: message || '(RCS 템플릿)',
+            title: title || '',
+            templateId: templateId || '',
+            mode: 'simulation',
+            type: 'RCS',
+            status: 'simulated'
+        });
+        saveDB(db);
+        return res.json({
+            success: true,
+            mode: 'simulation',
+            type: 'RCS',
+            sentCount: receivers.length,
+            message: `RCS 시뮬레이션: ${receivers.length}명 처리됨. RCS Biz Center 브랜드 등록 + 알리고 API Key 설정 후 실제 발송됩니다.`
+        });
+    }
+
+    // 실제 알리고 RCS API 발송
+    try {
+        const axios = require('axios');
+        const FormData = require('form-data');
+        const form = new FormData();
+        form.append('key', ALIGO_API_KEY);
+        form.append('user_id', ALIGO_USER_ID);
+        form.append('sender', ALIGO_SENDER);
+        form.append('receiver', receivers.map(r => r.replace(/-/g, '')).join(','));
+        form.append('brand_key', brandKey || ALIGO_RCS_BRAND_KEY);
+        if (templateId) form.append('template_id', templateId);
+        if (message) form.append('body', message);
+        if (title) form.append('title', title);
+        if (buttons) form.append('buttons', JSON.stringify(buttons));
+
+        // Fallback: RCS 미지원 기기 → SMS/LMS 자동 전환
+        if (fallbackMessage) {
+            form.append('sms_kind', fallbackMessage.length > 90 ? 'LMS' : 'SMS');
+            form.append('message', fallbackMessage);
+        }
+
+        const response = await axios.post('https://apis.aligo.in/rcs/send/', form, {
+            headers: form.getHeaders()
+        });
+
+        // 발송 이력 저장
+        const db = loadDB();
+        if (!db.sms_history) db.sms_history = [];
+        db.sms_history.push({
+            id: 'RCS-' + Date.now(),
+            timestamp: new Date().toISOString(),
+            receivers: receivers.length,
+            message: message || '(RCS 템플릿)',
+            title: title || '',
+            templateId: templateId || '',
+            mode: 'live',
+            type: 'RCS',
+            status: response.data.result_code === '1' ? 'success' : 'failed',
+            apiResponse: response.data
+        });
+        saveDB(db);
+
+        res.json({
+            success: response.data.result_code === '1',
+            mode: 'live',
+            type: 'RCS',
+            sentCount: receivers.length,
+            apiResult: response.data
+        });
+    } catch (error) {
+        console.error('[RCS 발송 오류]', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // --- Socket.io 실시간 통신 (Phase 3) ---
 // 접속 중인 사용자 (emp_id를 키값으로 관리)
 const onlineUsers = new Map();
