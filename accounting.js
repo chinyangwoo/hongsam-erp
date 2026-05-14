@@ -645,6 +645,208 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[회계자동화] Phase C: 정기 고정 지출 동기화 완료');
     }
 
+    // ══════════════════════════════════════════════════════════
+    // 경영 대시보드 (시뮬레이션 통합)
+    // ══════════════════════════════════════════════════════════
+
+    // Unit Toggle
+    const unitBtns = document.querySelectorAll('.sim-unit-btn');
+    unitBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            unitBtns.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+        });
+    });
+
+    // Revenue Trend Chart (12개월)
+    let revChart = null;
+    const revCtx = document.getElementById('simRevenueChart');
+    const isDark = document.body.classList.contains('dark-theme');
+    if (revCtx && typeof Chart !== 'undefined') {
+        revChart = new Chart(revCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: '홍삼스파 매출', data: [], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true },
+                    { label: '홍삼빌호텔 매출', data: [], borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { usePointStyle: true, padding: 20, color: isDark ? '#94A3B8' : '#6B7280' } },
+                    tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ₩' + ctx.parsed.y.toLocaleString() + '천원'; } } }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { callback: function(v) { return '₩' + (v/1000).toFixed(0) + 'M'; }, color: isDark ? '#94A3B8' : '#6B7280' } },
+                    x: { grid: { display: false }, ticks: { color: isDark ? '#94A3B8' : '#6B7280' } }
+                }
+            }
+        });
+    }
+
+    // 비용 도넛차트 (실제 회계 데이터 기반)
+    let costDonutChart = null;
+    function renderCostDonut(accData) {
+        const costCtx = document.getElementById('simCostChart');
+        if (!costCtx || typeof Chart === 'undefined') return;
+        if (costDonutChart) costDonutChart.destroy();
+
+        const now = new Date();
+        const curMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        const monthExpenses = (accData || loadData()).filter(d =>
+            d.date && d.date.startsWith(curMonth) && d.type === 'expense' && d.status !== 'draft'
+        );
+
+        const catMap = {};
+        monthExpenses.forEach(d => {
+            const cat = d.category || '기타';
+            catMap[cat] = (catMap[cat] || 0) + (d.amount || 0);
+        });
+
+        const labels = Object.keys(catMap).length > 0 ? Object.keys(catMap) : ['데이터 없음'];
+        const data = Object.keys(catMap).length > 0 ? Object.values(catMap) : [1];
+        const colors = ['#3B82F6','#10B981','#F59E0B','#8B5CF6','#EC4899','#6B7280','#14B8A6','#F97316'];
+
+        costDonutChart = new Chart(costCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{ data: data, backgroundColor: colors.slice(0, labels.length), borderWidth: 0, hoverOffset: 6 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '65%',
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 11 }, color: isDark ? '#94A3B8' : '#6B7280' } } }
+            }
+        });
+    }
+
+    // 대시보드 KPI 로드 (회계 DB + 호텔 API 통합)
+    async function loadDashboardKPIs() {
+        // 회계 DB에서 당월 데이터
+        const accData = loadData();
+        const now = new Date();
+        const curMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        const monthData = accData.filter(d => d.date && d.date.startsWith(curMonth) && d.status !== 'draft');
+
+        let accIncome = 0, accExpense = 0;
+        monthData.forEach(d => {
+            if (d.type === 'income') accIncome += (d.amount || 0);
+            else accExpense += (d.amount || 0);
+        });
+
+        // 호텔 API에서 가동률 가져오기
+        let hotelLatestOcc = 0;
+        try {
+            const cached = JSON.parse(localStorage.getItem('erp_hotel_api_cache') || '{}');
+            let hotelApiData = [];
+            if (cached.ts && (Date.now() - cached.ts < 30 * 60 * 1000) && cached.data) {
+                hotelApiData = cached.data;
+            } else {
+                const res = await fetch('https://hongsam.dothome.co.kr/api.php?action=load');
+                if (res.ok) hotelApiData = await res.json();
+            }
+            if (hotelApiData.length > 0) {
+                const sorted = hotelApiData.sort((a, b) => b.date.localeCompare(a.date));
+                hotelLatestOcc = sorted[0].metrics.occRate || 0;
+            }
+        } catch(e) {
+            try { hotelLatestOcc = JSON.parse(localStorage.getItem('erp_hotel_api_cache') || '{}').data?.[0]?.metrics?.occRate || 0; } catch(e2) {}
+        }
+
+        const totalProfit = accIncome - accExpense;
+
+        const elRev = document.getElementById('simRevenue');
+        const elCost = document.getElementById('simCost');
+        const elProfit = document.getElementById('simProfit');
+        const elOcc = document.getElementById('simOccupancy');
+
+        if (elRev) elRev.innerText = '₩ ' + accIncome.toLocaleString();
+        if (elCost) elCost.innerText = '₩ ' + accExpense.toLocaleString();
+        if (elProfit) {
+            elProfit.innerText = '₩ ' + totalProfit.toLocaleString();
+            elProfit.style.color = totalProfit >= 0 ? '#10B981' : '#EF4444';
+        }
+        if (elOcc) elOcc.innerText = hotelLatestOcc + '%';
+
+        // 12개월 차트 데이터 (회계 DB 기반)
+        const labels = [];
+        const incomeData = [];
+        const expenseData = [];
+
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            labels.push(`${d.getMonth() + 1}월`);
+
+            const mData = accData.filter(r => r.date && r.date.startsWith(prefix) && r.status !== 'draft');
+            let mIncome = 0, mExpense = 0;
+            mData.forEach(r => {
+                if (r.type === 'income') mIncome += (r.amount || 0);
+                else mExpense += (r.amount || 0);
+            });
+            incomeData.push(Math.round(mIncome / 1000)); // 천원 단위
+            expenseData.push(Math.round(mExpense / 1000));
+        }
+
+        if (revChart) {
+            revChart.data.labels = labels;
+            revChart.data.datasets[0].data = incomeData;
+            revChart.data.datasets[0].label = '매출 (수입)';
+            revChart.data.datasets[0].borderColor = '#10B981';
+            revChart.data.datasets[0].backgroundColor = 'rgba(16,185,129,0.1)';
+            revChart.data.datasets[1].data = expenseData;
+            revChart.data.datasets[1].label = '비용 (지출)';
+            revChart.data.datasets[1].borderColor = '#EF4444';
+            revChart.data.datasets[1].backgroundColor = 'rgba(239,68,68,0.1)';
+            revChart.update();
+        }
+
+        // 비용 도넛 차트 (실제 데이터)
+        renderCostDonut(accData);
+    }
+
+    // What-If Simulation Sliders
+    const sliders = {
+        spaVisitors: document.getElementById('sliderSpaVisitors'),
+        occupancy: document.getElementById('sliderOccupancy'),
+        avgSpend: document.getElementById('sliderAvgSpend'),
+        adr: document.getElementById('sliderADR')
+    };
+    const vals = {
+        spaVisitors: document.getElementById('valSpaVisitors'),
+        occupancy: document.getElementById('valOccupancy'),
+        avgSpend: document.getElementById('valAvgSpend'),
+        adr: document.getElementById('valADR')
+    };
+    const results = {
+        spa: document.getElementById('resultSpaMonthlySales'),
+        hotel: document.getElementById('resultHotelMonthlySales'),
+        total: document.getElementById('resultTotalMonthlySales')
+    };
+
+    function calculateSimulation() {
+        if (!sliders.spaVisitors) return;
+        const sv = parseInt(sliders.spaVisitors.value);
+        const oc = parseInt(sliders.occupancy.value);
+        const as2 = parseInt(sliders.avgSpend.value);
+        const ad = parseInt(sliders.adr.value);
+        if (vals.spaVisitors) vals.spaVisitors.textContent = sv + '명';
+        if (vals.occupancy) vals.occupancy.textContent = oc + '%';
+        if (vals.avgSpend) vals.avgSpend.textContent = '₩' + as2.toLocaleString();
+        if (vals.adr) vals.adr.textContent = '₩' + ad.toLocaleString();
+        const spa = sv * as2 * 30;
+        const hotel = Math.floor(43 * (oc / 100) * ad * 30);
+        const total = spa + hotel;
+        if (results.spa) results.spa.textContent = '₩ ' + spa.toLocaleString();
+        if (results.hotel) results.hotel.textContent = '₩ ' + hotel.toLocaleString();
+        if (results.total) results.total.textContent = '₩ ' + total.toLocaleString();
+    }
+
+    Object.values(sliders).forEach(function(s) { if (s) s.addEventListener('input', calculateSimulation); });
+    calculateSimulation();
+
     // ── 초기 로드 ──
     // 서버에서 데이터 복원 → 자동 동기화 실행 → UI 렌더링
     fetch(`${API_BASE}/db/erp_accounting_db`)
@@ -660,5 +862,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // UI 렌더링
             renderCashbook();
             updateKPIs(loadData(), '');
+
+            // 경영 대시보드 KPI 로드
+            loadDashboardKPIs();
         });
 });
+
