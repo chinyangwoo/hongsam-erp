@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ═══════════════════════════════════════════════════════════
     // 접근권한 제어 (RBAC)
     // CRM 페이지: 팀장(큐레이터) 이상만 접근 가능
-    // 마케팅 발송: admin(마스터)만 가능
+    // 마케팅 발송: 마스터, 호스트, 큐레이터(홍보팀장) 가능
     // ═══════════════════════════════════════════════════════════
     const CRM_ALLOWED_RANKS = ['마스터', '호스트', '큐레이터']; // 팀장 이상
-    const CRM_ADMIN_RANKS = ['마스터']; // 마케팅 발송 권한 (admin만)
+    const CRM_ADMIN_RANKS = ['마스터', '호스트', '큐레이터']; // 마케팅 발송 권한 (마스터 + 호스트 + 홍보팀장)
 
     const currentUser = localStorage.getItem('currentUser');
     let currentRank = '';
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExecuteCampaign.disabled = true;
         btnExecuteCampaign.style.opacity = '0.4';
         btnExecuteCampaign.style.cursor = 'not-allowed';
-        btnExecuteCampaign.title = '마케팅 발송은 관리자(admin)만 가능합니다';
+        btnExecuteCampaign.title = '마케팅 발송은 마스터/호스트/큐레이터(홍보팀장)만 가능합니다';
         btnExecuteCampaign.innerHTML = '<i class="fa-solid fa-lock"></i> 발송 권한 없음';
     }
 
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExecuteCampaign.addEventListener('click', async () => {
             // 발송 권한 재검증 (UI 우회 방지)
             if (!isAdmin) {
-                alert('⛔ 마케팅 발송 권한이 없습니다.\n관리자(admin) 계정으로 로그인해 주세요.');
+                alert('⛔ 마케팅 발송 권한이 없습니다.\n마스터/호스트/큐레이터(홍보팀장) 계정으로 로그인해 주세요.');
                 return;
             }
             const target = campaignTarget ? campaignTarget.value : 'all';
