@@ -1031,10 +1031,10 @@ document.addEventListener('DOMContentLoaded', () => {
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['OTA (Agoda/Yanolja)', '직판 (홈페이지/전화)', '워크인 (방문)'],
+                labels: ['OTA (Agoda/Yanolja)', '직판 (홈페이지/전화)', '여행사 (Agency)', '워크인 (방문)'],
                 datasets: [{
-                    data: [55, 35, 10], // 더미 데이터 (보통 호텔의 채널 비중)
-                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B'],
+                    data: [45, 25, 20, 10], // 더미 데이터 (보통 호텔의 채널 비중)
+                    backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'],
                     borderWidth: 0,
                     hoverOffset: 4
                 }]
