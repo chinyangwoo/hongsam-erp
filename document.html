@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +19,7 @@
     
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css?v=16">
-    <link rel="stylesheet" href="document.css">
+    <link rel="stylesheet" href="document.css?v=2">
     <!-- Mobile Responsive Override -->
     <link rel="stylesheet" href="mobile.css?v=1">
     <link rel="stylesheet" href="print.css?v=1">
@@ -92,7 +92,7 @@
             </div>
             
             <div class="header-actions">
-                <button class="btn-primary" id="btnUploadDoc"><i class="fa-solid fa-cloud-arrow-up"></i> 새 문서 업로드</button>
+                <button class="btn-primary doc-admin-only" id="btnUploadDoc"><i class="fa-solid fa-cloud-arrow-up"></i> 새 문서 업로드</button>
                 <button class="theme-toggle" id="themeToggle" title="테마 변경">
                     <i class="fa-solid fa-sun"></i>
                 </button>
@@ -105,17 +105,17 @@
             <div class="doc-sidebar">
                 <div class="folder-header">
                     <h3>카테고리 폴더</h3>
-                    <button class="btn-icon-small" title="새 폴더"><i class="fa-solid fa-folder-plus"></i></button>
+                    <button class="btn-icon-small doc-admin-only" title="새 폴더" id="btnNewFolder"><i class="fa-solid fa-folder-plus"></i></button>
                 </div>
                 
                 <ul class="folder-list">
                     <!-- JS에서 동적 생성 -->
                 </ul>
                 
-                <div class="storage-info">
+                <div class="storage-info doc-admin-only">
                     <div class="s-text">
                         <span>스토리지 사용량</span>
-                        <span>4.2 GB / 50 GB</span>
+                        <span id="storageUsage">0건</span>
                     </div>
                     <div class="progress-bar-bg" style="height: 6px; margin:0;">
                         <div class="progress-bar-fill" style="width: 8.4%; background: var(--accent-blue);"></div>
@@ -128,11 +128,12 @@
                 <div class="explorer-toolbar">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="문서 이름이나 확장자 검색...">
+                        <input type="text" id="docSearchInput" placeholder="문서 이름이나 확장자 검색...">
                     </div>
-                    <div class="view-toggles">
-                        <button class="btn-icon active" title="리스트 보기"><i class="fa-solid fa-list"></i></button>
-                        <button class="btn-icon" title="섬네일 보기"><i class="fa-solid fa-border-all"></i></button>
+                    <!-- Batch Actions (선택 시 표시) -->
+                    <div class="batch-actions" id="batchActions" style="display:none;">
+                        <span class="batch-count" id="batchCount">0건 선택</span>
+                        <button class="btn-batch" id="btnBatchDownload" title="선택 다운로드"><i class="fa-solid fa-download"></i> 다운로드</button>
                     </div>
                 </div>
 
@@ -142,21 +143,25 @@
                 </div>
 
                 <div class="file-list-header">
+                    <div class="col-check"><input type="checkbox" id="checkAll" title="전체 선택"></div>
                     <div class="col-name">파일명</div>
+                    <div class="col-sec">보안등급</div>
                     <div class="col-date">등록일</div>
                     <div class="col-user">등록자</div>
                     <div class="col-size text-right">크기</div>
                     <div class="col-actions text-right">관리</div>
                 </div>
 
-                <div class="file-list-body">
+                <div class="file-list-body" id="fileListBody">
                     <!-- JS에서 동적 렌더링 -->
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Modal: HWP Warning Alert -->
+    <!-- ═══════════════════════════════════════════════
+         Modal: HWP Warning Alert
+         ═══════════════════════════════════════════════ -->
     <div class="modal-overlay" id="hwpAlertModal">
         <div class="modal-content glassmorphism" style="width: 400px; text-align: center;">
             <div class="modal-header" style="justify-content: center; border-bottom: none;">
@@ -174,6 +179,64 @@
             <div class="modal-footer" style="justify-content: center; border-top: none;">
                 <button class="btn-secondary" id="closeHwpAlert">취소</button>
                 <button class="btn-primary" id="btnHwpDownload"><i class="fa-solid fa-download"></i> 바로 다운로드</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         Modal: 문서 업로드
+         ═══════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content glassmorphism" style="width: 560px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-cloud-arrow-up" style="color: var(--accent-blue); margin-right:8px;"></i> 새 문서 업로드</h2>
+                <button class="btn-close" id="closeUploadModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 28px;">
+                <!-- 드래그 앤 드롭 영역 -->
+                <div class="upload-dropzone" id="uploadDropzone">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:2.5rem; color: var(--accent-blue); margin-bottom:16px;"></i>
+                    <p style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:8px;">파일을 여기로 드래그하거나</p>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:16px;">클릭하여 파일을 선택하세요</p>
+                    <input type="file" id="uploadFileInput" multiple style="display:none;">
+                    <button class="btn-primary" id="btnSelectFile" style="padding:10px 24px;"><i class="fa-solid fa-folder-open"></i> 파일 선택</button>
+                    <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:12px;">PDF, DOCX, XLSX, PPTX, HWP, 이미지 (최대 50MB)</p>
+                </div>
+                <!-- 업로드 옵션 -->
+                <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px;">
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">카테고리</label>
+                        <select id="uploadCategory" style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-family:inherit; outline:none; font-size:0.9rem;">
+                            <option value="general">총무/일반 양식</option>
+                            <option value="hr">인사 (HR) 양식</option>
+                            <option value="facility">시설 및 공무 자료</option>
+                            <option value="operation">매장 운영 매뉴얼</option>
+                            <option value="sales">영업 및 마케팅</option>
+                            <option value="safety">안전 및 위생</option>
+                            <option value="it">IT/정보보안</option>
+                            <option value="policy">사규 및 규정</option>
+                            <option value="accounting">경영 및 회계</option>
+                            <option value="contract">계약서/법무</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">보안 등급</label>
+                        <select id="uploadSecLevel" style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-family:inherit; outline:none; font-size:0.9rem;">
+                            <option value="public">전사공개</option>
+                            <option value="dept">부서공개</option>
+                            <option value="conf">대외비</option>
+                        </select>
+                    </div>
+                    <!-- 선택된 파일 목록 -->
+                    <div id="uploadFileList" style="display:none;">
+                        <label style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:block; font-weight:600;">선택된 파일</label>
+                        <div id="uploadFileListItems" style="max-height:120px; overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelUploadBtn">취소</button>
+                <button class="btn-primary" id="saveUploadBtn"><i class="fa-solid fa-cloud-arrow-up"></i> 업로드</button>
             </div>
         </div>
     </div>
@@ -198,14 +261,7 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=11"></script>
-    <script src="document_data.js"></script>
-    <script src="document.js?v=2"></script>
+    <script src="document_data.js?v=2"></script>
+    <script src="document.js?v=3"></script>
 </body>
 </html>
-
-
-
-
-
-
-
