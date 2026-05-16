@@ -248,26 +248,49 @@ app.post('/api/rcs/send', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════
-// Claude Opus 4.6 Thinking — AI 경영실적분석 프록시
+// Claude Sonnet 4.6 — AI 경영실적분석 프록시
 // 환경변수: ANTHROPIC_API_KEY
+// 캐시: db_storage.json 영구 저장 (월 1회 분석, 이후 캐시 재사용)
 // ═══════════════════════════════════════════════════════════
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
-const aiAnalysisCache = {}; // { '2026-05': { result, timestamp } }
 
+// 영구 캐시 헬퍼
+function loadAiCache() {
+    const db = loadDB();
+    return db.ai_analysis_cache || {};
+}
+function saveAiCache(month, result, timestamp) {
+    const db = loadDB();
+    if (!db.ai_analysis_cache) db.ai_analysis_cache = {};
+    db.ai_analysis_cache[month] = { result, timestamp };
+    saveDB(db);
+}
+
+// GET: 캐시 조회 전용 (토큰 소모 없음, 누구나 접근 가능)
+app.get('/api/ai/cache/:month', (req, res) => {
+    const month = req.params.month;
+    const cache = loadAiCache();
+    if (cache[month]) {
+        console.log(`[AI] Cache read for ${month}`);
+        return res.json({ success: true, cached: true, result: cache[month].result, timestamp: cache[month].timestamp });
+    }
+    res.json({ success: false, cached: false, message: '해당 월의 분석 캐시가 없습니다.' });
+});
+
+// POST: 실제 AI 분석 실행 (마스터만, 캐시 없을 때만)
 app.post('/api/ai/analyze', async (req, res) => {
-    const { prompt, month } = req.body;
+    const { prompt, month, forceRefresh } = req.body;
 
     if (!prompt) {
         return res.status(400).json({ success: false, error: '분석 프롬프트가 비어 있습니다.' });
     }
 
-    // 캐시 확인 (24시간)
-    if (month && aiAnalysisCache[month]) {
-        const cached = aiAnalysisCache[month];
-        const elapsed = Date.now() - cached.timestamp;
-        if (elapsed < 24 * 60 * 60 * 1000) {
-            console.log(`[AI] Cache hit for ${month}`);
-            return res.json({ success: true, cached: true, result: cached.result, timestamp: cached.timestamp });
+    // 캐시 확인 (forceRefresh가 아닌 경우)
+    if (month && !forceRefresh) {
+        const cache = loadAiCache();
+        if (cache[month]) {
+            console.log(`[AI] Cache hit for ${month} (persistent)`);
+            return res.json({ success: true, cached: true, result: cache[month].result, timestamp: cache[month].timestamp });
         }
     }
 
@@ -329,13 +352,14 @@ app.post('/api/ai/analyze', async (req, res) => {
         const textBlocks = (apiResult.body.content || []).filter(b => b.type === 'text');
         const resultText = textBlocks.map(b => b.text).join('\n');
 
-        // 캐시 저장
+        // 영구 캐시 저장 (db_storage.json)
+        const now = Date.now();
         if (month) {
-            aiAnalysisCache[month] = { result: resultText, timestamp: Date.now() };
+            saveAiCache(month, resultText, now);
         }
 
-        console.log(`[AI] Analysis complete for ${month || 'unknown'}, ${resultText.length} chars`);
-        res.json({ success: true, cached: false, result: resultText, timestamp: Date.now() });
+        console.log(`[AI] Analysis complete for ${month || 'unknown'}, ${resultText.length} chars — cached permanently`);
+        res.json({ success: true, cached: false, result: resultText, timestamp: now });
 
     } catch (error) {
         console.error('[AI] Error:', error.message);

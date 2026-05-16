@@ -1032,9 +1032,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     // ══════════════════════════════════════════════════════════
-    // 5) AI 경영실적 분석 (Claude Opus 4.6 Thinking)
+    // 5) AI 경영실적 분석 — 영구 캐시 우선 (월 1회 분석, 이후 캐시 재사용)
     // ══════════════════════════════════════════════════════════
-    
+    const AI_LOCAL_CACHE_KEY = 'erp_ai_analysis_cache';
+
+    function loadLocalAiCache() {
+        try { return JSON.parse(localStorage.getItem(AI_LOCAL_CACHE_KEY) || '{}'); } catch(e) { return {}; }
+    }
+    function saveLocalAiCache(month, result, timestamp) {
+        const c = loadLocalAiCache();
+        c[month] = { result, timestamp };
+        localStorage.setItem(AI_LOCAL_CACHE_KEY, JSON.stringify(c));
+    }
+
     // 월 선택 드롭다운 초기화
     (function initAiMonthSelector() {
         const select = document.getElementById('aiAnalysisMonth');
@@ -1051,166 +1061,161 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })();
 
-    // AI 분석 탭 클릭 시 처리
-    // (탭 전환은 기존 로직에서 처리, panelAiAnalysis가 target)
+    // 캐시된 분석 결과 표시 함수
+    function displayAiResult(month, result, timestamp, fromCache) {
+        const statusEl = document.getElementById('aiAnalysisStatus');
+        const resultEl = document.getElementById('aiAnalysisResult');
+        const guideEl = document.getElementById('aiAnalysisGuide');
+        if (guideEl) guideEl.style.display = 'none';
+        if (statusEl) statusEl.style.display = 'none';
+        if (resultEl) resultEl.style.display = 'block';
+
+        const [yyyy, mm] = month.split('-');
+        const titleEl = document.getElementById('aiReportTitle');
+        const tsEl = document.getElementById('aiReportTimestamp');
+        const contentEl = document.getElementById('aiReportContent');
+
+        if (titleEl) titleEl.textContent = `${yyyy}년 ${parseInt(mm)}월 AI 경영실적 분석 리포트`;
+        if (tsEl) {
+            const ts = new Date(timestamp);
+            const cacheLabel = fromCache ? '📋 저장된 분석 결과' : '✨ 새로 생성됨';
+            tsEl.textContent = `${cacheLabel} | 생성: ${ts.getFullYear()}.${ts.getMonth()+1}.${ts.getDate()} ${ts.getHours()}:${String(ts.getMinutes()).padStart(2,'0')}`;
+        }
+        if (contentEl) contentEl.textContent = result;
+
+        // 로컬 캐시에도 저장
+        saveLocalAiCache(month, result, timestamp);
+    }
+
+    // 월 변경 시 자동 캐시 로드
+    const aiMonthSelect = document.getElementById('aiAnalysisMonth');
+    if (aiMonthSelect) {
+        aiMonthSelect.addEventListener('change', () => autoLoadAiCache(aiMonthSelect.value));
+    }
+
+    // 캐시 자동 로드 (탭 열릴 때 + 월 변경 시)
+    async function autoLoadAiCache(month) {
+        if (!month) return;
+        const statusEl = document.getElementById('aiAnalysisStatus');
+        const resultEl = document.getElementById('aiAnalysisResult');
+        const guideEl = document.getElementById('aiAnalysisGuide');
+
+        // 1단계: 로컬 캐시 먼저 확인 (즉시 표시)
+        const localCache = loadLocalAiCache();
+        if (localCache[month]) {
+            displayAiResult(month, localCache[month].result, localCache[month].timestamp, true);
+            return;
+        }
+
+        // 2단계: 서버 캐시 확인 (네트워크 요청, 토큰 소모 없음)
+        try {
+            const res = await fetch(`${API_BASE}/ai/cache/${month}`);
+            const data = await res.json();
+            if (data.success && data.cached) {
+                displayAiResult(month, data.result, data.timestamp, true);
+                return;
+            }
+        } catch(e) { console.log('[AI] 서버 캐시 조회 실패, 로컬만 사용'); }
+
+        // 캐시 없음 → 가이드 표시
+        if (guideEl) guideEl.style.display = 'block';
+        if (resultEl) resultEl.style.display = 'none';
+        if (statusEl) statusEl.style.display = 'none';
+    }
+
+    // AI 탭 열릴 때 자동 캐시 로드
+    const aiTab = document.querySelector('.acc-tab[data-target="panelAiAnalysis"]');
+    if (aiTab) {
+        aiTab.addEventListener('click', () => {
+            const month = aiMonthSelect ? aiMonthSelect.value : '';
+            if (month) setTimeout(() => autoLoadAiCache(month), 100);
+        });
+    }
 
     // AI 분석 실행 버튼
     const btnRunAi = document.getElementById('btnRunAiAnalysis');
     if (btnRunAi) {
-        // 마스터만 실행 가능
         if (!isAdmin) {
-            btnRunAi.disabled = true;
-            btnRunAi.style.opacity = '0.4';
-            btnRunAi.style.cursor = 'not-allowed';
-            btnRunAi.title = 'AI 분석은 대표(마스터)만 실행 가능합니다';
-            btnRunAi.innerHTML = '<i class="fa-solid fa-lock"></i> 권한 없음';
-        }
+            btnRunAi.textContent = '';
+            btnRunAi.innerHTML = '<i class="fa-solid fa-eye"></i> 분석 결과 보기';
+            btnRunAi.title = '저장된 분석 결과를 불러옵니다 (토큰 소모 없음)';
+            // 일반 직원: 클릭 시 캐시만 로드
+            btnRunAi.addEventListener('click', () => {
+                const month = aiMonthSelect ? aiMonthSelect.value : '';
+                if (!month) return alert('조회할 월을 선택하세요.');
+                autoLoadAiCache(month);
+            });
+        } else {
+            // 마스터: 실제 AI 분석 실행
+            btnRunAi.addEventListener('click', async () => {
+                const month = aiMonthSelect ? aiMonthSelect.value : '';
+                if (!month) return alert('분석할 월을 선택하세요.');
 
-        btnRunAi.addEventListener('click', async () => {
-            if (!isAdmin) return;
-
-            const monthSelect = document.getElementById('aiAnalysisMonth');
-            const month = monthSelect ? monthSelect.value : '';
-            if (!month) return alert('분석할 월을 선택하세요.');
-
-            const statusEl = document.getElementById('aiAnalysisStatus');
-            const resultEl = document.getElementById('aiAnalysisResult');
-            const guideEl = document.getElementById('aiAnalysisGuide');
-
-            // 로딩 표시
-            if (guideEl) guideEl.style.display = 'none';
-            if (resultEl) resultEl.style.display = 'none';
-            if (statusEl) statusEl.style.display = 'block';
-            btnRunAi.disabled = true;
-            btnRunAi.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 분석 중...';
-
-            try {
-                // 1. 회계 데이터 집계
-                const allData = loadData();
-                const monthData = allData.filter(d => d.date && d.date.startsWith(month) && d.status !== 'draft');
-                
-                let totalIncome = 0, totalExpense = 0;
-                const incomeCats = {};
-                const expenseCats = {};
-                
-                monthData.forEach(d => {
-                    const cat = d.category || '기타';
-                    if (d.type === 'income') {
-                        totalIncome += (d.amount || 0);
-                        incomeCats[cat] = (incomeCats[cat] || 0) + (d.amount || 0);
-                    } else {
-                        totalExpense += (d.amount || 0);
-                        expenseCats[cat] = (expenseCats[cat] || 0) + (d.amount || 0);
+                // 캐시 확인 → 있으면 재분석 여부 확인
+                const localCache = loadLocalAiCache();
+                if (localCache[month]) {
+                    const ts = new Date(localCache[month].timestamp);
+                    const dateStr = `${ts.getFullYear()}.${ts.getMonth()+1}.${ts.getDate()}`;
+                    if (!confirm(`이미 ${dateStr}에 생성된 분석 결과가 있습니다.\n새로 분석하면 토큰이 소비됩니다.\n\n새로 분석하시겠습니까?`)) {
+                        displayAiResult(month, localCache[month].result, localCache[month].timestamp, true);
+                        return;
                     }
-                });
+                }
 
-                // 2. 전월 데이터
-                const prevDate = new Date(parseInt(month.split('-')[0]), parseInt(month.split('-')[1]) - 2, 1);
-                const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
-                const prevData = allData.filter(d => d.date && d.date.startsWith(prevMonth) && d.status !== 'draft');
-                let prevIncome = 0, prevExpense = 0;
-                prevData.forEach(d => {
-                    if (d.type === 'income') prevIncome += (d.amount || 0);
-                    else prevExpense += (d.amount || 0);
-                });
+                const statusEl = document.getElementById('aiAnalysisStatus');
+                const resultEl = document.getElementById('aiAnalysisResult');
+                const guideEl = document.getElementById('aiAnalysisGuide');
+                if (guideEl) guideEl.style.display = 'none';
+                if (resultEl) resultEl.style.display = 'none';
+                if (statusEl) statusEl.style.display = 'block';
+                btnRunAi.disabled = true;
+                btnRunAi.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> AI 분석 중... (최대 2분)';
 
-                // 3. 현금 잔액
-                let cashBalance = 0;
-                const sorted = [...allData].filter(d => d.status !== 'draft').sort((a,b) => (a.date||'').localeCompare(b.date||''));
-                sorted.forEach(d => { cashBalance += d.type === 'income' ? (d.amount||0) : -(d.amount||0); });
-
-                // 4. 스파/호텔 매출 분리
-                let spaRevenue = 0, hotelRevenue = 0;
                 try {
-                    const revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
-                    Object.keys(revDb).forEach(dateKey => {
-                        if (dateKey.startsWith(month)) {
-                            const r = revDb[dateKey];
-                            spaRevenue += ((r.spaTickRev || 0) + (r.spaFbRev || 0)) * 10000;
-                            hotelRevenue += ((r.hotelRoomRev || 0) + (r.hotelFbRev || 0)) * 10000;
-                        }
+                    const allData = loadData();
+                    const monthData = allData.filter(d => d.date && d.date.startsWith(month) && d.status !== 'draft');
+                    let totalIncome = 0, totalExpense = 0;
+                    const incomeCats = {}, expenseCats = {};
+                    monthData.forEach(d => {
+                        const cat = d.category || '기타';
+                        if (d.type === 'income') { totalIncome += (d.amount||0); incomeCats[cat] = (incomeCats[cat]||0) + (d.amount||0); }
+                        else { totalExpense += (d.amount||0); expenseCats[cat] = (expenseCats[cat]||0) + (d.amount||0); }
                     });
-                } catch(e) {}
+                    const prevDate = new Date(parseInt(month.split('-')[0]), parseInt(month.split('-')[1]) - 2, 1);
+                    const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}`;
+                    const prevData = allData.filter(d => d.date && d.date.startsWith(prevMonth) && d.status !== 'draft');
+                    let prevIncome = 0, prevExpense = 0;
+                    prevData.forEach(d => { if (d.type === 'income') prevIncome += (d.amount||0); else prevExpense += (d.amount||0); });
+                    let cashBalance = 0;
+                    [...allData].filter(d => d.status !== 'draft').sort((a,b) => (a.date||'').localeCompare(b.date||'')).forEach(d => { cashBalance += d.type === 'income' ? (d.amount||0) : -(d.amount||0); });
+                    let spaRevenue = 0, hotelRevenue = 0;
+                    try { const revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}'); Object.keys(revDb).forEach(dk => { if (dk.startsWith(month)) { const r = revDb[dk]; spaRevenue += ((r.spaTickRev||0)+(r.spaFbRev||0))*10000; hotelRevenue += ((r.hotelRoomRev||0)+(r.hotelFbRev||0))*10000; } }); } catch(e) {}
 
-                // 5. 프롬프트 구성
-                const [yyyy, mm] = month.split('-');
-                const prompt = `당신은 전라북도 진안군에 위치한 "홍삼한방타운" (홍삼스파 + 홍삼빌호텔)의 전담 AI CFO(최고재무책임자)입니다.
-아래 경영 데이터를 기반으로 ${yyyy}년 ${parseInt(mm)}월 경영실적을 심층 분석하고, CEO에게 보고할 수 있는 수준의 전문 리포트를 작성해 주세요.
+                    const [yyyy, mm] = month.split('-');
+                    const prompt = `당신은 전라북도 진안군에 위치한 "홍삼한방타운" (홍삼스파 + 홍삼빌호텔)의 전담 AI CFO입니다.\n${yyyy}년 ${parseInt(mm)}월 경영실적을 심층 분석해주세요.\n\n═══ 경영 데이터 ═══\n[매출] 총 수입: ${totalIncome.toLocaleString()}원, 전월: ${prevIncome.toLocaleString()}원, 증감: ${(totalIncome-prevIncome).toLocaleString()}원\n수입별: ${Object.entries(incomeCats).map(([k,v])=>`${k}: ${v.toLocaleString()}원`).join(', ')}\n스파: ${spaRevenue.toLocaleString()}원, 호텔: ${hotelRevenue.toLocaleString()}원\n[비용] 총 지출: ${totalExpense.toLocaleString()}원, 전월: ${prevExpense.toLocaleString()}원\n비용별: ${Object.entries(expenseCats).map(([k,v])=>`${k}: ${v.toLocaleString()}원(${(v/totalExpense*100).toFixed(1)}%)`).join(', ')}\n[현금흐름] 영업이익: ${(totalIncome-totalExpense).toLocaleString()}원, 이익률: ${totalIncome>0?((totalIncome-totalExpense)/totalIncome*100).toFixed(1):0}%, 현금잔액: ${cashBalance.toLocaleString()}원\n\n분석 항목: 1.경영요약 2.매출구조 3.비용효율성 4.현금흐름 5.전월대비 6.CEO 액션아이템\n한국어, 이모지 활용, 섹션 번호 매겨주세요.`;
 
-═══ ${yyyy}년 ${parseInt(mm)}월 경영 데이터 ═══
+                    const response = await fetch(`${API_BASE}/ai/analyze`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, month, forceRefresh: !!localCache[month] })
+                    });
+                    const data = await response.json();
+                    if (!data.success) throw new Error(data.error || 'AI 분석 실패');
 
-[매출/수입]
-- 총 수입: ${totalIncome.toLocaleString()}원 (전표 ${monthData.filter(d=>d.type==='income').length}건)
-- 전월(${prevDate.getMonth()+1}월) 수입: ${prevIncome.toLocaleString()}원
-- 전월 대비 증감: ${totalIncome - prevIncome >= 0 ? '+' : ''}${(totalIncome - prevIncome).toLocaleString()}원 (${prevIncome > 0 ? ((totalIncome - prevIncome) / prevIncome * 100).toFixed(1) : 'N/A'}%)
-- 수입 카테고리별:
-${Object.entries(incomeCats).map(([k,v]) => `  · ${k}: ${v.toLocaleString()}원`).join('\n')}
-- 스파 매출(POS): ${spaRevenue.toLocaleString()}원
-- 호텔 매출(PMS): ${hotelRevenue.toLocaleString()}원
+                    displayAiResult(month, data.result, data.timestamp, data.cached);
+                    if (!data.cached) showToast('AI 분석이 완료되어 영구 저장되었습니다.');
 
-[비용/지출]
-- 총 지출: ${totalExpense.toLocaleString()}원 (전표 ${monthData.filter(d=>d.type==='expense').length}건)
-- 전월 지출: ${prevExpense.toLocaleString()}원
-- 지출 카테고리별:
-${Object.entries(expenseCats).map(([k,v]) => `  · ${k}: ${v.toLocaleString()}원 (비중 ${(v/totalExpense*100).toFixed(1)}%)`).join('\n')}
-
-[현금흐름]
-- 영업이익: ${(totalIncome - totalExpense).toLocaleString()}원
-- 영업이익률: ${totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100).toFixed(1) : 0}%
-- 현재 현금잔액: ${cashBalance.toLocaleString()}원
-- 월 운영비 대비 확보 개월수: ${totalExpense > 0 ? (cashBalance / totalExpense).toFixed(1) : 'N/A'}개월
-
-═══ 분석 요청 사항 ═══
-1. 경영 요약 (Executive Summary) — 3줄 이내의 핵심 요약
-2. 매출 구조 분석 — 스파 vs 호텔 비중, 카테고리별 강약점
-3. 비용 효율성 진단 — 카테고리별 비용 적정성, 이상치 탐지
-4. 현금흐름 건전성 평가 — 운전자금 여유도, 리스크
-5. 전월 대비 변화 분석 — 주목할 만한 증감 항목
-6. CEO 액션 아이템 — 구체적이고 실행 가능한 3~5개 제안
-
-리포트는 한국어로, 이모지를 활용하여 가독성 좋게 작성해 주세요. 각 섹션에 번호를 매겨주세요.`;
-
-                // 6. API 호출
-                const response = await fetch(`${API_BASE}/ai/analyze`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt, month })
-                });
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.error || 'AI 분석 실패');
+                } catch (error) {
+                    console.error('AI Analysis Error:', error);
+                    if (statusEl) statusEl.style.display = 'none';
+                    if (guideEl) guideEl.style.display = 'block';
+                    alert('AI 분석 오류: ' + error.message);
+                } finally {
+                    btnRunAi.disabled = false;
+                    btnRunAi.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석 실행';
                 }
-
-                // 7. 결과 렌더링
-                if (statusEl) statusEl.style.display = 'none';
-                if (resultEl) resultEl.style.display = 'block';
-
-                const titleEl = document.getElementById('aiReportTitle');
-                const tsEl = document.getElementById('aiReportTimestamp');
-                const contentEl = document.getElementById('aiReportContent');
-
-                if (titleEl) titleEl.textContent = `${yyyy}년 ${parseInt(mm)}월 AI 경영실적 분석 리포트`;
-                if (tsEl) {
-                    const ts = new Date(data.timestamp);
-                    tsEl.textContent = `${data.cached ? '(캐시)' : ''} 생성: ${ts.getFullYear()}.${ts.getMonth()+1}.${ts.getDate()} ${ts.getHours()}:${String(ts.getMinutes()).padStart(2,'0')}`;
-                }
-                if (contentEl) {
-                    contentEl.textContent = data.result;
-                }
-
-            } catch (error) {
-                console.error('AI Analysis Error:', error);
-                if (statusEl) statusEl.style.display = 'none';
-                const guideEl2 = document.getElementById('aiAnalysisGuide');
-                if (guideEl2) guideEl2.style.display = 'block';
-                alert('AI 분석 오류: ' + error.message);
-            } finally {
-                btnRunAi.disabled = isAdmin ? false : true;
-                btnRunAi.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석 실행';
-            }
-        });
+            });
+        }
     }
 
 });
