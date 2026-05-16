@@ -210,74 +210,95 @@
                     </div>
                 </div>
 
-                <!-- RIGHT: Fault & Repair Ledger -->
+                <!-- RIGHT: Fault & Repair Ledger (Timeline Table) -->
                 <div class="facility-panel glassmorphism">
-                    <div class="panel-header">
-                        <h2><i class="fa-solid fa-list-ul"></i> 고장 및 유지보수 대장</h2>
+                    <div class="panel-header" style="justify-content: space-between;">
+                        <h2><i class="fa-solid fa-clipboard-list"></i> 고장 및 유지보수 대장</h2>
                         <button id="btnNewLedger" class="btn-text"><i class="fa-solid fa-plus"></i> 신규 등록</button>
                     </div>
-                    <div class="panel-body ledger-list-container">
-                        <div class="ledger-item critical">
-                            <div class="ledger-meta">
-                                <span class="tag tag-important">수리중</span>
-                                <span class="ledger-site-badge spa">홍삼스파</span>
-                                <span class="l-date">접수: 2026.04.16</span>
-                            </div>
-                            <h4>루프탑 인피니티풀 순환 모터 소음 불량</h4>
-                            <p>모터 베어링 파손 의심. 현재 외부 수리업체(한일모터스) 방문 대기 중. 예비 모터 가동 중.</p>
-                            <div class="l-footer">
-                                <span>담당: 공무팀 박철수</span>
-                                <span>비용 예상: 450,000원</span>
-                            </div>
-                        </div>
 
-                        <div class="ledger-item resolved">
-                            <div class="ledger-meta">
-                                <span class="tag tag-general">수리완료</span>
-                                <span class="ledger-site-badge spa">홍삼스파</span>
-                                <span class="l-date">접수: 2026.04.14</span>
-                            </div>
-                            <h4>2층 남탕 샤워기 3번 수압 약함</h4>
-                            <p>샤워기 헤드 내부 스케일 제거 및 고무패킹 교체 완료.</p>
-                            <div class="l-footer">
-                                <span>담당: 공무팀 김민규</span>
-                                <span>완료: 2026.04.15</span>
-                            </div>
-                        </div>
-                        
-                        <div class="ledger-item pending">
-                            <div class="ledger-meta">
-                                <span class="tag tag-hr">접수대기</span>
-                                <span class="ledger-site-badge hotel">홍삼빌호텔</span>
-                                <span class="l-date">접수: 2026.05.08</span>
-                            </div>
-                            <h4>3층 302호 에어컨 냉매 보충 필요</h4>
-                            <p>냉방 효율 저하. 냉매 보충 및 필터 청소 요망.</p>
-                            <div class="l-footer">
-                                <span>보고자: 메이드팀</span>
-                                <span>배정 요망</span>
-                            </div>
-                        </div>
-
-                        <div class="ledger-item pending">
-                            <div class="ledger-meta">
-                                <span class="tag tag-hr">접수대기</span>
-                                <span class="ledger-site-badge spa">홍삼스파</span>
-                                <span class="l-date">접수: 2026.04.17</span>
-                            </div>
-                            <h4>1층 프런트 우측 조명 램프 1개 나감</h4>
-                            <p>LED 다운라이트(주백색) 교체 요망.</p>
-                            <div class="l-footer">
-                                <span>보고자: 운영팀 프런트</span>
-                                <span>배정 요망</span>
-                            </div>
-                        </div>
+                    <!-- 상태 필터 탭 -->
+                    <div class="ledger-filter-bar">
+                        <button class="ledger-filter-btn active" data-filter="all">전체 <span class="filter-cnt" id="cntAll">0</span></button>
+                        <button class="ledger-filter-btn" data-filter="pending">접수대기 <span class="filter-cnt" id="cntPending">0</span></button>
+                        <button class="ledger-filter-btn" data-filter="inprogress">수리중 <span class="filter-cnt" id="cntInprogress">0</span></button>
+                        <button class="ledger-filter-btn" data-filter="resolved">수리완료 <span class="filter-cnt" id="cntResolved">0</span></button>
                     </div>
+
+                    <div class="panel-body ledger-table-container">
+                        <!-- 테이블 헤더 -->
+                        <div class="ledger-table-header">
+                            <div class="lt-col lt-status">상태</div>
+                            <div class="lt-col lt-facility">시설명칭</div>
+                            <div class="lt-col lt-occurred">발생일시</div>
+                            <div class="lt-col lt-handler">조치 담당</div>
+                            <div class="lt-col lt-completed">복구완료</div>
+                            <div class="lt-col lt-elapsed">소요시간</div>
+                        </div>
+                        <!-- JS에서 동적 렌더링 -->
+                        <div class="ledger-table-body" id="ledgerTableBody">
+                        </div>
+                        </div>
                 </div>
             </div>
 
         </div>
     </main>
+
+    <!-- Modal: 유지보수 상세 보기 -->
+    <div class="modal-overlay" id="ledgerDetailModal">
+        <div class="modal-content glassmorphism" style="width: 600px;">
+            <div class="modal-header">
+                <h2 id="ldModalTitle"><i class="fa-solid fa-wrench" style="color:#F59E0B; margin-right:8px;"></i> 유지보수 상세</h2>
+                <button class="btn-close" id="closeLdDetail"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="ldModalBody" style="padding:24px 28px;"></div>
+            <div class="modal-footer" id="ldModalFooter">
+                <button class="btn-secondary" id="closeLdDetailBtn">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: 신규 등록 -->
+    <div class="modal-overlay" id="ledgerNewModal">
+        <div class="modal-content glassmorphism" style="width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-plus-circle" style="color:#3B82F6; margin-right:8px;"></i> 고장/유지보수 신규 등록</h2>
+                <button class="btn-close" id="closeLdNew"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding:24px 28px;">
+                <div style="display:flex; flex-direction:column; gap:18px;">
+                    <div>
+                        <label class="ld-label">오작동 시설명칭 <span style="color:#EF4444;">*</span></label>
+                        <input type="text" id="newLdFacility" class="ld-input" placeholder="예: 루프탑 인피니티풀 순환모터">
+                    </div>
+                    <div>
+                        <label class="ld-label">소속</label>
+                        <select id="newLdSite" class="ld-input">
+                            <option value="spa">홍삼스파</option>
+                            <option value="hotel">홍삼빌호텔</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="ld-label">발생 일시 <span style="color:#EF4444;">*</span></label>
+                        <input type="datetime-local" id="newLdOccurred" class="ld-input">
+                    </div>
+                    <div>
+                        <label class="ld-label">신고자 (보고자)</label>
+                        <input type="text" id="newLdReporter" class="ld-input" placeholder="예: 운영팀 프런트">
+                    </div>
+                    <div>
+                        <label class="ld-label">증상 및 내용</label>
+                        <textarea id="newLdDesc" class="ld-input" rows="3" placeholder="고장 증상을 상세히 기술해 주세요."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelLdNew">취소</button>
+                <button class="btn-primary" id="saveLdNew"><i class="fa-solid fa-check"></i> 등록</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom View logic -->
     <script src="cloud_sync.js?v=1"></script>
