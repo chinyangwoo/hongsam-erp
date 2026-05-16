@@ -284,12 +284,16 @@
                         <h2><i class="fa-solid fa-book" style="color:#3B82F6;"></i> 현금출납부</h2>
                         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                             <div class="acc-filter-bar">
-                                <input type="month" id="cbMonthFilter">
                                 <select id="cbTypeFilter">
                                     <option value="all">전체</option>
                                     <option value="income">수입</option>
                                     <option value="expense">지출</option>
                                 </select>
+                                <!-- 주간/월간 뷰 토글 -->
+                                <div style="display:flex; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+                                    <button class="cb-view-toggle active" id="cbViewWeek" title="주간 뷰" style="padding:6px 12px; font-size:0.75rem; background:rgba(59,130,246,0.2); color:#60A5FA; border:none; cursor:pointer; font-weight:600;">주간</button>
+                                    <button class="cb-view-toggle" id="cbViewMonth" title="월간 뷰" style="padding:6px 12px; font-size:0.75rem; background:rgba(255,255,255,0.05); color:var(--text-secondary); border:none; cursor:pointer; font-weight:600;">월간</button>
+                                </div>
                             </div>
                             <button class="btn-print" onclick="window.print()" title="현금출납부 인쇄">
                                 <i class="fa-solid fa-print"></i> 인쇄
@@ -302,6 +306,44 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- 주간 네비게이션 바 -->
+                    <div id="cbWeekNav" style="display:flex; align-items:center; justify-content:space-between; padding:12px 20px; margin-bottom:16px; border-radius:12px; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.15);">
+                        <button id="cbPrevWeek" style="background:none; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; color:var(--text-primary); cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                            <i class="fa-solid fa-chevron-left"></i> 이전주
+                        </button>
+                        <div style="text-align:center;">
+                            <div id="cbWeekLabel" style="font-size:1.1rem; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em;"></div>
+                            <div id="cbWeekRange" style="font-size:0.78rem; color:var(--text-secondary); margin-top:2px;"></div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button id="cbToday" style="background:linear-gradient(135deg,#3B82F6,#2563EB); border:none; border-radius:8px; padding:8px 14px; color:white; cursor:pointer; font-size:0.8rem; font-weight:600; transition:all 0.2s; box-shadow:0 2px 8px rgba(59,130,246,0.3);">
+                                <i class="fa-solid fa-calendar-day"></i> 오늘
+                            </button>
+                            <button id="cbNextWeek" style="background:none; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; color:var(--text-primary); cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                다음주 <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 월간 네비게이션 바 (숨김) -->
+                    <div id="cbMonthNav" style="display:none; align-items:center; justify-content:space-between; padding:12px 20px; margin-bottom:16px; border-radius:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15);">
+                        <button id="cbPrevMonth" style="background:none; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; color:var(--text-primary); cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                            <i class="fa-solid fa-chevron-left"></i> 이전달
+                        </button>
+                        <div style="text-align:center;">
+                            <div id="cbMonthLabel" style="font-size:1.1rem; font-weight:700; color:var(--text-primary);"></div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button id="cbThisMonth" style="background:linear-gradient(135deg,#F59E0B,#D97706); border:none; border-radius:8px; padding:8px 14px; color:white; cursor:pointer; font-size:0.8rem; font-weight:600; transition:all 0.2s; box-shadow:0 2px 8px rgba(245,158,11,0.3);">
+                                <i class="fa-solid fa-calendar-day"></i> 이번달
+                            </button>
+                            <button id="cbNextMonth" style="background:none; border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; color:var(--text-primary); cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                다음달 <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div style="overflow-x: auto;">
                         <table class="acc-table">
                             <thead>
@@ -318,6 +360,27 @@
                             <tbody id="cbTableBody">
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- 주간 소계 바 -->
+                    <div id="cbWeeklySummary" style="display:flex; justify-content:space-between; align-items:center; padding:14px 24px; margin-top:12px; border-radius:12px; background:linear-gradient(135deg, rgba(59,130,246,0.08), rgba(16,185,129,0.08)); border:1px solid rgba(59,130,246,0.12); flex-wrap:wrap; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                            <div>
+                                <span style="font-size:0.75rem; color:var(--text-secondary);">수입 합계</span>
+                                <div id="cbSumIncome" style="font-size:1.05rem; font-weight:700; color:#10B981;">₩0</div>
+                            </div>
+                            <div style="width:1px; height:30px; background:rgba(255,255,255,0.1);"></div>
+                            <div>
+                                <span style="font-size:0.75rem; color:var(--text-secondary);">지출 합계</span>
+                                <div id="cbSumExpense" style="font-size:1.05rem; font-weight:700; color:#EF4444;">₩0</div>
+                            </div>
+                            <div style="width:1px; height:30px; background:rgba(255,255,255,0.1);"></div>
+                            <div>
+                                <span style="font-size:0.75rem; color:var(--text-secondary);">기간 순이익</span>
+                                <div id="cbSumNet" style="font-size:1.05rem; font-weight:700; color:#3B82F6;">₩0</div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.78rem; color:var(--text-secondary);" id="cbSumCount">0건</div>
                     </div>
                 </div>
             </div>

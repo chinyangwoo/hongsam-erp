@@ -48,64 +48,228 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ══════════════════════════════════════════════════════════
-    // 1) 현금출납부 (Cash Book)
+    // 1) 현금출납부 (Cash Book) — 주간/월간 페이지네이션
     // ══════════════════════════════════════════════════════════
+    let cbViewMode = 'week'; // 'week' or 'month'
+    let cbCurrentWeekStart = getMonday(new Date()); // 현재 주의 월요일
+    let cbCurrentMonth = new Date(); // 현재 월
+
+    // 해당 날짜가 속한 주의 월요일을 반환
+    function getMonday(d) {
+        const dt = new Date(d);
+        const day = dt.getDay();
+        const diff = dt.getDate() - day + (day === 0 ? -6 : 1); // 일요일이면 전주 월요일
+        return new Date(dt.setDate(diff));
+    }
+
+    // 날짜를 YYYY-MM-DD 문자열로
+    function toDateStr(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${dd}`;
+    }
+
+    // 주차 계산 (해당 월의 몇째 주)
+    function getWeekOfMonth(d) {
+        const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
+        const firstMonday = getMonday(firstDay);
+        if (firstMonday.getMonth() < d.getMonth() || (firstMonday.getMonth() === 11 && d.getMonth() === 0)) {
+            // 첫째 월요일이 전월이면 1일부터 시작
+        }
+        const diff = Math.floor((d - firstMonday) / (7 * 24 * 60 * 60 * 1000));
+        return Math.max(1, diff + 1);
+    }
+
+    // 주간 네비 라벨 업데이트
+    function updateWeekLabel() {
+        const start = new Date(cbCurrentWeekStart);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 6);
+
+        const weekNum = getWeekOfMonth(start);
+        const labelEl = document.getElementById('cbWeekLabel');
+        const rangeEl = document.getElementById('cbWeekRange');
+        if (labelEl) labelEl.textContent = `${start.getFullYear()}년 ${start.getMonth() + 1}월 ${weekNum}주차`;
+        if (rangeEl) rangeEl.textContent = `${start.getMonth() + 1}/${start.getDate()}(${['일','월','화','수','목','금','토'][start.getDay()]}) ~ ${end.getMonth() + 1}/${end.getDate()}(${['일','월','화','수','목','금','토'][end.getDay()]})`;
+    }
+
+    // 월간 네비 라벨 업데이트
+    function updateMonthLabel() {
+        const labelEl = document.getElementById('cbMonthLabel');
+        if (labelEl) labelEl.textContent = `${cbCurrentMonth.getFullYear()}년 ${cbCurrentMonth.getMonth() + 1}월`;
+    }
+
     function renderCashbook() {
         const data = loadData();
-        const monthFilter = document.getElementById('cbMonthFilter');
-        const month = monthFilter ? monthFilter.value : '';
         const typeFilter = document.getElementById('cbTypeFilter');
         const type = typeFilter ? typeFilter.value : 'all';
 
         let filtered = data.filter(d => d.status !== 'draft');
-        if (month) filtered = filtered.filter(d => d.date && d.date.startsWith(month));
         if (type !== 'all') filtered = filtered.filter(d => d.type === type);
+
+        // 기간 필터링
+        if (cbViewMode === 'week') {
+            const weekStart = toDateStr(cbCurrentWeekStart);
+            const weekEnd = new Date(cbCurrentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            const weekEndStr = toDateStr(weekEnd);
+            filtered = filtered.filter(d => d.date && d.date >= weekStart && d.date <= weekEndStr);
+            updateWeekLabel();
+        } else {
+            const monthStr = `${cbCurrentMonth.getFullYear()}-${String(cbCurrentMonth.getMonth() + 1).padStart(2, '0')}`;
+            filtered = filtered.filter(d => d.date && d.date.startsWith(monthStr));
+            updateMonthLabel();
+        }
+
         filtered.sort((a,b) => (b.date||'').localeCompare(a.date||''));
 
         const tbody = document.getElementById('cbTableBody');
         if (!tbody) return;
 
+        // 잔액 누적 계산 (전체 데이터 기준)
         let balance = 0;
-        // 역순 정렬 후 잔액 누적을 위해 다시 날짜순
-        const ordered = [...filtered].sort((a,b) => (a.date||'').localeCompare(b.date||''));
-        ordered.forEach(d => {
+        const allSorted = [...data].filter(d => d.status !== 'draft').sort((a,b) => (a.date||'').localeCompare(b.date||''));
+        allSorted.forEach(d => {
             if (d.type === 'income') balance += (d.amount || 0);
             else balance -= (d.amount || 0);
             d._balance = balance;
         });
 
-        // 최신순으로 표시
-        const display = [...ordered].reverse();
+        // 현재 기간 내 항목만 최신순 표시
+        const display = [...filtered].sort((a,b) => (b.date||'').localeCompare(a.date||''));
 
         if (display.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="acc-empty"><i class="fa-solid fa-receipt"></i>등록된 내역이 없습니다.</td></tr>`;
-            return;
+            tbody.innerHTML = `<tr><td colspan="7" class="acc-empty"><i class="fa-solid fa-receipt"></i>이 기간에 등록된 내역이 없습니다.</td></tr>`;
+        } else {
+            tbody.innerHTML = display.map(d => {
+                const autoBadge = d.autoGenerated ? '<span style="background:rgba(59,130,246,0.15); color:#60A5FA; font-size:0.6rem; padding:2px 6px; border-radius:4px; margin-left:6px; font-weight:600;">자동</span>' : '';
+                return `
+                <tr data-id="${d.id}" style="cursor:pointer;${d.autoGenerated ? ' opacity:0.85;' : ''}">
+                    <td>${d.date || '-'}</td>
+                    <td><span class="acc-tag ${d.type}">${d.type === 'income' ? '수입' : '지출'}</span></td>
+                    <td>${escapeHtml(d.category || '-')}</td>
+                    <td>${escapeHtml(d.description || '-')}${autoBadge}</td>
+                    <td>${escapeHtml(d.department || '-')}</td>
+                    <td class="text-right ${d.type === 'income' ? 'acc-amount-positive' : 'acc-amount-negative'}">
+                        ${d.type === 'income' ? '+' : '-'}${(d.amount||0).toLocaleString()}
+                    </td>
+                    <td class="text-right acc-amount-neutral">${(d._balance||0).toLocaleString()}</td>
+                </tr>
+            `;}).join('');
+
+            // 클릭시 상세 보기
+            tbody.querySelectorAll('tr[data-id]').forEach(tr => {
+                tr.addEventListener('click', () => openViewModal(tr.dataset.id));
+            });
         }
 
-        tbody.innerHTML = display.map(d => {
-            const autoBadge = d.autoGenerated ? '<span style="background:rgba(59,130,246,0.15); color:#60A5FA; font-size:0.6rem; padding:2px 6px; border-radius:4px; margin-left:6px; font-weight:600;">자동</span>' : '';
-            return `
-            <tr data-id="${d.id}" style="cursor:pointer;${d.autoGenerated ? ' opacity:0.85;' : ''}">
-                <td>${d.date || '-'}</td>
-                <td><span class="acc-tag ${d.type}">${d.type === 'income' ? '수입' : '지출'}</span></td>
-                <td>${escapeHtml(d.category || '-')}</td>
-                <td>${escapeHtml(d.description || '-')}${autoBadge}</td>
-                <td>${escapeHtml(d.department || '-')}</td>
-                <td class="text-right ${d.type === 'income' ? 'acc-amount-positive' : 'acc-amount-negative'}">
-                    ${d.type === 'income' ? '+' : '-'}${(d.amount||0).toLocaleString()}
-                </td>
-                <td class="text-right acc-amount-neutral">${(d._balance||0).toLocaleString()}</td>
-            </tr>
-        `;}).join('');
-
-        // 클릭시 상세 보기
-        tbody.querySelectorAll('tr[data-id]').forEach(tr => {
-            tr.addEventListener('click', () => openViewModal(tr.dataset.id));
+        // 주간/월간 소계 업데이트
+        let sumIncome = 0, sumExpense = 0;
+        display.forEach(d => {
+            if (d.type === 'income') sumIncome += (d.amount || 0);
+            else sumExpense += (d.amount || 0);
         });
+        const net = sumIncome - sumExpense;
+        const elSumIncome = document.getElementById('cbSumIncome');
+        const elSumExpense = document.getElementById('cbSumExpense');
+        const elSumNet = document.getElementById('cbSumNet');
+        const elSumCount = document.getElementById('cbSumCount');
+        if (elSumIncome) elSumIncome.textContent = '₩' + sumIncome.toLocaleString();
+        if (elSumExpense) elSumExpense.textContent = '₩' + sumExpense.toLocaleString();
+        if (elSumNet) {
+            elSumNet.textContent = (net >= 0 ? '₩' : '-₩') + Math.abs(net).toLocaleString();
+            elSumNet.style.color = net >= 0 ? '#10B981' : '#EF4444';
+        }
+        if (elSumCount) elSumCount.textContent = display.length + '건';
 
-        // KPI 업데이트
-        updateKPIs(data, month);
+        // KPI 업데이트 (월 전체 기준)
+        const now = new Date();
+        const curMonthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        updateKPIs(data, curMonthStr);
     }
+
+    // 주간/월간 네비게이션 이벤트
+    const cbPrevWeek = document.getElementById('cbPrevWeek');
+    const cbNextWeek = document.getElementById('cbNextWeek');
+    const cbToday = document.getElementById('cbToday');
+    const cbPrevMonth = document.getElementById('cbPrevMonth');
+    const cbNextMonth = document.getElementById('cbNextMonth');
+    const cbThisMonth = document.getElementById('cbThisMonth');
+    const cbViewWeek = document.getElementById('cbViewWeek');
+    const cbViewMonth = document.getElementById('cbViewMonth');
+
+    if (cbPrevWeek) cbPrevWeek.addEventListener('click', () => {
+        cbCurrentWeekStart.setDate(cbCurrentWeekStart.getDate() - 7);
+        renderCashbook();
+    });
+    if (cbNextWeek) cbNextWeek.addEventListener('click', () => {
+        cbCurrentWeekStart.setDate(cbCurrentWeekStart.getDate() + 7);
+        renderCashbook();
+    });
+    if (cbToday) cbToday.addEventListener('click', () => {
+        cbCurrentWeekStart = getMonday(new Date());
+        renderCashbook();
+    });
+    if (cbPrevMonth) cbPrevMonth.addEventListener('click', () => {
+        cbCurrentMonth.setMonth(cbCurrentMonth.getMonth() - 1);
+        renderCashbook();
+    });
+    if (cbNextMonth) cbNextMonth.addEventListener('click', () => {
+        cbCurrentMonth.setMonth(cbCurrentMonth.getMonth() + 1);
+        renderCashbook();
+    });
+    if (cbThisMonth) cbThisMonth.addEventListener('click', () => {
+        cbCurrentMonth = new Date();
+        renderCashbook();
+    });
+
+    // 뷰 토글 (주간 ↔ 월간)
+    function switchView(mode) {
+        cbViewMode = mode;
+        const weekNav = document.getElementById('cbWeekNav');
+        const monthNav = document.getElementById('cbMonthNav');
+        if (mode === 'week') {
+            if (weekNav) weekNav.style.display = 'flex';
+            if (monthNav) monthNav.style.display = 'none';
+            if (cbViewWeek) { cbViewWeek.style.background = 'rgba(59,130,246,0.2)'; cbViewWeek.style.color = '#60A5FA'; cbViewWeek.classList.add('active'); }
+            if (cbViewMonth) { cbViewMonth.style.background = 'rgba(255,255,255,0.05)'; cbViewMonth.style.color = 'var(--text-secondary)'; cbViewMonth.classList.remove('active'); }
+        } else {
+            if (weekNav) weekNav.style.display = 'none';
+            if (monthNav) monthNav.style.display = 'flex';
+            if (cbViewMonth) { cbViewMonth.style.background = 'rgba(245,158,11,0.2)'; cbViewMonth.style.color = '#FBBF24'; cbViewMonth.classList.add('active'); }
+            if (cbViewWeek) { cbViewWeek.style.background = 'rgba(255,255,255,0.05)'; cbViewWeek.style.color = 'var(--text-secondary)'; cbViewWeek.classList.remove('active'); }
+        }
+        renderCashbook();
+    }
+
+    if (cbViewWeek) cbViewWeek.addEventListener('click', () => switchView('week'));
+    if (cbViewMonth) cbViewMonth.addEventListener('click', () => switchView('month'));
+
+    // 키보드 화살표 단축키 (현금출납부 탭이 활성화된 경우)
+    document.addEventListener('keydown', (e) => {
+        const cashbookPanel = document.getElementById('panelCashbook');
+        if (!cashbookPanel || !cashbookPanel.classList.contains('active')) return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (cbViewMode === 'week') {
+                cbCurrentWeekStart.setDate(cbCurrentWeekStart.getDate() - 7);
+            } else {
+                cbCurrentMonth.setMonth(cbCurrentMonth.getMonth() - 1);
+            }
+            renderCashbook();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (cbViewMode === 'week') {
+                cbCurrentWeekStart.setDate(cbCurrentWeekStart.getDate() + 7);
+            } else {
+                cbCurrentMonth.setMonth(cbCurrentMonth.getMonth() + 1);
+            }
+            renderCashbook();
+        }
+    });
 
     function updateKPIs(data, month) {
         const now = new Date();
@@ -478,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Filter 이벤트 ──
-    ['cbMonthFilter','cbTypeFilter'].forEach(id => {
+    ['cbTypeFilter'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('change', renderCashbook);
     });
