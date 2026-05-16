@@ -279,12 +279,8 @@ app.post('/api/ai/analyze', async (req, res) => {
         const https = require('https');
 
         const postData = JSON.stringify({
-            model: 'claude-opus-4-20250514',
-            max_tokens: 16000,
-            thinking: {
-                type: "enabled",
-                budget_tokens: 10000
-            },
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 8000,
             messages: [{
                 role: 'user',
                 content: prompt
@@ -298,7 +294,7 @@ app.post('/api/ai/analyze', async (req, res) => {
             headers: {
                 'Content-Type': 'application/json',
                 'x-api-key': ANTHROPIC_API_KEY,
-                'anthropic-version': '2025-04-14',
+                'anthropic-version': '2023-06-01',
                 'Content-Length': Buffer.byteLength(postData)
             }
         };
