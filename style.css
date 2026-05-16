@@ -238,17 +238,14 @@ select option {
 }
 
 .top-header {
-    height: var(--header-height);
-    padding: 0 40px;
+    min-height: var(--header-height);
+    padding: 16px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
-    /* background: var(--bg-surface);
-    backdrop-filter: blur(10px); */
-    position: sticky;
-    top: 0;
-    z-index: 40;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .header-title h1 {
