@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 마케팅 발송: 마스터, 호스트, 큐레이터(홍보팀장) 가능
     // ═══════════════════════════════════════════════════════════
     const CRM_ALLOWED_RANKS = ['마스터', '호스트', '큐레이터']; // 팀장 이상
-    const CRM_ADMIN_RANKS = ['마스터', '호스트', '큐레이터']; // 마케팅 발송 권한 (마스터 + 호스트 + 홍보팀장)
+    const CRM_ADMIN_RANKS = ['마스터', '호스트']; // 마케팅 발송 권한 (마스터, 호스트)
 
     const currentUser = localStorage.getItem('currentUser');
     let currentRank = '';
@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // 이하 모든 CRM 로직 실행 중단
     }
 
-    // admin 여부 확인 (마케팅 발송 권한)
-    isAdmin = CRM_ADMIN_RANKS.includes(currentRank);
+    // admin 여부 확인 (마케팅 발송 권한: 마스터, 호스트, 또는 사번 029)
+    isAdmin = CRM_ADMIN_RANKS.includes(currentRank) || currentUser === '029';
 
     // 마케팅 발송 버튼 — admin이 아니면 비활성화
     const btnExecuteCampaign = document.getElementById('btnExecuteCampaign');
