@@ -559,3 +559,124 @@
     padding: 10px 22px; border-radius: 10px;
     font-weight: 600; cursor: pointer; font-family: inherit;
 }
+
+/* ══════════════════════════════════════════════
+   v5 New Features Styles
+   ══════════════════════════════════════════════ */
+
+/* ── 대화 검색 바 ── */
+.chat-search-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid var(--border-color);
+    animation: slideDown 0.2s ease;
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.chat-search-bar input {
+    flex: 1; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-color); color: var(--text-primary);
+    padding: 8px 14px; border-radius: 8px; font-family: inherit; font-size: 0.88rem;
+    outline: none;
+}
+.chat-search-bar input:focus { border-color: var(--accent-blue); }
+.chat-search-bar span { color: var(--text-secondary); font-size: 0.78rem; white-space: nowrap; min-width: 50px; text-align: center; }
+.chat-search-bar button {
+    background: none; border: none; color: var(--text-secondary);
+    cursor: pointer; font-size: 0.9rem; padding: 4px 6px; border-radius: 4px;
+    transition: var(--transition);
+}
+.chat-search-bar button:hover { color: var(--text-primary); background: rgba(255,255,255,0.08); }
+
+/* ── 이모티콘 선택기 ── */
+.emoji-picker {
+    position: absolute; bottom: 100%; left: 0; right: 0;
+    background: rgba(15,23,42,0.97); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    z-index: 100; max-height: 280px;
+    animation: emojiSlideUp 0.25s ease;
+}
+@keyframes emojiSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.emoji-tabs {
+    display: flex; gap: 2px; padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.emoji-tab {
+    background: none; border: none; font-size: 1.3rem; cursor: pointer;
+    padding: 6px 10px; border-radius: 8px; transition: var(--transition);
+    opacity: 0.5;
+}
+.emoji-tab:hover { opacity: 0.8; background: rgba(255,255,255,0.06); }
+.emoji-tab.active { opacity: 1; background: rgba(59,130,246,0.2); }
+.emoji-grid {
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    gap: 2px; padding: 10px 12px; max-height: 200px; overflow-y: auto;
+}
+.emoji-grid span {
+    font-size: 1.5rem; text-align: center; cursor: pointer;
+    padding: 4px; border-radius: 6px; transition: var(--transition);
+    line-height: 1.4;
+}
+.emoji-grid span:hover { background: rgba(255,255,255,0.1); transform: scale(1.2); }
+
+/* ── 읽음 확인 표시 ── */
+.msg-read-status {
+    font-size: 0.7rem; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 3px; margin-top: 2px;
+}
+.msg-read-status.read { color: #3B82F6; }
+.msg-read-status i { font-size: 0.65rem; }
+
+/* ── 메시지 삭제 버튼 ── */
+.msg-wrapper:hover .msg-delete-btn { opacity: 1; }
+.msg-delete-btn {
+    opacity: 0; background: none; border: none;
+    color: var(--text-secondary); cursor: pointer;
+    font-size: 0.75rem; padding: 2px 5px; border-radius: 4px;
+    transition: var(--transition); margin-left: 4px;
+}
+.msg-delete-btn:hover { color: #EF4444; background: rgba(239,68,68,0.15); }
+
+/* ── 채널 고정 표시 ── */
+.channel-item.pinned {
+    background: rgba(234,179,8,0.08);
+}
+.channel-item.pinned .pin-icon {
+    color: #EAB308; font-size: 0.7rem; margin-left: 4px;
+}
+#btnPinChannel.pinned i { color: #EAB308; }
+
+/* ── 타이핑 인디케이터 ── */
+.typing-indicator {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; font-size: 0.82rem; color: var(--text-secondary);
+    font-style: italic;
+}
+.typing-dots { display: inline-flex; gap: 3px; }
+.typing-dots span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary);
+    animation: typingBounce 1.4s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+}
+
+/* ── 검색 하이라이트 ── */
+.msg-bubble mark {
+    background: rgba(234,179,8,0.4); color: inherit;
+    padding: 1px 2px; border-radius: 2px;
+}
+.msg-bubble mark.current { background: rgba(59,130,246,0.6); }
+
+/* ── chat-input-area position relative for emoji picker ── */
+.chat-input-area { position: relative; }

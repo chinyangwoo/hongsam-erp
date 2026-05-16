@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css?v=16">
-    <link rel="stylesheet" href="messenger.css?v=3">
+    <link rel="stylesheet" href="messenger.css?v=5">
     <link rel="stylesheet" href="mobile.css?v=1">
     <link rel="stylesheet" href="print.css?v=1">
 </head>
@@ -128,9 +128,16 @@
                         <span class="ch-member-count"><i class="fa-solid fa-users"></i> 그룹 채널</span>
                     </div>
                     <div class="ch-header-tools">
-                        <button class="btn-icon" title="통화"><i class="fa-solid fa-phone"></i></button>
-                        <button class="btn-icon" title="파일함"><i class="fa-solid fa-folder-open"></i></button>
-                        <button class="btn-icon" title="설정"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        <button class="btn-icon" id="btnSearchChat" title="대화 검색"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <button class="btn-icon" id="btnPinChannel" title="채널 고정/해제"><i class="fa-solid fa-thumbtack"></i></button>
+                    </div>
+                    <!-- 대화 검색 바 -->
+                    <div class="chat-search-bar" id="chatSearchBar" style="display:none;">
+                        <input type="text" id="chatSearchQuery" placeholder="대화 내용 검색...">
+                        <span id="chatSearchCount"></span>
+                        <button id="chatSearchPrev" title="이전"><i class="fa-solid fa-chevron-up"></i></button>
+                        <button id="chatSearchNext" title="다음"><i class="fa-solid fa-chevron-down"></i></button>
+                        <button id="chatSearchClose" title="닫기"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
 
@@ -147,11 +154,22 @@
                 <div class="chat-input-area">
                     <div class="chat-toolbar">
                         <button title="파일 첨부"><i class="fa-solid fa-paperclip"></i></button>
-                        <button title="이모티콘"><i class="fa-regular fa-face-smile"></i></button>
+                        <button id="btnEmoji" title="이모티콘"><i class="fa-regular fa-face-smile"></i></button>
                         <div class="broadcast-toggle" title="대표이사/마스터 전용 기능">
                             <input type="checkbox" id="checkBroadcast">
                             <label for="checkBroadcast"><i class="fa-solid fa-bullhorn"></i> 전체 공지 (Broadcast)</label>
                         </div>
+                    </div>
+                    <!-- 이모티콘 선택기 -->
+                    <div class="emoji-picker" id="emojiPicker" style="display:none;">
+                        <div class="emoji-tabs">
+                            <button class="emoji-tab active" data-group="frequent">⭐</button>
+                            <button class="emoji-tab" data-group="smile">😀</button>
+                            <button class="emoji-tab" data-group="hand">👍</button>
+                            <button class="emoji-tab" data-group="heart">❤️</button>
+                            <button class="emoji-tab" data-group="object">🎉</button>
+                        </div>
+                        <div class="emoji-grid" id="emojiGrid"></div>
                     </div>
                     <div class="chat-input-wrapper">
                         <textarea id="chatInput" placeholder="메시지를 입력하세요. (Enter를 누르면 전송, Shift+Enter는 줄바꿈)" rows="1"></textarea>
@@ -191,6 +209,6 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=11"></script>
-    <script src="messenger.js?v=3"></script>
+    <script src="messenger.js?v=5"></script>
 </body>
 </html>
