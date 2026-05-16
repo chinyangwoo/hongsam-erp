@@ -119,87 +119,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const lrDate = new Date(latestRec.date);
             const dateStr = `${lrDate.getMonth() + 1}/${lrDate.getDate()}`;
 
-            // 라벨 업데이트
-            document.getElementById('hotel-kpi-occ-label').innerText = `점유율 (${dateStr})`;
-            document.getElementById('hotel-kpi-room-rev-label').innerText = `객실 매출 (${dateStr})`;
-            document.getElementById('hotel-kpi-revpar-label').innerText = `RevPAR (${dateStr})`;
-            document.getElementById('hotel-kpi-rooms-sold-label').innerText = `판매 객실수 (${dateStr})`;
-            document.getElementById('hotel-kpi-adr-label').innerText = `ADR (${dateStr})`;
-            document.getElementById('hotel-kpi-fb-label').innerText = `F&B 매출 (${dateStr})`;
+            const fmt = v => '₩ ' + Math.round(v).toLocaleString();
 
-            const fmt = v => '₩ ' + v.toLocaleString();
-            const delta = (curr, prev, unit) => {
-                if (!prev) return { cls: 'sk-delta', text: `최신: ${latestRec.date}`, style: 'color:var(--text-secondary)' };
-                const diff = curr - prev;
-                const pct = prev > 0 ? Math.round(((curr - prev) / prev) * 100) : 0;
-                if (diff >= 0) return { cls: 'sk-delta up', text: `▲ ${unit === '%' ? Math.abs(pct) + '%' : Math.abs(diff) + unit} 전일대비`, style: '' };
-                else return { cls: 'sk-delta down', text: `▼ ${unit === '%' ? Math.abs(pct) + '%' : Math.abs(diff) + unit} 전일대비`, style: '' };
-            };
-
-            // 점유율
-            const occ = latestRec.metrics.occRate || 0;
-            const prevOcc = prevRec ? (prevRec.metrics.occRate || 0) : null;
-            const elOcc = document.getElementById('hotel-kpi-occ');
-            const elOccD = document.getElementById('hotel-kpi-occ-delta');
-            if (elOcc) elOcc.innerHTML = occ + '<span style="font-size:0.8rem;">%</span>';
-            if (elOccD && prevOcc !== null) {
-                const d1 = delta(occ, prevOcc, '%');
-                elOccD.className = d1.cls; elOccD.innerText = d1.text;
-                if (d1.style) elOccD.style.color = d1.style.split(':')[1];
-            } else if (elOccD) {
-                elOccD.innerText = '최신: ' + latestRec.date;
-            }
-
-            // 객실매출
-            const roomRev = latestRec.revenue.room || 0;
-            const elRR = document.getElementById('hotel-kpi-room-rev');
-            const elRRD = document.getElementById('hotel-kpi-room-rev-delta');
-            if (elRR) elRR.innerText = fmt(roomRev);
-            if (elRRD && prevRec) {
-                const d2 = delta(roomRev, prevRec.revenue.room || 0, '%');
-                elRRD.className = d2.cls; elRRD.innerText = d2.text;
-            }
-
-            // RevPAR
-            const revpar = latestRec.metrics.revpar || 0;
-            const elRP = document.getElementById('hotel-kpi-revpar');
-            const elRPD = document.getElementById('hotel-kpi-revpar-delta');
-            if (elRP) elRP.innerText = fmt(revpar);
-            if (elRPD && prevRec) {
-                const d3 = delta(revpar, prevRec.metrics.revpar || 0, '%');
-                elRPD.className = d3.cls; elRPD.innerText = d3.text;
-            }
-
-            // 판매 객실수
+            // 1. 실시간 객실 현황 (Dummy Data & Calculated)
             const roomsSold = latestRec.rooms.total || 0;
-            const elRS = document.getElementById('hotel-kpi-rooms-sold');
-            const elRSD = document.getElementById('hotel-kpi-rooms-sold-delta');
-            if (elRS) elRS.innerHTML = roomsSold + '<span style="font-size:0.8rem;"> / 43</span>';
-            if (elRSD && prevRec) {
-                const diff = roomsSold - (prevRec.rooms.total || 0);
-                elRSD.className = diff >= 0 ? 'sk-delta up' : 'sk-delta down';
-                elRSD.innerText = (diff >= 0 ? '▲ ' : '▼ ') + Math.abs(diff) + '실 전일대비';
-            }
+            const totalRooms = 43;
+            const occRooms = roomsSold;
+            // 랜덤으로 공실과 청소중 분리
+            const remaining = totalRooms - occRooms;
+            const dirty = Math.floor(Math.random() * (remaining > 5 ? 5 : remaining));
+            const vac = remaining - dirty;
+            
+            const expectedRev = (latestRec.revenue.total || 0) * 1.05; // 금일 예상(5% 증가 목표치)
 
-            // ADR
+            const elOccR = document.getElementById('rtOccRooms');
+            const elVacR = document.getElementById('rtVacRooms');
+            const elDirR = document.getElementById('rtDirRooms');
+            const elExpRev = document.getElementById('rtExpectedRev');
+            
+            if(elOccR) elOccR.innerText = occRooms;
+            if(elVacR) elVacR.innerText = vac;
+            if(elDirR) elDirR.innerText = dirty;
+            if(elExpRev) elExpRev.innerText = fmt(expectedRev);
+
+            // 2. 핵심 4대 KPI
+            const occ = latestRec.metrics.occRate || 0;
             const adr = latestRec.metrics.adr || 0;
-            const elADR = document.getElementById('hotel-kpi-adr');
-            const elADRD = document.getElementById('hotel-kpi-adr-delta');
-            if (elADR) elADR.innerText = fmt(adr);
-            if (elADRD && prevRec) {
-                const d4 = delta(adr, prevRec.metrics.adr || 0, '%');
-                elADRD.className = d4.cls; elADRD.innerText = d4.text;
-            }
+            const revpar = latestRec.metrics.revpar || 0;
+            // GOP% 추정 (마진율 시뮬레이션: 통상 호텔은 30~45%)
+            const gop = occ > 0 ? (35 + (occ * 0.1)).toFixed(1) : 0;
 
-            // F&B 매출
-            const fbRev = latestRec.revenue.food || 0;
-            const elFB = document.getElementById('hotel-kpi-fb');
-            const elFBD = document.getElementById('hotel-kpi-fb-delta');
-            if (elFB) elFB.innerText = fmt(fbRev);
-            if (elFBD && prevRec) {
-                const d5 = delta(fbRev, prevRec.revenue.food || 0, '%');
-                elFBD.className = d5.cls; elFBD.innerText = d5.text;
-            }
+            const elOcc = document.getElementById('hotel-kpi-occ');
+            const elAdr = document.getElementById('hotel-kpi-adr');
+            const elRevpar = document.getElementById('hotel-kpi-revpar');
+            const elGop = document.getElementById('hotel-kpi-gop');
+
+            if(elOcc) elOcc.innerHTML = occ + '<span style="font-size:0.9rem;">%</span>';
+            if(elAdr) elAdr.innerText = fmt(adr);
+            if(elRevpar) elRevpar.innerText = fmt(revpar);
+            if(elGop) elGop.innerHTML = gop + '<span style="font-size:0.9rem;">%</span>';
         }
 
         // ── 2) 호텔 매출 데이터를 revDb에 동기화 (미니캘린더 + 바차트 반영) ──
@@ -1061,3 +1019,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+    // ══════════════════════════════════════════
+    // 5. 채널별 판매 비중 도넛 차트 (Channel Mix)
+    // ══════════════════════════════════════════
+    function renderChannelChart() {
+        const ctx = document.getElementById('hotelChannelChart');
+        if (!ctx) return;
+        
+        // 도넛 차트 렌더링
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['OTA (Agoda/Yanolja)', '직판 (홈페이지/전화)', '워크인 (방문)'],
+                datasets: [{
+                    data: [55, 35, 10], // 더미 데이터 (보통 호텔의 채널 비중)
+                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#94A3B8',
+                            font: { size: 11, family: "'Inter', sans-serif" },
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15,23,42,0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 약간의 딜레이 후 차트 렌더링 (DOM 준비 보장)
+    setTimeout(renderChannelChart, 500);

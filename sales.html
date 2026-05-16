@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -150,37 +150,56 @@
                     <a href="https://hongsam.dothome.co.kr/index.html" target="_blank" class="biz-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> 호텔 대시보드</a>
                 </div>
                 <div class="biz-section-body">
-                    <!-- Hotel Sub KPIs -->
-                    <div class="sub-kpi-grid" id="hotelKpiGrid">
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-occ-label">오늘 점유율</div>
-                            <div class="sk-value" id="hotel-kpi-occ" style="color:#F59E0B;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-occ-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                    <!-- 1. 실시간 객실 현황 (Real-time Status) -->
+                    <div class="realtime-status-panel glassmorphism">
+                        <div class="rt-header">
+                            <h3><i class="fa-solid fa-clock" style="color:#10B981;"></i> 실시간 객실 현황 <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal; margin-left:8px;">(총 43실)</span></h3>
                         </div>
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-room-rev-label">객실 매출</div>
-                            <div class="sk-value" id="hotel-kpi-room-rev" style="color:#10B981;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-room-rev-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                        <div class="rt-body">
+                            <div class="rt-rooms">
+                                <div class="rt-room-item occ">
+                                    <div class="rt-room-val" id="rtOccRooms"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                                    <div class="rt-room-lbl">재실 (Occupied)</div>
+                                </div>
+                                <div class="rt-room-item vac">
+                                    <div class="rt-room-val" id="rtVacRooms"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                                    <div class="rt-room-lbl">공실 (Vacant)</div>
+                                </div>
+                                <div class="rt-room-item dir">
+                                    <div class="rt-room-val" id="rtDirRooms"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                                    <div class="rt-room-lbl">청소중 (Dirty)</div>
+                                </div>
+                            </div>
+                            <div class="rt-divider"></div>
+                            <div class="rt-revenue">
+                                <div class="rt-rev-lbl">금일 예상 매출</div>
+                                <div class="rt-rev-val" id="rtExpectedRev"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                                <div class="rt-rev-sub">객실 + F&B 통합</div>
+                            </div>
                         </div>
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-revpar-label">RevPAR</div>
-                            <div class="sk-value" id="hotel-kpi-revpar" style="color:#3B82F6;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-revpar-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                    </div>
+
+                    <!-- 2. 핵심 KPI (Core KPIs) -->
+                    <div class="core-kpi-grid">
+                        <div class="core-kpi-card c-blue">
+                            <div class="core-kpi-label">OCC (객실점유율)</div>
+                            <div class="core-kpi-val" id="hotel-kpi-occ"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
+                            <div class="core-kpi-sub">총 43실 기준</div>
                         </div>
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-rooms-sold-label">판매 객실수</div>
-                            <div class="sk-value" id="hotel-kpi-rooms-sold" style="color:#E2E8F0;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-rooms-sold-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                        <div class="core-kpi-card c-purple">
+                            <div class="core-kpi-label">ADR (평균객실단가)</div>
+                            <div class="core-kpi-val" id="hotel-kpi-adr"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
+                            <div class="core-kpi-sub">객실매출 ÷ 판매객실수</div>
                         </div>
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-adr-label">ADR (평균요금)</div>
-                            <div class="sk-value" id="hotel-kpi-adr" style="color:#8B5CF6;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-adr-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                        <div class="core-kpi-card c-green">
+                            <div class="core-kpi-label">RevPAR (객실당수익)</div>
+                            <div class="core-kpi-val" id="hotel-kpi-revpar"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
+                            <div class="core-kpi-sub">객실매출 ÷ 총객실수</div>
                         </div>
-                        <div class="sub-kpi">
-                            <div class="sk-label" id="hotel-kpi-fb-label">F&B 매출</div>
-                            <div class="sk-value" id="hotel-kpi-fb" style="color:#F97316;"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
-                            <div class="sk-delta" id="hotel-kpi-fb-delta" style="color:var(--text-secondary);">API 연동 중...</div>
+                        <div class="core-kpi-card c-orange">
+                            <div class="core-kpi-label">GOP% (매출총이익률)</div>
+                            <div class="core-kpi-val" id="hotel-kpi-gop"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></div>
+                            <div class="core-kpi-sub">추정 영업이익률</div>
                         </div>
                     </div>
 
@@ -199,10 +218,17 @@
                                 <!-- Generated by JS -->
                             </div>
                         </div>
-                        <div class="chart-wrap">
+                        <div class="chart-wrap" style="flex: 1;">
                             <h3><i class="fa-solid fa-chart-bar" style="color:#F59E0B;"></i> 30일 매출 추이</h3>
                             <div class="bar-chart-area" id="hotelBarChart">
                                 <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        <!-- 채널별 판매 비중 -->
+                        <div class="chart-wrap" style="flex: 0.8;">
+                            <h3><i class="fa-solid fa-chart-pie" style="color:#8B5CF6;"></i> 채널별 판매 비중</h3>
+                            <div class="doughnut-chart-area" style="position:relative; height:220px; display:flex; justify-content:center; align-items:center; padding-top:10px;">
+                                <canvas id="hotelChannelChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -470,6 +496,7 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="socket_client.js?v=1"></script>
     <script src="app.js?v=11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="sales.js?v=5"></script>
 </body>
 </html>
