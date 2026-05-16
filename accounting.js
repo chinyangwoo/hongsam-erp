@@ -1136,15 +1136,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRunAi = document.getElementById('btnRunAiAnalysis');
     if (btnRunAi) {
         if (!isAdmin) {
-            btnRunAi.textContent = '';
-            btnRunAi.innerHTML = '<i class="fa-solid fa-eye"></i> 분석 결과 보기';
-            btnRunAi.title = '저장된 분석 결과를 불러옵니다 (토큰 소모 없음)';
-            // 일반 직원: 클릭 시 캐시만 로드
-            btnRunAi.addEventListener('click', () => {
-                const month = aiMonthSelect ? aiMonthSelect.value : '';
-                if (!month) return alert('조회할 월을 선택하세요.');
-                autoLoadAiCache(month);
-            });
+            // 마스터가 아닌 경우 버튼 숨김 (결과는 자동 로드됨)
+            btnRunAi.style.display = 'none';
         } else {
             // 마스터: 실제 AI 분석 실행
             btnRunAi.addEventListener('click', async () => {
