@@ -1030,5 +1030,188 @@ document.addEventListener('DOMContentLoaded', () => {
             // 경영 대시보드 KPI 로드
             loadDashboardKPIs();
         });
+
+    // ══════════════════════════════════════════════════════════
+    // 5) AI 경영실적 분석 (Claude Opus 4.6 Thinking)
+    // ══════════════════════════════════════════════════════════
+    
+    // 월 선택 드롭다운 초기화
+    (function initAiMonthSelector() {
+        const select = document.getElementById('aiAnalysisMonth');
+        if (!select) return;
+        const now = new Date();
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            const label = `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = label;
+            select.appendChild(opt);
+        }
+    })();
+
+    // AI 분석 탭 클릭 시 처리
+    // (탭 전환은 기존 로직에서 처리, panelAiAnalysis가 target)
+
+    // AI 분석 실행 버튼
+    const btnRunAi = document.getElementById('btnRunAiAnalysis');
+    if (btnRunAi) {
+        // 마스터만 실행 가능
+        if (!isAdmin) {
+            btnRunAi.disabled = true;
+            btnRunAi.style.opacity = '0.4';
+            btnRunAi.style.cursor = 'not-allowed';
+            btnRunAi.title = 'AI 분석은 대표(마스터)만 실행 가능합니다';
+            btnRunAi.innerHTML = '<i class="fa-solid fa-lock"></i> 권한 없음';
+        }
+
+        btnRunAi.addEventListener('click', async () => {
+            if (!isAdmin) return;
+
+            const monthSelect = document.getElementById('aiAnalysisMonth');
+            const month = monthSelect ? monthSelect.value : '';
+            if (!month) return alert('분석할 월을 선택하세요.');
+
+            const statusEl = document.getElementById('aiAnalysisStatus');
+            const resultEl = document.getElementById('aiAnalysisResult');
+            const guideEl = document.getElementById('aiAnalysisGuide');
+
+            // 로딩 표시
+            if (guideEl) guideEl.style.display = 'none';
+            if (resultEl) resultEl.style.display = 'none';
+            if (statusEl) statusEl.style.display = 'block';
+            btnRunAi.disabled = true;
+            btnRunAi.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 분석 중...';
+
+            try {
+                // 1. 회계 데이터 집계
+                const allData = loadData();
+                const monthData = allData.filter(d => d.date && d.date.startsWith(month) && d.status !== 'draft');
+                
+                let totalIncome = 0, totalExpense = 0;
+                const incomeCats = {};
+                const expenseCats = {};
+                
+                monthData.forEach(d => {
+                    const cat = d.category || '기타';
+                    if (d.type === 'income') {
+                        totalIncome += (d.amount || 0);
+                        incomeCats[cat] = (incomeCats[cat] || 0) + (d.amount || 0);
+                    } else {
+                        totalExpense += (d.amount || 0);
+                        expenseCats[cat] = (expenseCats[cat] || 0) + (d.amount || 0);
+                    }
+                });
+
+                // 2. 전월 데이터
+                const prevDate = new Date(parseInt(month.split('-')[0]), parseInt(month.split('-')[1]) - 2, 1);
+                const prevMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+                const prevData = allData.filter(d => d.date && d.date.startsWith(prevMonth) && d.status !== 'draft');
+                let prevIncome = 0, prevExpense = 0;
+                prevData.forEach(d => {
+                    if (d.type === 'income') prevIncome += (d.amount || 0);
+                    else prevExpense += (d.amount || 0);
+                });
+
+                // 3. 현금 잔액
+                let cashBalance = 0;
+                const sorted = [...allData].filter(d => d.status !== 'draft').sort((a,b) => (a.date||'').localeCompare(b.date||''));
+                sorted.forEach(d => { cashBalance += d.type === 'income' ? (d.amount||0) : -(d.amount||0); });
+
+                // 4. 스파/호텔 매출 분리
+                let spaRevenue = 0, hotelRevenue = 0;
+                try {
+                    const revDb = JSON.parse(localStorage.getItem('erp_revenue_db') || '{}');
+                    Object.keys(revDb).forEach(dateKey => {
+                        if (dateKey.startsWith(month)) {
+                            const r = revDb[dateKey];
+                            spaRevenue += ((r.spaTickRev || 0) + (r.spaFbRev || 0)) * 10000;
+                            hotelRevenue += ((r.hotelRoomRev || 0) + (r.hotelFbRev || 0)) * 10000;
+                        }
+                    });
+                } catch(e) {}
+
+                // 5. 프롬프트 구성
+                const [yyyy, mm] = month.split('-');
+                const prompt = `당신은 전라북도 진안군에 위치한 "홍삼한방타운" (홍삼스파 + 홍삼빌호텔)의 전담 AI CFO(최고재무책임자)입니다.
+아래 경영 데이터를 기반으로 ${yyyy}년 ${parseInt(mm)}월 경영실적을 심층 분석하고, CEO에게 보고할 수 있는 수준의 전문 리포트를 작성해 주세요.
+
+═══ ${yyyy}년 ${parseInt(mm)}월 경영 데이터 ═══
+
+[매출/수입]
+- 총 수입: ${totalIncome.toLocaleString()}원 (전표 ${monthData.filter(d=>d.type==='income').length}건)
+- 전월(${prevDate.getMonth()+1}월) 수입: ${prevIncome.toLocaleString()}원
+- 전월 대비 증감: ${totalIncome - prevIncome >= 0 ? '+' : ''}${(totalIncome - prevIncome).toLocaleString()}원 (${prevIncome > 0 ? ((totalIncome - prevIncome) / prevIncome * 100).toFixed(1) : 'N/A'}%)
+- 수입 카테고리별:
+${Object.entries(incomeCats).map(([k,v]) => `  · ${k}: ${v.toLocaleString()}원`).join('\n')}
+- 스파 매출(POS): ${spaRevenue.toLocaleString()}원
+- 호텔 매출(PMS): ${hotelRevenue.toLocaleString()}원
+
+[비용/지출]
+- 총 지출: ${totalExpense.toLocaleString()}원 (전표 ${monthData.filter(d=>d.type==='expense').length}건)
+- 전월 지출: ${prevExpense.toLocaleString()}원
+- 지출 카테고리별:
+${Object.entries(expenseCats).map(([k,v]) => `  · ${k}: ${v.toLocaleString()}원 (비중 ${(v/totalExpense*100).toFixed(1)}%)`).join('\n')}
+
+[현금흐름]
+- 영업이익: ${(totalIncome - totalExpense).toLocaleString()}원
+- 영업이익률: ${totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome * 100).toFixed(1) : 0}%
+- 현재 현금잔액: ${cashBalance.toLocaleString()}원
+- 월 운영비 대비 확보 개월수: ${totalExpense > 0 ? (cashBalance / totalExpense).toFixed(1) : 'N/A'}개월
+
+═══ 분석 요청 사항 ═══
+1. 경영 요약 (Executive Summary) — 3줄 이내의 핵심 요약
+2. 매출 구조 분석 — 스파 vs 호텔 비중, 카테고리별 강약점
+3. 비용 효율성 진단 — 카테고리별 비용 적정성, 이상치 탐지
+4. 현금흐름 건전성 평가 — 운전자금 여유도, 리스크
+5. 전월 대비 변화 분석 — 주목할 만한 증감 항목
+6. CEO 액션 아이템 — 구체적이고 실행 가능한 3~5개 제안
+
+리포트는 한국어로, 이모지를 활용하여 가독성 좋게 작성해 주세요. 각 섹션에 번호를 매겨주세요.`;
+
+                // 6. API 호출
+                const response = await fetch(`${API_BASE}/ai/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, month })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'AI 분석 실패');
+                }
+
+                // 7. 결과 렌더링
+                if (statusEl) statusEl.style.display = 'none';
+                if (resultEl) resultEl.style.display = 'block';
+
+                const titleEl = document.getElementById('aiReportTitle');
+                const tsEl = document.getElementById('aiReportTimestamp');
+                const contentEl = document.getElementById('aiReportContent');
+
+                if (titleEl) titleEl.textContent = `${yyyy}년 ${parseInt(mm)}월 AI 경영실적 분석 리포트`;
+                if (tsEl) {
+                    const ts = new Date(data.timestamp);
+                    tsEl.textContent = `${data.cached ? '(캐시)' : ''} 생성: ${ts.getFullYear()}.${ts.getMonth()+1}.${ts.getDate()} ${ts.getHours()}:${String(ts.getMinutes()).padStart(2,'0')}`;
+                }
+                if (contentEl) {
+                    contentEl.textContent = data.result;
+                }
+
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                if (statusEl) statusEl.style.display = 'none';
+                const guideEl2 = document.getElementById('aiAnalysisGuide');
+                if (guideEl2) guideEl2.style.display = 'block';
+                alert('AI 분석 오류: ' + error.message);
+            } finally {
+                btnRunAi.disabled = isAdmin ? false : true;
+                btnRunAi.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석 실행';
+            }
+        });
+    }
+
 });
 

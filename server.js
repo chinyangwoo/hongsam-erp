@@ -247,6 +247,106 @@ app.post('/api/rcs/send', async (req, res) => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════
+// Claude Opus 4.6 Thinking — AI 경영실적분석 프록시
+// 환경변수: ANTHROPIC_API_KEY
+// ═══════════════════════════════════════════════════════════
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const aiAnalysisCache = {}; // { '2026-05': { result, timestamp } }
+
+app.post('/api/ai/analyze', async (req, res) => {
+    const { prompt, month } = req.body;
+
+    if (!prompt) {
+        return res.status(400).json({ success: false, error: '분석 프롬프트가 비어 있습니다.' });
+    }
+
+    // 캐시 확인 (24시간)
+    if (month && aiAnalysisCache[month]) {
+        const cached = aiAnalysisCache[month];
+        const elapsed = Date.now() - cached.timestamp;
+        if (elapsed < 24 * 60 * 60 * 1000) {
+            console.log(`[AI] Cache hit for ${month}`);
+            return res.json({ success: true, cached: true, result: cached.result, timestamp: cached.timestamp });
+        }
+    }
+
+    if (!ANTHROPIC_API_KEY) {
+        return res.status(500).json({ success: false, error: 'ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다.' });
+    }
+
+    try {
+        const https = require('https');
+
+        const postData = JSON.stringify({
+            model: 'claude-opus-4-20250514',
+            max_tokens: 16000,
+            thinking: {
+                type: "enabled",
+                budget_tokens: 10000
+            },
+            messages: [{
+                role: 'user',
+                content: prompt
+            }]
+        });
+
+        const options = {
+            hostname: 'api.anthropic.com',
+            path: '/v1/messages',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': ANTHROPIC_API_KEY,
+                'anthropic-version': '2025-04-14',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+        const apiResult = await new Promise((resolve, reject) => {
+            const apiReq = https.request(options, (apiRes) => {
+                let data = '';
+                apiRes.on('data', chunk => { data += chunk; });
+                apiRes.on('end', () => {
+                    try {
+                        resolve({ statusCode: apiRes.statusCode, body: JSON.parse(data) });
+                    } catch(e) {
+                        reject(new Error('API 응답 파싱 실패: ' + data.substring(0, 200)));
+                    }
+                });
+            });
+            apiReq.on('error', reject);
+            apiReq.setTimeout(120000, () => {
+                apiReq.destroy();
+                reject(new Error('API 요청 타임아웃 (120초)'));
+            });
+            apiReq.write(postData);
+            apiReq.end();
+        });
+
+        if (apiResult.statusCode !== 200) {
+            console.error('[AI] API Error:', apiResult.body);
+            return res.status(apiResult.statusCode).json({ success: false, error: apiResult.body.error?.message || 'API 오류' });
+        }
+
+        // content 배열에서 text 블록 추출
+        const textBlocks = (apiResult.body.content || []).filter(b => b.type === 'text');
+        const resultText = textBlocks.map(b => b.text).join('\n');
+
+        // 캐시 저장
+        if (month) {
+            aiAnalysisCache[month] = { result: resultText, timestamp: Date.now() };
+        }
+
+        console.log(`[AI] Analysis complete for ${month || 'unknown'}, ${resultText.length} chars`);
+        res.json({ success: true, cached: false, result: resultText, timestamp: Date.now() });
+
+    } catch (error) {
+        console.error('[AI] Error:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // --- Socket.io 실시간 통신 (Phase 3) ---
 // 접속 중인 사용자 (emp_id를 키값으로 관리)
 const onlineUsers = new Map();
