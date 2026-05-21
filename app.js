@@ -1,8 +1,92 @@
 // Check Auth Status (Mock Session)
-if (localStorage.getItem('isLoggedIn') !== 'true') {
+if (localStorage.getItem('isLoggedIn') !== 'true' || !localStorage.getItem('currentUser')) {
     // Not logged in -> Redirect immediately
     window.location.replace('login.html');
 }
+
+// ══════════════════════════════════════════════════════
+// 즉각적인 URL 직접 진입 차단 (FOUC 방지를 위해 DOM 완료 전에 즉시 실행)
+// ══════════════════════════════════════════════════════
+(function enforceImmediateRouteGuard() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) return;
+
+    const empNum = parseInt(currentUser, 10);
+    let hrEmployees = [];
+    try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
+    const empRecord = hrEmployees.find(e => e.emp_id === currentUser);
+    let isAdmin = ['001'].includes(currentUser);
+    if (empRecord && empRecord.is_admin) isAdmin = true;
+
+    // 역할 결정
+    let userRole = 'crew'; // 기본값: 팀원급
+    if (isAdmin) {
+        userRole = 'admin';
+    } else if (empNum >= 1 && empNum <= 9) {
+        userRole = 'executive'; // 임원급
+    } else if (empNum >= 10 && empNum <= 19) {
+        userRole = 'leader'; // 팀장급
+    } else {
+        userRole = 'crew'; // 팀원급 (020~099)
+    }
+
+    // 역할별 접근 가능 메뉴 정의
+    const roleMenuAccess = {
+        admin: 'all',
+        executive: [
+            'index.html', 'traffic.html', 'hr.html', 'sales.html', 'crm.html', 'reservation.html',
+            'accounting.html', 'inventory.html', 'facility.html',
+            'board.html', 'messenger.html', 'document.html', 'approval.html'
+        ],
+        leader: [
+            'index.html', 'traffic.html', 'hr.html', 'sales.html', 'crm.html', 'reservation.html',
+            'accounting.html', 'inventory.html', 'facility.html',
+            'board.html', 'messenger.html', 'document.html', 'approval.html'
+        ],
+        crew: [
+            'traffic.html', 'hr.html', 'inventory.html', 'facility.html',
+            'board.html', 'messenger.html', 'document.html', 'approval.html'
+        ]
+    };
+
+    // 전체 메뉴 목록
+    const allMenuPages = [
+        { url: 'index.html', name: '통합 대시보드' },
+        { url: 'traffic.html', name: '트래픽 모니터링' },
+        { url: 'hr.html', name: 'HR/근태 관리' },
+        { url: 'sales.html', name: '영업관리' },
+        { url: 'crm.html', name: '고객관리/CRM' },
+        { url: 'reservation.html', name: '예약/대관 관리' },
+        { url: 'accounting.html', name: '회계/경영분석' },
+        { url: 'inventory.html', name: '재고관리' },
+        { url: 'facility.html', name: '시설현황' },
+        { url: 'board.html', name: '전사 게시판' },
+        { url: 'messenger.html', name: '사내 메신저' },
+        { url: 'document.html', name: '문서 관리' },
+        { url: 'approval.html', name: '전자결재' }
+    ];
+
+    // 1) 시스템 보안: ADMIN 전용
+    if (!isAdmin && window.location.pathname.includes('security.html')) {
+        alert('접근 권한이 없습니다. 관리자(ADMIN)만 접근할 수 있는 메뉴입니다.');
+        window.location.replace('index.html');
+        return;
+    }
+
+    // 2) 역할 기반 메뉴 접근 제어
+    if (userRole !== 'admin') {
+        const allowedPages = roleMenuAccess[userRole];
+        allMenuPages.forEach(menu => {
+            if (!allowedPages.includes(menu.url)) {
+                if (window.location.pathname.includes(menu.url)) {
+                    alert(`[${menu.name}] 접근 권한이 없습니다.\n귀하의 권한 등급: ${userRole === 'executive' ? '임원급' : userRole === 'leader' ? '팀장급' : '팀원급'}`);
+                    const fallback = allowedPages.includes('index.html') ? 'index.html' : allowedPages[0];
+                    window.location.replace(fallback);
+                }
+            }
+        });
+    }
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -126,10 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.nav-admin-only').forEach(el => {
             el.style.display = isAdmin ? '' : 'none';
         });
-        if (!isAdmin && window.location.pathname.includes('security.html')) {
-            alert('접근 권한이 없습니다. 관리자(ADMIN)만 접근할 수 있는 메뉴입니다.');
-            window.location.replace('index.html');
-        }
 
         // --- 2) 역할 기반 메뉴 접근 제어 ---
         if (userRole !== 'admin') {
@@ -140,14 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 사이드바 메뉴 숨기기
                     const navItem = document.querySelector(`.nav-item[href="${menu.url}"]`);
                     if (navItem) navItem.style.display = 'none';
-
-                    // URL 직접 접속 차단
-                    if (window.location.pathname.includes(menu.url)) {
-                        alert(`[${menu.name}] 접근 권한이 없습니다.\n귀하의 권한 등급: ${userRole === 'executive' ? '임원급' : userRole === 'leader' ? '팀장급' : '팀원급'}`);
-                        // 팀원급은 대시보드 접근 불가 → 트래픽으로 리다이렉트
-                        const fallback = allowedPages.includes('index.html') ? 'index.html' : allowedPages[0];
-                        window.location.replace(fallback);
-                    }
                 }
             });
         }
@@ -209,6 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h2 style="font-size:1.3rem;">비밀번호 변경</h2>
                         <button id="closePwdModal" style="background:none; border:none; color:#fff; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+                    <div id="pwdWarningBanner" style="display:none; padding:12px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); border-radius:6px; color:#FCA5A5; font-size:0.85rem; margin-bottom:15px; line-height:1.4;">
+                        <i class="fa-solid fa-triangle-exclamation" style="margin-right:5px;"></i>
+                        초기 비밀번호(0000)를 사용 중입니다. 안전을 위해 반드시 4자리 새 비밀번호로 변경해야 시스템 이용이 가능합니다.
+                    </div>
                     <div>
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:#ccc;">현재 비밀번호</label>
@@ -236,11 +312,62 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             document.getElementById('currentPwd').value = '';
             document.getElementById('newPwd').value = '';
+            // 만약 초기 비밀번호 상태가 아니라면 모달 내 UI 리셋
+            const dbStr = localStorage.getItem('erp_users_db');
+            const users = dbStr ? JSON.parse(dbStr) : {};
+            let hrEmployees = [];
+            try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
+            hrEmployees.forEach(emp => {
+                if (!users[emp.emp_id]) {
+                    users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+                }
+            });
+            const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+            if (closePwdModal) closePwdModal.style.display = isInitialPwd ? 'none' : 'block';
+            const warningBanner = document.getElementById('pwdWarningBanner');
+            if (warningBanner) warningBanner.style.display = isInitialPwd ? 'block' : 'none';
+
             pwdModal.style.display = 'flex';
         });
     });
 
+    // --- 1. 초기 비밀번호 강제 변경 점검 ---
+    (function checkInitialPasswordForceChange() {
+        const dbStr = localStorage.getItem('erp_users_db');
+        const users = dbStr ? JSON.parse(dbStr) : {};
+        
+        let hrEmployees = [];
+        try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
+        hrEmployees.forEach(emp => {
+            if (!users[emp.emp_id]) {
+                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+            }
+        });
+
+        const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+        if (isInitialPwd) {
+            setTimeout(() => {
+                const warningBanner = document.getElementById('pwdWarningBanner');
+                if (pwdModal) {
+                    document.getElementById('currentPwd').value = '';
+                    document.getElementById('newPwd').value = '';
+                    pwdModal.style.display = 'flex';
+                    if (closePwdModal) closePwdModal.style.display = 'none';
+                    if (warningBanner) warningBanner.style.display = 'block';
+                }
+            }, 100);
+        }
+    })();
+
     closePwdModal.addEventListener('click', () => {
+        const dbStr = localStorage.getItem('erp_users_db');
+        const users = dbStr ? JSON.parse(dbStr) : {};
+        const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+        
+        if (isInitialPwd) {
+            alert('초기 비밀번호 상태에서는 반드시 비밀번호를 변경하셔야 합니다.');
+            return;
+        }
         pwdModal.style.display = 'none';
     });
 
@@ -272,6 +399,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('현재 비밀번호가 일치하지 않습니다.');
                 return;
             }
+
+            // 비밀번호 복잡성 검증 (complexity check)
+            if (!/^\d{4}$/.test(newPwd)) {
+                alert('새 비밀번호는 반드시 숫자 4자리여야 합니다.');
+                return;
+            }
+            if (newPwd === '0000') {
+                alert('안전을 위해 초기 비밀번호인 "0000"은 새 비밀번호로 지정할 수 없습니다.');
+                return;
+            }
+            if (newPwd === currentPwd) {
+                alert('새 비밀번호는 현재 비밀번호와 달라야 합니다.');
+                return;
+            }
+
             // Success: update password
             users[currentUser].password = newPwd;
             
@@ -307,6 +449,11 @@ document.addEventListener('DOMContentLoaded', () => {
               .catch(err => console.warn('서버 저장 실패:', err));
 
             alert('비밀번호가 성공적으로 변경되었습니다.\n다음에 로그인할 때 새 비밀번호를 사용하세요.');
+            
+            // 성공 시 UI 복구 및 닫기
+            if (closePwdModal) closePwdModal.style.display = 'block';
+            const warningBanner = document.getElementById('pwdWarningBanner');
+            if (warningBanner) warningBanner.style.display = 'none';
             pwdModal.style.display = 'none';
         } else {
             alert('사용자 정보를 찾을 수 없습니다.');

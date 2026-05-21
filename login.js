@@ -84,6 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // --- 보안: 로그인 잠금 점검 ---
+        const lockKey = `login_lock_${empIdStr}`;
+        const failKey = `login_failures_${empIdStr}`;
+        const lockTime = localStorage.getItem(lockKey);
+        if (lockTime) {
+            const timeLeft = parseInt(lockTime, 10) - Date.now();
+            if (timeLeft > 0) {
+                const minutes = Math.ceil(timeLeft / 60000);
+                alert(`잦은 로그인 실패로 인해 계정이 잠겼습니다. ${minutes}분 후 다시 시도해 주세요.`);
+                return;
+            } else {
+                localStorage.removeItem(lockKey);
+                localStorage.removeItem(failKey);
+            }
+        }
+
         // --- DB Verification ---
         const dbStr = localStorage.getItem('erp_users_db');
         const users = JSON.parse(dbStr || '{}');
@@ -113,7 +129,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (users[empIdStr].password !== pwdStr) {
             // 실패 로그 기록
             logLoginEvent(empIdStr, users[empIdStr].name, 'fail');
-            alert('비밀번호가 일치하지 않습니다.');
+            
+            // 로그인 실패 횟수 증가 및 5분간 잠금 처리
+            let failures = parseInt(localStorage.getItem(failKey) || '0', 10);
+            failures += 1;
+            localStorage.setItem(failKey, failures.toString());
+            
+            if (failures >= 5) {
+                const lockoutUntil = Date.now() + 300000; // 5분 잠금
+                localStorage.setItem(lockKey, lockoutUntil.toString());
+                alert('비밀번호를 5회 연속 잘못 입력하여 계정이 5분간 잠깁니다.');
+            } else {
+                alert(`비밀번호가 일치하지 않습니다. (실패 횟수: ${failures}/5)`);
+            }
             return;
         }
 
@@ -146,6 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('currentUser', empIdStr);
             localStorage.setItem('currentUserName', users[empIdStr].name);
+            localStorage.removeItem(lockKey);
+            localStorage.removeItem(failKey);
 
             // Redirect to dashboard
             window.location.href = 'index.html';
