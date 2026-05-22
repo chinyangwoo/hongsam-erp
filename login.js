@@ -10,17 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE = 'http://43.203.237.63:3001/api';
 
     // --- Mock DB Initialization ---
-    // User IDs 001 to 099, initial password "0000"
+    // User IDs 001 to 099, initial password "000000"
     function initMockDB() {
         let dbStr = localStorage.getItem('erp_users_db');
         if (!dbStr) {
             let users = {};
             for(let i = 1; i <= 99; i++) {
                 let idStr = i.toString().padStart(3, '0');
-                users[idStr] = { password: '0000', name: '사원 ' + idStr };
+                users[idStr] = { password: '000000', name: '사원 ' + idStr };
             }
             // Master account (대표이사)
-            users['001'] = { password: '1234', name: '진양우 (대표이사)' };
+            users['001'] = { password: '123456', name: '진양우 (대표이사)' };
             
             localStorage.setItem('erp_users_db', JSON.stringify(users));
         }
@@ -112,10 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
         hrEmployees.forEach(emp => {
             // If the user already exists in erp_users_db with a changed password, keep that password.
             // Otherwise, use the HR module's password.
-            if (users[emp.emp_id] && users[emp.emp_id].password !== '0000') {
+            if (users[emp.emp_id] && users[emp.emp_id].password !== '000000') {
                 users[emp.emp_id].name = emp.name;
             } else {
-                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+                users[emp.emp_id] = { password: emp.login_pw || '000000', name: emp.name };
             }
         });
 

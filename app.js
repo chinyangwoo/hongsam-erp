@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div id="pwdWarningBanner" style="display:none; padding:12px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); border-radius:6px; color:#FCA5A5; font-size:0.85rem; margin-bottom:15px; line-height:1.4;">
                         <i class="fa-solid fa-triangle-exclamation" style="margin-right:5px;"></i>
-                        초기 비밀번호(0000)를 사용 중입니다. 안전을 위해 반드시 4자리 새 비밀번호로 변경해야 시스템 이용이 가능합니다.
+                        초기 비밀번호(000000)를 사용 중입니다. 안전을 위해 반드시 6자리 새 비밀번호로 변경해야 시스템 이용이 가능합니다.
                     </div>
                     <div>
                         <div style="margin-bottom:15px;">
@@ -319,10 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
             try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
             hrEmployees.forEach(emp => {
                 if (!users[emp.emp_id]) {
-                    users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+                    users[emp.emp_id] = { password: emp.login_pw || '000000', name: emp.name };
                 }
             });
-            const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+            const isInitialPwd = users[currentUser] && users[currentUser].password === '000000';
             if (closePwdModal) closePwdModal.style.display = isInitialPwd ? 'none' : 'block';
             const warningBanner = document.getElementById('pwdWarningBanner');
             if (warningBanner) warningBanner.style.display = isInitialPwd ? 'block' : 'none';
@@ -340,11 +340,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try { hrEmployees = JSON.parse(localStorage.getItem('hongsam_employees') || '[]'); } catch (_) {}
         hrEmployees.forEach(emp => {
             if (!users[emp.emp_id]) {
-                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+                users[emp.emp_id] = { password: emp.login_pw || '000000', name: emp.name };
             }
         });
 
-        const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+        const isInitialPwd = users[currentUser] && users[currentUser].password === '000000';
         if (isInitialPwd) {
             setTimeout(() => {
                 const warningBanner = document.getElementById('pwdWarningBanner');
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closePwdModal.addEventListener('click', () => {
         const dbStr = localStorage.getItem('erp_users_db');
         const users = dbStr ? JSON.parse(dbStr) : {};
-        const isInitialPwd = users[currentUser] && users[currentUser].password === '0000';
+        const isInitialPwd = users[currentUser] && users[currentUser].password === '000000';
         
         if (isInitialPwd) {
             alert('초기 비밀번호 상태에서는 반드시 비밀번호를 변경하셔야 합니다.');
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         hrEmployees.forEach(emp => {
             if (!users[emp.emp_id]) {
-                users[emp.emp_id] = { password: emp.login_pw || '0000', name: emp.name };
+                users[emp.emp_id] = { password: emp.login_pw || '000000', name: emp.name };
             }
         });
 
@@ -401,12 +401,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 비밀번호 복잡성 검증 (complexity check)
-            if (!/^\d{4}$/.test(newPwd)) {
-                alert('새 비밀번호는 반드시 숫자 4자리여야 합니다.');
+            if (!/^\d{6}$/.test(newPwd)) {
+                alert('새 비밀번호는 반드시 숫자 6자리여야 합니다.');
                 return;
             }
-            if (newPwd === '0000') {
-                alert('안전을 위해 초기 비밀번호인 "0000"은 새 비밀번호로 지정할 수 없습니다.');
+            if (newPwd === '000000') {
+                alert('안전을 위해 초기 비밀번호인 "000000"은 새 비밀번호로 지정할 수 없습니다.');
                 return;
             }
             if (newPwd === currentPwd) {
@@ -999,4 +999,36 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('trafficStatus').textContent = status;
         document.getElementById('trafficStatus').style.color = color;
         document.getElementById('trafficTime').textContent = `예상 ${totalTime}분`;
+    })();
+
+    // --- 4. 보안: 30분 미활동 시 자동 로그아웃 기능 ---
+    (function initSessionTimeout() {
+        const TIMEOUT_DURATION = 30 * 60 * 1000; // 30분 (밀리초)
+        let timeoutTimer = null;
+
+        function logoutUser() {
+            alert('보안 및 개인정보 보호를 위해 30분 동안 활동이 없어 자동 로그아웃되었습니다.');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            if (window.erpSocket) {
+                try { window.erpSocket.disconnect(); } catch(e) {}
+            }
+            window.location.replace('login.html');
+        }
+
+        function resetTimer() {
+            if (timeoutTimer) clearTimeout(timeoutTimer);
+            timeoutTimer = setTimeout(logoutUser, TIMEOUT_DURATION);
+        }
+
+        // 로그인 상태인 경우에만 감시 시작
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            resetTimer();
+
+            // 사용자 활동 감지 이벤트 등록
+            const activityEvents = ['mousemove', 'keypress', 'click', 'touchstart', 'scroll'];
+            activityEvents.forEach(eventName => {
+                document.addEventListener(eventName, resetTimer, { passive: true });
+            });
+        }
     })();
