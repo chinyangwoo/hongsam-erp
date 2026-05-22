@@ -38,6 +38,9 @@ const DOC_CATEGORIES = [
 // ── 양식 데이터 ──────────────────────────────────────
 const DOC_TEMPLATES = [
     // ── 사규 및 규정 (policy) ──
+    { name: '홍삼스파_시설관리규정_개정안.hwp',               cat: 'policy',     ext: 'hwp',  date: '2026-04-20', user: '박종수 팀장', size: '145 KB', secLevel: 'conf' },
+    { name: '조식뷔페_위생점검수칙.hwp',                      cat: 'safety',     ext: 'hwp',  date: '2026-04-22', user: '이수진 매니저', size: '98 KB', secLevel: 'public' },
+    { name: '취업규칙_홍삼한방타운_최종.hwp',                 cat: 'policy',     ext: 'hwp',  date: '2026-01-15', user: '진양우 대표', size: '285 KB', secLevel: 'conf' },
     { name: '취업규칙_홍삼한방타운_최종.docx',               cat: 'policy',     ext: 'docx', date: '2026-01-15', user: '진양우 대표', size: '285 KB', secLevel: 'conf' },
     { name: '인사규정_2026년_개정본.docx',                   cat: 'policy',     ext: 'docx', date: '2026-01-15', user: '진양우 대표', size: '198 KB', secLevel: 'conf' },
     { name: '급여규정_홍삼한방타운.docx',                    cat: 'policy',     ext: 'docx', date: '2026-01-15', user: '진양우 대표', size: '176 KB', secLevel: 'conf' },

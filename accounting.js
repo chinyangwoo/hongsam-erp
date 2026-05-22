@@ -11,8 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 팀장급(010~019) 이상만 편집 가능, 크루는 열람불가 (app.js에서 차단)
     const canEdit = isAdmin || (empNum >= 2 && empNum <= 19);
 
+    // AI CFO 및 AI 분석 권한: 대표이사(001) 및 어드민 임원/팀장급(1~19)
+    const canUseAi = currentUser === '001' || (empNum >= 1 && empNum <= 19);
+
     if (!canEdit) {
         document.querySelectorAll('.acc-admin-only').forEach(el => el.style.display = 'none');
+    }
+
+    if (!canUseAi) {
+        // AI 실적분석 탭 숨기기
+        const aiTabEl = document.querySelector('.acc-tab[data-target="panelAiAnalysis"]');
+        if (aiTabEl) aiTabEl.style.display = 'none';
     }
 
     // ── localStorage Keys ──────────────────────────────────
@@ -1135,11 +1144,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // AI 분석 실행 버튼
     const btnRunAi = document.getElementById('btnRunAiAnalysis');
     if (btnRunAi) {
-        if (!isAdmin) {
-            // 마스터가 아닌 경우 버튼 숨김 (결과는 자동 로드됨)
+        if (!canUseAi) {
+            // 어드민 권한이 없는 경우 버튼 숨김 (결과는 자동 로드됨)
             btnRunAi.style.display = 'none';
         } else {
-            // 마스터: 실제 AI 분석 실행
+            // 어드민 권한 소지자: 실제 AI 분석 실행
             btnRunAi.addEventListener('click', async () => {
                 const month = aiMonthSelect ? aiMonthSelect.value : '';
                 if (!month) return alert('분석할 월을 선택하세요.');
@@ -1210,6 +1219,194 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    // ══════════════════════════════════════════════════════════
+    // 6) AI CFO 실시간 회계 Q&A 대화형 챗봇 연동 (Task 6)
+    // ══════════════════════════════════════════════════════════
+    const cfoChatBody = document.getElementById('cfoChatBody');
+    const cfoInputBox = document.getElementById('cfoInputBox');
+    const btnCfoSend = document.getElementById('btnCfoSend');
+    const cfoChips = document.querySelectorAll('.cfo-chip');
+
+    // 대화 이력 메모리 (세션 유지)
+    let cfoHistory = [];
+    try {
+        const stored = sessionStorage.getItem('erp_cfo_chat_history');
+        if (stored) {
+            cfoHistory = JSON.parse(stored);
+            // 저장된 이력이 있다면 기존 메시지들을 렌더링
+            // 단, 첫 웰컴 메시지는 기본 HTML에 있으므로 그 이후 메시지만 렌더링
+            cfoHistory.forEach(msg => {
+                renderCfoMessage(msg.role === 'user' ? 'user' : 'ai', msg.content);
+            });
+        }
+    } catch(e) { console.warn('[AI CFO] 대화 이력 로드 실패:', e); }
+
+    // 대화 이력 저장
+    function saveCfoHistory() {
+        try {
+            sessionStorage.setItem('erp_cfo_chat_history', JSON.stringify(cfoHistory));
+        } catch(e) {}
+    }
+
+    // 마크다운 줄바꿈 및 볼드 변환을 위한 초경량 포맷터
+    function formatMarkdown(text) {
+        if (!text) return '';
+        // HTML 이스케이프 (XSS 방지)
+        let escaped = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+        // 볼드 처리 (**text** 또는 *text* 또는 `text`)
+        escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-family:monospace; color:#A78BFA;">$1</code>');
+
+        // 줄바꿈 처리
+        escaped = escaped.replace(/\n/g, '<br>');
+
+        return escaped;
+    }
+
+    // 메시지 렌더링 함수
+    function renderCfoMessage(sender, text) {
+        if (!cfoChatBody) return;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `cfo-message ${sender}`;
+        
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'cfo-msg-meta';
+        metaDiv.textContent = sender === 'user' ? '나 (경영자)' : 'AI CFO 재무 비서';
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'cfo-msg-bubble';
+        bubbleDiv.innerHTML = formatMarkdown(text);
+        
+        msgDiv.appendChild(metaDiv);
+        msgDiv.appendChild(bubbleDiv);
+        cfoChatBody.appendChild(msgDiv);
+        
+        // 스크롤 최하단 이동
+        cfoChatBody.scrollTop = cfoChatBody.scrollHeight;
+    }
+
+    // 타이핑 인디케이터 엘리먼트
+    let typingIndicatorEl = null;
+
+    function showCfoTyping() {
+        if (!cfoChatBody || typingIndicatorEl) return;
+        
+        typingIndicatorEl = document.createElement('div');
+        typingIndicatorEl.className = 'cfo-message ai typing-indicator';
+        
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'cfo-msg-meta';
+        metaDiv.textContent = 'AI CFO 재무 비서';
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'cfo-msg-bubble';
+        bubbleDiv.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div class="cfo-loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span style="font-size:0.85rem; color:var(--text-secondary);">실시간 ERP 분석 데이터를 기반으로 회계 추론 중...</span>
+            </div>
+        `;
+        
+        typingIndicatorEl.appendChild(metaDiv);
+        typingIndicatorEl.appendChild(bubbleDiv);
+        cfoChatBody.appendChild(typingIndicatorEl);
+        cfoChatBody.scrollTop = cfoChatBody.scrollHeight;
+    }
+
+    function hideCfoTyping() {
+        if (typingIndicatorEl && cfoChatBody) {
+            cfoChatBody.removeChild(typingIndicatorEl);
+            typingIndicatorEl = null;
+        }
+    }
+
+    // 메시지 발송 핵심 함수
+    async function handleCfoSend() {
+        if (!canUseAi) {
+            alert('AI CFO Q&A 기능을 사용할 수 있는 권한이 없습니다.');
+            return;
+        }
+        if (!cfoInputBox) return;
+        const query = cfoInputBox.value.trim();
+        if (!query) return;
+
+        // 입력칸 청소 및 포커스 유지
+        cfoInputBox.value = '';
+        cfoInputBox.focus();
+
+        // 1. 사용자 화면에 즉시 렌더링
+        renderCfoMessage('user', query);
+
+        // 2. 대화 이력 메모리에 추가
+        cfoHistory.push({ role: 'user', content: query });
+        saveCfoHistory();
+
+        // 3. 타이핑 인디케이터 노출
+        showCfoTyping();
+
+        try {
+            // 4. API 전송
+            const response = await fetch(`${API_BASE}/ai/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: cfoHistory })
+            });
+
+            if (!response.ok) throw new Error('API 응답에 실패했습니다.');
+            const data = await response.json();
+            
+            // 5. 타이핑 인디케이터 제거
+            hideCfoTyping();
+
+            if (data.success && data.result) {
+                // 6. AI 답변 화면에 렌더링 및 이력 저장
+                renderCfoMessage('ai', data.result);
+                cfoHistory.push({ role: 'assistant', content: data.result });
+                saveCfoHistory();
+            } else {
+                throw new Error(data.error || 'AI 응답 형식이 올바르지 않습니다.');
+            }
+        } catch(err) {
+            console.error('[AI CFO Chat Error]:', err);
+            hideCfoTyping();
+            renderCfoMessage('ai', '⚠️ AI CFO 재무 분석기와의 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해 주십시오. (오류 내용: ' + err.message + ')');
+        }
+    }
+
+    // 전송 버튼 클릭 바인딩
+    if (btnCfoSend) {
+        btnCfoSend.addEventListener('click', handleCfoSend);
+    }
+
+    // 인풋창 엔터키 입력 바인딩
+    if (cfoInputBox) {
+        cfoInputBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleCfoSend();
+            }
+        });
+    }
+
+    // 퀵 가이드 추천 질문 칩 클릭 바인딩
+    cfoChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const question = chip.dataset.question;
+            if (question && cfoInputBox) {
+                cfoInputBox.value = question;
+                handleCfoSend();
+            }
+        });
+    });
 
 });
 

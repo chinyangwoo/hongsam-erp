@@ -175,8 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-size text-right">${doc.size}</div>
                 <div class="col-actions text-right">
                     ${doc.ext === 'hwp'
-                        ? '<button class="btn-action restricted-view" data-type="hwp" title="뷰어 확인"><i class="fa-solid fa-eye"></i></button>'
-                        : '<button class="btn-action btn-preview" title="미리보기"><i class="fa-solid fa-eye"></i></button>'}
+                        ? `<button class="btn-action btn-preview" data-type="hwp" data-filename="${doc.name}" title="실시간 HWP 뷰어 확인"><i class="fa-solid fa-eye"></i></button>`
+                        : `<button class="btn-action btn-preview" data-filename="${doc.name}" title="미리보기"><i class="fa-solid fa-eye"></i></button>`}
                     <button class="btn-action btn-download" title="다운로드" data-filename="${doc.name}"><i class="fa-solid fa-download"></i></button>
                     ${isAdmin ? `<button class="btn-action text-danger btn-delete" title="삭제" data-filename="${doc.name}"><i class="fa-regular fa-trash-can"></i></button>` : ''}
                 </div>
@@ -203,7 +203,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // 미리보기 버튼
         fileBody.querySelectorAll('.btn-preview').forEach(btn => {
             btn.addEventListener('click', () => {
-                alert('📄 미리보기 기능은 추후 업데이트 예정입니다.\n다운로드 버튼을 눌러 파일을 받으신 후 열람해 주세요.');
+                const fname = btn.getAttribute('data-filename');
+                const isHwp = btn.getAttribute('data-type') === 'hwp';
+                
+                const previewModal = document.getElementById('previewModal');
+                const previewModalTitle = document.getElementById('previewModalTitle');
+                const previewIframe = document.getElementById('previewIframe');
+                
+                if (previewModal && previewModalTitle && previewIframe) {
+                    previewModalTitle.textContent = `${fname} - ${isHwp ? 'HWP 실시간 변환 뷰어' : '문서 미리보기'}`;
+                    previewIframe.src = `/api/doc/convert-hwp?file=${encodeURIComponent(fname)}`;
+                    previewModal.classList.add('show');
+                }
             });
         });
 
@@ -478,6 +489,35 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = prompt('새 폴더 이름을 입력하세요:');
             if (name && name.trim()) {
                 alert(`"${name.trim()}" 폴더 생성은 백엔드 연동 후 활성화됩니다.`);
+            }
+        });
+    }
+
+    // ── 8. 미리보기 모달 인터랙션 ─────────────────────────────────
+    const previewModal = document.getElementById('previewModal');
+    const closePreviewModal = document.getElementById('closePreviewModal');
+    const previewIframe = document.getElementById('previewIframe');
+    
+    if (closePreviewModal && previewModal) {
+        closePreviewModal.addEventListener('click', () => {
+            previewModal.classList.remove('show');
+            if (previewIframe) previewIframe.src = '';
+        });
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                previewModal.classList.remove('show');
+                if (previewIframe) previewIframe.src = '';
+            }
+        });
+    }
+    
+    // 미리보기 인쇄 기능
+    const btnPreviewPrint = document.getElementById('btnPreviewPrint');
+    if (btnPreviewPrint) {
+        btnPreviewPrint.addEventListener('click', () => {
+            if (previewIframe && previewIframe.contentWindow) {
+                previewIframe.contentWindow.focus();
+                previewIframe.contentWindow.print();
             }
         });
     }

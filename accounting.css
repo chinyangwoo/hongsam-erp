@@ -335,3 +335,309 @@
 .light-theme .sim-slider { background: rgba(0,0,0,0.08); }
 .light-theme .sim-result-card { background: rgba(0,0,0,0.03); border-color: rgba(59,130,246,0.15); }
 .light-theme .sim-result-row { border-color: rgba(0,0,0,0.06); }
+
+/* ==========================================================================
+   AI CFO Q&A Chatbot Layout & Design System (Task 6)
+   ========================================================================== */
+.ai-layout-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .ai-layout-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Chatbot Card Wrapper */
+.cfo-chat-wrapper {
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.cfo-chat-header {
+    padding: 16px 20px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.15));
+    border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cfo-chat-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cfo-chat-title i {
+    font-size: 1.25rem;
+    color: #A78BFA;
+    filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.4));
+}
+
+.cfo-chat-title h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.cfo-chat-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.cfo-chat-status .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #38bdf8;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: cfo-pulse 1.8s infinite;
+}
+
+@keyframes cfo-pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+/* Chatbot Messages Body */
+.cfo-chat-body {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+    background: rgba(10, 15, 30, 0.2);
+}
+
+.cfo-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 85%;
+    animation: cfo-fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes cfo-fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cfo-message.user {
+    align-self: flex-end;
+}
+
+.cfo-message.ai {
+    align-self: flex-start;
+}
+
+.cfo-msg-meta {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.cfo-message.user .cfo-msg-meta {
+    text-align: right;
+    margin-right: 4px;
+}
+
+.cfo-message.ai .cfo-msg-meta {
+    margin-left: 4px;
+}
+
+.cfo-msg-bubble {
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+}
+
+.cfo-message.user .cfo-msg-bubble {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    color: #fff;
+    border-top-right-radius: 2px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.cfo-message.ai .cfo-msg-bubble {
+    background: rgba(30, 41, 59, 0.8);
+    color: #f1f5f9;
+    border-top-left-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cfo-message.ai .cfo-msg-bubble p {
+    margin: 0 0 10px 0;
+}
+.cfo-message.ai .cfo-msg-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.cfo-message.ai .cfo-msg-bubble pre {
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 8px 0;
+}
+
+.cfo-message.ai .cfo-msg-bubble table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.cfo-message.ai .cfo-msg-bubble th, .cfo-message.ai .cfo-msg-bubble td {
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 10px;
+    font-size: 0.8rem;
+}
+
+.cfo-message.ai .cfo-msg-bubble th {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    background: rgba(30, 41, 59, 0.8);
+    border-radius: 12px;
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background: #A78BFA;
+    border-radius: 50%;
+    animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing-bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* Quick Suggestion Chips */
+.cfo-chat-chips {
+    padding: 8px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(15, 23, 42, 0.2);
+}
+
+.cfo-chat-chips::-webkit-scrollbar {
+    height: 4px;
+}
+
+.cfo-chat-chips::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.cfo-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.cfo-chip:hover {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.35);
+    color: #C084FC;
+}
+
+/* Chat Footer Input Area */
+.cfo-chat-footer {
+    padding: 12px 16px;
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 1px solid rgba(139, 92, 246, 0.25);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cfo-input-box {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.cfo-input-box:focus {
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+.cfo-send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, opacity 0.15s;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.cfo-send-btn:hover {
+    transform: scale(1.05);
+}
+
+.cfo-send-btn:active {
+    transform: scale(0.95);
+}
+
+.cfo-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
