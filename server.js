@@ -361,6 +361,10 @@ app.post('/api/ai/analyze', async (req, res) => {
         console.log(`[AI] Analysis complete for ${month || 'unknown'}, ${resultText.length} chars — cached permanently`);
         res.json({ success: true, cached: false, result: resultText, timestamp: now });
 
+    } catch (error) {
+        console.error('[AI] Analysis Error:', error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
 // ═══════════════════════════════════════════════════════════
