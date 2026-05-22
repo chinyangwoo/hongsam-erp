@@ -965,7 +965,7 @@ app.post('/api/ai/chat', async (req, res) => {
         }));
 
         const postData = JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022', // 최신 Claude 3.5 Sonnet 사용
+            model: 'claude-sonnet-4-6', // 최신 Claude Sonnet 4.6 사용
             max_tokens: 4000,
             system: systemPrompt,
             messages: formattedMessages
