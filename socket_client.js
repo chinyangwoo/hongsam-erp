@@ -11,7 +11,7 @@
     }
 
     console.log("[Phase 3] Connecting to Real-Time Socket Server...");
-    socket = io(SOCKET_URL);
+    socket = io(SOCKET_URL, { auth: { token: localStorage.getItem('erp_auth_token') || '' } });
 
     socket.on('connect', () => {
         console.log('[Phase 3] Socket Connected successfully: ' + socket.id);

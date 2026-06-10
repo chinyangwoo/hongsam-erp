@@ -9,3 +9,6 @@ backup_20260516/
 클라우드 api key.txt
 *.log
 *.pem
+
+.env
+node_modules/

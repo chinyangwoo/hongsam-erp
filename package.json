@@ -1,9 +1,23 @@
 {
   "name": "hongsam-erp-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "홍삼한방타운 ERP API 서버",
+  "scripts": {
+    "start": "node server.js",
+    "migrate:pw": "node migrate_passwords.js",
+    "migrate:json": "node -e \"require('./database')\""
+  },
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.4.0",
+    "dotenv": "^16.4.5",
+    "axios": "^1.7.7",
+    "form-data": "^4.0.0",
+    "better-sqlite3": "^11.6.0"
   }
 }
