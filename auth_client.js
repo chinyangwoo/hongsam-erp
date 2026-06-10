@@ -10,7 +10,7 @@
 
     var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? 'http://localhost:3001/api'
-        : 'http://43.203.237.63:3001/api';
+        : ((window.ERP_CONFIG && window.ERP_CONFIG.apiBase) || 'http://43.203.237.63:3001/api');
 
     function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
 

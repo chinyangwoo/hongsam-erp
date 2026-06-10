@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Storage ──
     const DB_KEY = 'erp_messenger_db';
     const ROOMS_KEY = 'erp_messenger_rooms';
-    const API_BASE = 'http://43.203.237.63:3001/api';
+    const API_BASE = ((window.ERP_CONFIG && window.ERP_CONFIG.apiBase) || 'http://43.203.237.63:3001/api');
 
     function loadMessages() {
         try { return JSON.parse(localStorage.getItem(DB_KEY) || '{}'); } catch(e) { return {}; }

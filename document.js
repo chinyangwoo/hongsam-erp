@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (previewModal && previewModalTitle && previewIframe) {
                     previewModalTitle.textContent = `${fname} - ${isHwp ? 'HWP 실시간 변환 뷰어' : '문서 미리보기'}`;
-                    previewIframe.src = `/api/doc/convert-hwp?file=${encodeURIComponent(fname)}`;
+                    previewIframe.src = ((window.ERP_CONFIG && window.ERP_CONFIG.origin) || 'http://43.203.237.63:3001') + `/api/doc/convert-hwp?file=${encodeURIComponent(fname)}`;
                     previewModal.classList.add('show');
                 }
             });

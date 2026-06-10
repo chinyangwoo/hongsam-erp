@@ -17,18 +17,12 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 3001;
 const DB_FILE = path.join(__dirname, 'db_storage.json');
 
-app.use(cors());
+app.use(cors({ origin: true, exposedHeaders: ['X-Collection-Version'], allowedHeaders: ['Content-Type', 'Authorization', 'X-Collection-Version'] }));
 app.use(express.json({ limit: '50mb' }));
 const { loadDB, saveDB, setupCrudRoutes, getCollection, setCollection } = require('./database');
 require('./auth').setupAuth(app, { loadDB, saveDB });
 setupCrudRoutes(app);
 require('./rbac_audit').setup(app, io, { getCollection, setCollection });
-
-
-
-
-
-});
 
 // 테스트용 Ping
 app.get('/api/ping', (req, res) => {
@@ -344,433 +338,9 @@ app.post('/api/ai/analyze', async (req, res) => {
 // ═══════════════════════════════════════════════════════════
 // HWP 한글 문서 서버사이드 실시간 PDF/HTML 변환 뷰어 API (Task 4)
 // ═══════════════════════════════════════════════════════════
-app.get('/api/doc/convert-hwp', (req, res) => {
-    const fileName = req.query.file;
-    if (!fileName) {
-        return res.status(400).send('<h3>파일명이 지정되지 않았습니다.</h3>');
-    }
+// Real document preview engine (Item 4) - see hwp_viewer.js
+require('./hwp_viewer').setup(app);
 
-    const decodedName = decodeURIComponent(fileName);
-    let title = decodedName.replace('.hwp', '').replace('.docx', '').replace('.pdf', '');
-    let category = '총무/일반';
-    let docNum = 'HS-DOC-2026-0421';
-    let secLevel = '대외비 (Confidential)';
-    let writer = '진양우 대표이사';
-    let contentHtml = '';
-
-    // 문서 이름별 고정밀 마크업 콘텐츠 분기 (실제 한글 뷰어와 동일한 정밀 서식)
-    if (decodedName.includes('취업규칙')) {
-        category = '사규 및 규정';
-        docNum = 'HS-REG-2026-001';
-        secLevel = '대외비 (Confidential)';
-        contentHtml = `
-            <h3>제1장 총 칙</h3>
-            <p><strong>제1조 (목적)</strong> 본 규칙은 근로기준법에 따라 홍삼한방타운(이하 "회사")에서 근무하는 사원의 근로조건 및 복무규율에 관한 사항을 정함으로써, 회사의 발전과 사원의 권익 향상을 도모함을 목적으로 한다.</p>
-            <p><strong>제2조 (적용범위)</strong> 사원의 취업에 관하여 관계 법령 또는 근로계약에 별도 정함이 있는 경우를 제외하고는 본 규칙이 정하는 바에 의한다.</p>
-            <p><strong>제3조 (사원의 정의)</strong> "사원"이라 함은 회사의 채용 절차를 거쳐 근로계약을 체결하고 회사에 근무하는 자를 말하며, 정규직, 계약직, 아르바이트 사원을 모두 포함한다.</p>
-
-            <h3>제2장 채용 및 근로계약</h3>
-            <p><strong>제4조 (채용 기 기회균등)</strong> 회사는 사원의 채용에 있어서 성별, 신앙, 사회적 신분, 출신지역 또는 연령 등을 이유로 차별을 두지 아니한다.</p>
-            <p><strong>제5조 (근로계약)</strong> 채용이 확정된 자는 근로계약서에 서명 날인하여 근로계약을 체결하여야 하며, 회사는 근로계약 체결 시 사원에게 근로시간, 임금, 휴일, 휴가 등 주요 근로조건을 서면으로 명시한다.</p>
-
-            <h3>제3장 복 무</h3>
-            <p><strong>제6조 (성실의무)</strong> 사원은 회사의 규정과 지시를 준수하며, 맡은 바 직무를 성실히 수행하여야 한다.</p>
-            <p><strong>제7조 (품위유지)</strong> 사원은 항상 단정한 용모와 품위를 유지하며, 회사 내외를 불문하고 회사의 신용과 명예를 훼손하는 행위를 해서는 아니 된다.</p>
-
-            <table class="hwp-table">
-                <thead>
-                    <tr>
-                        <th>구분</th>
-                        <th>평일 근무</th>
-                        <th>토/일 교대근무</th>
-                        <th>비고</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>프론트/스파</strong></td>
-                        <td>09:00 ~ 18:00</td>
-                        <td>08:00 ~ 22:00 (스케줄)</td>
-                        <td>주 40시간 탄력근무제 적용</td>
-                    </tr>
-                    <tr>
-                        <td><strong>시설/공무</strong></td>
-                        <td>09:00 ~ 18:00</td>
-                        <td>24시간 3교대 감시적 근로</td>
-                        <td>당직 및 휴일 교대 근무 시행</td>
-                    </tr>
-                    <tr>
-                        <td><strong>사무지원</strong></td>
-                        <td>09:00 ~ 18:00</td>
-                        <td>휴무</td>
-                        <td>일반 법정근로시간 적용</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    } else if (decodedName.includes('인사규정')) {
-        category = '사규 및 규정';
-        docNum = 'HS-REG-2026-002';
-        secLevel = '대외비 (Confidential)';
-        contentHtml = `
-            <h3>제1장 총 칙</h3>
-            <p><strong>제1조 (목적)</strong> 본 규정은 홍삼한방타운 사원의 인사관리에 관한 기준을 정하여 공정하고 효율적인 인사업무를 수행함을 목적으로 한다.</p>
-            <p><strong>제2조 (적용범위)</strong> 사원의 인사에 관한 사항은 다른 특별한 규정이 없는 한 본 규정에 의한다.</p>
-            
-            <h3>제2장 인사위원회</h3>
-            <p><strong>제3조 (구성)</strong> 인사위원회(이하 "위원회")는 대표이사를 위원장으로 하고, 각 부서의 팀장급 이상 보직자 중 위원장이 위임한 3인 이상 5인 이하의 위원으로 구성한다.</p>
-            <p><strong>제4조 (기능)</strong> 위원회는 다음 각 호의 사항을 심의·의결한다.</p>
-            <p>1. 사원의 포상 및 징계 처분에 관한 사항<br>2. 사원의 승진, 발령 등 중요 인사에 관한 사항<br>3. 기타 인사관리상 필요하여 위원장이 부의하는 사항</p>
-
-            <table class="hwp-table">
-                <thead>
-                    <tr>
-                        <th>직급</th>
-                        <th>최소 승진 소요 연한</th>
-                        <th>주요 역할 및 책임 범위</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>사원 → 대리</strong></td>
-                        <td>3년 이상 재직</td>
-                        <td>실무 보조 및 개별 파트 운영 담당</td>
-                    </tr>
-                    <tr>
-                        <td><strong>대리 → 과장</strong></td>
-                        <td>4년 이상 재직</td>
-                        <td>개별 파트 총괄 및 팀장 보좌</td>
-                    </tr>
-                    <tr>
-                        <td><strong>과장 → 팀장</strong></td>
-                        <td>5년 이상 과장 재직</td>
-                        <td>부서 예산 집행 및 팀원 근태 평가 책임</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    } else if (decodedName.includes('급여규정') || decodedName.includes('급여대장')) {
-        category = '경영 및 회계';
-        docNum = 'HS-FIN-2026-015';
-        secLevel = '극비 (Strict Confidential)';
-        writer = '김지현 경리 주임';
-        contentHtml = `
-            <h3>제1장 총 칙</h3>
-            <p><strong>제1조 (목적)</strong> 본 규정은 홍삼한방타운 사원에게 지급하는 임금(급여)의 구성 체계, 계산 방법, 지급 시기 및 정산에 관한 사항을 규정함을 목적으로 한다.</p>
-            <p><strong>제2조 (급여의 구성)</strong> 사원의 급여는 기본급과 법정수당(연장, 야간, 휴일근로수당 등) 및 기타 상여금, 복리후생비 등으로 구성한다.</p>
-            <p><strong>제3조 (급여 지급일)</strong> 급여는 매월 25일에 지급함을 원칙으로 한다. 다만, 지급일이 토요일 또는 공휴일인 경우에는 그 전일에 지급한다.</p>
-
-            <table class="hwp-table">
-                <thead>
-                    <tr>
-                        <th>수당 항목</th>
-                        <th>지급 대상</th>
-                        <th>계산 기준 및 요율</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>기본급</strong></td>
-                        <td>전 임직원</td>
-                        <td>근로계약상 약정 월급여</td>
-                    </tr>
-                    <tr>
-                        <td><strong>연장근무수당</strong></td>
-                        <td>소정근로 초과 근무자</td>
-                        <td>통상임금의 1.5배 가산 지급 (5인 이상 적용)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>직책수당</strong></td>
-                        <td>팀장급 이상 보직자</td>
-                        <td>팀장 월 300,000원, 실장/매니저 월 150,000원 고정</td>
-                    </tr>
-                    <tr>
-                        <td><strong>식대/교통비</strong></td>
-                        <td>전 임직원 (비과세)</td>
-                        <td>식대 월 100,000원 일괄 지원</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    } else {
-        // 일반 문서 템플릿
-        contentHtml = `
-            <h3>1. 문서 개요 및 목적</h3>
-            <p>본 문서는 홍삼한방타운 ERP 시스템 내에 안전하게 보관 및 동기화된 사내 공식 자료입니다. 본문 내용은 원본 <code>.hwp</code> 아래한글 바이너리 파일을 클라우드 서버에서 PDF/HTML 렌더링 엔진을 통해 웹 전용 문서 형태로 실시간 변환하여 표출한 화면입니다.</p>
-            <p>원본 문서의 레이아웃, 표 서식, 줄 간격 및 글자 크기가 웹 표준 규격에 맞추어 완전 호환 및 재정렬되었습니다. 문서 열람 중 발생한 변환 지연이나 폰트 깨짐 등이 있을 경우 전산 관리부서(내선 104)로 문의하시기 바랍니다.</p>
-            
-            <h3>2. 사내 보안 및 열람 주의</h3>
-            <p>본 문서에 명시된 모든 세부 지표, 인적 구성, 시설 수선 지출 및 운영 노하우는 회사의 핵심 영업 비밀로 취급됩니다. 권한이 없는 타 부서 직원이나 외부 제3자에게 이메일, 메신저 등을 통해 스크린샷이나 인쇄물을 유출할 경우 회사 보안 서약 및 영업비밀 보호 규정에 따라 민·형사상의 엄중한 법적 책임 및 징계 처분을 받을 수 있음을 경고합니다.</p>
-
-            <table class="hwp-table">
-                <thead>
-                    <tr>
-                        <th>분류 코드</th>
-                        <th>등록 및 승인 일자</th>
-                        <th>보안 등급</th>
-                        <th>최종 편집자</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>${docNum}</strong></td>
-                        <td>2026-04-21</td>
-                        <td><span style="color:#F59E0B; font-weight:600;">${secLevel}</span></td>
-                        <td>${writer}</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    }
-
-    // 미려한 한글 뷰어 테마 및 프린트 기능 내장된 HTML 스트림 작성
-    const viewerHtml = `
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${title} - HWP 실시간 뷰어</title>
-        <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            :root {
-                --primary-color: #0284c7;
-                --bg-canvas: #334155;
-                --bg-paper: #ffffff;
-                --text-main: #1e293b;
-                --text-sub: #64748b;
-                --border-color: #cbd5e1;
-            }
-            body {
-                background: var(--bg-canvas);
-                font-family: 'Noto Sans KR', sans-serif;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                min-height: 100vh;
-                overflow-x: hidden;
-            }
-            /* 상단 변환 툴바 */
-            .viewer-toolbar {
-                width: 100%;
-                height: 50px;
-                background: #1e293b;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 24px;
-                box-sizing: border-box;
-                position: fixed;
-                top: 0;
-                left: 0;
-                z-index: 1000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                color: #f8fafc;
-            }
-            .toolbar-info {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 0.88rem;
-            }
-            .toolbar-info i {
-                color: #0ea5e9;
-                font-size: 1.1rem;
-            }
-            .toolbar-info .badge {
-                background: rgba(14, 165, 233, 0.2);
-                color: #38bdf8;
-                font-size: 0.72rem;
-                padding: 3px 8px;
-                border-radius: 4px;
-                font-weight: 700;
-                border: 1px solid rgba(14, 165, 233, 0.3);
-            }
-            .toolbar-actions {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            .btn-action {
-                background: rgba(255,255,255,0.08);
-                border: 1px solid rgba(255,255,255,0.15);
-                color: #f1f5f9;
-                padding: 6px 12px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 0.8rem;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                transition: all 0.2s;
-            }
-            .btn-action:hover {
-                background: #0284c7;
-                border-color: #0284c7;
-                color: white;
-            }
-            .btn-action.download {
-                background: #0284c7;
-                border-color: #0284c7;
-            }
-            .btn-action.download:hover {
-                background: #0369a1;
-            }
-            /* A4 용지 캔버스 시뮬레이터 */
-            .page-container {
-                margin-top: 80px;
-                margin-bottom: 40px;
-                padding: 0 20px;
-                display: flex;
-                justify-content: center;
-                width: 100%;
-                box-sizing: border-box;
-            }
-            .paper {
-                background: var(--bg-paper);
-                width: 800px;
-                min-height: 1130px;
-                box-shadow: 0 12px 35px rgba(0,0,0,0.35);
-                padding: 85px 80px;
-                box-sizing: border-box;
-                position: relative;
-                border-radius: 4px;
-                color: var(--text-main);
-                font-size: 0.95rem;
-            }
-            .hwp-header {
-                display: flex;
-                justify-content: space-between;
-                border-bottom: 2px solid #0ea5e9;
-                padding-bottom: 12px;
-                margin-bottom: 50px;
-                font-size: 0.82rem;
-                color: var(--text-sub);
-                font-weight: 500;
-            }
-            .hwp-title {
-                font-family: 'Nanum Myeongjo', serif;
-                font-size: 2.1rem;
-                font-weight: 800;
-                text-align: center;
-                margin-bottom: 60px;
-                color: #0f172a;
-                letter-spacing: -0.5px;
-                line-height: 1.4;
-            }
-            .hwp-content {
-                line-height: 1.9;
-                text-align: justify;
-            }
-            .hwp-content h3 {
-                font-size: 1.25rem;
-                font-weight: 700;
-                margin-top: 40px;
-                margin-bottom: 16px;
-                color: #0f172a;
-                border-left: 5px solid #0284c7;
-                padding-left: 12px;
-                letter-spacing: -0.3px;
-            }
-            .hwp-content p {
-                margin: 0 0 18px 0;
-            }
-            .hwp-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 28px 0;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            }
-            .hwp-table th, .hwp-table td {
-                border: 1px solid var(--border-color);
-                padding: 12px 14px;
-                font-size: 0.88rem;
-            }
-            .hwp-table th {
-                background: #f8fafc;
-                font-weight: 700;
-                color: #334155;
-                text-align: center;
-            }
-            .hwp-table td {
-                color: #475569;
-            }
-            .hwp-footer {
-                position: absolute;
-                bottom: 45px;
-                left: 0;
-                right: 0;
-                text-align: center;
-                font-size: 0.82rem;
-                color: var(--text-sub);
-                border-top: 1px solid #e2e8f0;
-                padding-top: 15px;
-                margin: 0 80px;
-            }
-            /* 인쇄 지원 미디어 쿼리 */
-            @media print {
-                body {
-                    background: white;
-                }
-                .viewer-toolbar {
-                    display: none;
-                }
-                .page-container {
-                    margin: 0;
-                    padding: 0;
-                }
-                .paper {
-                    box-shadow: none;
-                    width: 100%;
-                    min-height: auto;
-                    padding: 0;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="viewer-toolbar">
-            <div class="toolbar-info">
-                <i class="fa-solid fa-file-invoice"></i>
-                <strong>${decodedName}</strong>
-                <span class="badge"><i class="fa-solid fa-bolt"></i> 실시간 HWP 변환 모드</span>
-            </div>
-            <div class="toolbar-actions">
-                <button class="btn-action" onclick="window.print()"><i class="fa-solid fa-print"></i> 인쇄</button>
-                <button class="btn-action" onclick="alert('사내 보안 지침에 따라 본 변환 뷰어의 화면 텍스트 복사는 전산 모니터링됩니다.')"><i class="fa-solid fa-shield-halved"></i> 보안</button>
-                <button class="btn-action download" onclick="location.href='/docs/${encodeURIComponent(decodedName.replace('.hwp', '.docx'))}'"><i class="fa-solid fa-download"></i> 원본 DOCX 다운로드</button>
-            </div>
-        </div>
-
-        <div class="page-container">
-            <div class="paper">
-                <div class="hwp-header">
-                    <span>분류: ${category}</span>
-                    <span>문서번호: ${docNum}</span>
-                </div>
-                <div class="hwp-title">${title}</div>
-                <div class="hwp-content">
-                    ${contentHtml}
-                </div>
-                <div class="hwp-footer">
-                    <span>홍 삼 한 방 타 운</span>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    `;
-
-    res.send(viewerHtml);
-});
-
-// ═══════════════════════════════════════════════════════════
-// AI CFO 실시간 회계 Q&A 대화형 챗봇 API (Task 6)
-// ═══════════════════════════════════════════════════════════
 app.post('/api/ai/chat', async (req, res) => {
     const { messages } = req.body;
 
@@ -998,47 +568,85 @@ app.post('/api/ai/chat', async (req, res) => {
 
 // --- Socket.io 실시간 통신 (Phase 3) ---
 // 접속 중인 사용자 (emp_id를 키값으로 관리)
+// empId -> { name, sockets:Set }  (multi-tab safe)
 const onlineUsers = new Map();
+function regOnline(empId, name, socketId) {
+    const id = String(empId);
+    let rec = onlineUsers.get(id);
+    if (!rec) { rec = { name: name || id, sockets: new Set() }; onlineUsers.set(id, rec); }
+    if (name) rec.name = name;
+    rec.sockets.add(socketId);
+}
+function emitToEmp(empId, event, data) {
+    const rec = onlineUsers.get(String(empId));
+    if (rec) rec.sockets.forEach(sid => io.to(sid).emit(event, data));
+}
+// dm_<empA>_<empB> room ids let the server derive recipients (Item 3: no more broadcast of private messages)
+function dmTargets(roomId) {
+    if (typeof roomId === 'string' && roomId.indexOf('dm_') === 0) {
+        const p = roomId.slice(3).split('_').filter(Boolean);
+        if (p.length >= 2) return p;
+    }
+    return null;
+}
 
 io.on('connection', (socket) => {
-    console.log(`[Socket] A user connected: ${socket.id}`);
+    const ju = socket.user || {}; // set by JWT socket auth (rbac_audit.js)
+    if (ju.empId) {
+        socket.emp_id = String(ju.empId);
+        regOnline(socket.emp_id, ju.name, socket.id);
+        io.emit('online_users_update', Array.from(onlineUsers.keys()));
+    }
+    console.log('[Socket] connected:', socket.id, socket.emp_id ? '(' + socket.emp_id + ')' : '(unauth)');
 
-    // 사용자 로그인 및 접속 알림
     socket.on('user_login', (empData) => {
-        if(!empData || !empData.emp_id) return;
-        
-        // 메모리에 세션 등록
-        socket.emp_id = empData.emp_id;
-        onlineUsers.set(empData.emp_id, {
-            socketId: socket.id,
-            name: empData.name,
-            lastActivity: Date.now()
-        });
-
-        console.log(`[Socket] User ${empData.name} (${empData.emp_id}) logged in`);
-        
-        // 전체 사용자에게 접속 상태 브로드캐스트 (내 자신 포함)
+        const id = socket.emp_id || (empData && empData.emp_id);
+        if (!id) return;
+        socket.emp_id = String(id);
+        regOnline(socket.emp_id, (empData && empData.name) || ju.name, socket.id);
         io.emit('online_users_update', Array.from(onlineUsers.keys()));
     });
 
-    // 사내 메신저 기능 (1:1 메시지 등)
     socket.on('send_message', (msgBody) => {
-        // 모든 접속된 클라이언트에게 메시지 발송 (실제 운영 시에는 수신자 타겟팅 필요)
-        io.emit('receive_message', msgBody);
+        if (!msgBody || typeof msgBody !== 'object') return;
+        if (socket.emp_id) { msgBody.senderId = socket.emp_id; if (ju.name) msgBody.senderName = ju.name; } // anti-spoofing
+        const sender = socket.emp_id || msgBody.senderId;
+        const targets = dmTargets(msgBody.roomId);
+        if (targets) {
+            const dedup = new Set(targets.map(String));
+            if (sender) dedup.add(String(sender));
+            dedup.forEach(eid => emitToEmp(eid, 'receive_message', msgBody));
+        } else {
+            io.emit('receive_message', msgBody); // channel rooms (members: all)
+        }
     });
 
-    // 전사 공지 푸시 (Broadcast)
     socket.on('send_broadcast', (msgBody) => {
+        if (!msgBody || typeof msgBody !== 'object') return;
+        if (socket.emp_id) { msgBody.senderId = socket.emp_id; if (ju.name) msgBody.senderName = ju.name; }
         io.emit('receive_broadcast', msgBody);
     });
 
-    // 클라이언트 종료 시
+    socket.on('user_typing', (d) => {
+        if (!d || typeof d !== 'object') return;
+        const targets = dmTargets(d.roomId);
+        if (targets) {
+            targets.map(String).forEach(eid => { if (eid !== String(socket.emp_id)) emitToEmp(eid, 'user_typing', d); });
+        } else {
+            socket.broadcast.emit('user_typing', d);
+        }
+    });
+
     socket.on('disconnect', () => {
-        console.log(`[Socket] User disconnected: ${socket.id}`);
-        if(socket.emp_id) {
-            onlineUsers.delete(socket.emp_id);
-            // 오프라인 상태 브로드캐스트
-            io.emit('online_users_update', Array.from(onlineUsers.keys()));
+        const id = socket.emp_id;
+        if (!id) return;
+        const rec = onlineUsers.get(id);
+        if (rec) {
+            rec.sockets.delete(socket.id);
+            if (rec.sockets.size === 0) {
+                onlineUsers.delete(id);
+                io.emit('online_users_update', Array.from(onlineUsers.keys()));
+            }
         }
     });
 });

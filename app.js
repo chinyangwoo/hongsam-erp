@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // --- 서버에 저장하여 변경된 비밀번호 유지 ---
-            const API_BASE = 'http://43.203.237.63:3001/api';
+            const API_BASE = ((window.ERP_CONFIG && window.ERP_CONFIG.apiBase) || 'http://43.203.237.63:3001/api');
             const updatedDb = JSON.parse(localStorage.getItem('erp_users_db') || '{}');
             fetch(`${API_BASE}/db/erp_users_db`, {
                 method: 'POST',

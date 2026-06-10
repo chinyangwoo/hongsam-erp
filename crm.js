@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Data Initialization & LocalStorage Sync
     const CRM_DB_KEY = 'hongsam_crm_db';
-    const API_BASE = 'http://43.203.237.63:3001/api';
+    const API_BASE = ((window.ERP_CONFIG && window.ERP_CONFIG.apiBase) || 'http://43.203.237.63:3001/api');
     let customers = [];
     
     try {
@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTable(data) {
         const tbody = document.getElementById('customerTableBody');
         if(!tbody) return;
+        if (window.ERPPaginate) { data = ERPPaginate.attach('crm_customers', tbody, data, 50, renderTable) || data; }
         
         let html = '';
         data.forEach(c => {

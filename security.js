@@ -1,6 +1,6 @@
 // Security Module JS - 로그인 감사 로그 및 실시간 접속자 모니터링
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE = 'http://43.203.237.63:3001/api';
+    const API_BASE = ((window.ERP_CONFIG && window.ERP_CONFIG.apiBase) || 'http://43.203.237.63:3001/api');
     const loginLogBody = document.getElementById('loginLogBody');
     const btnRefresh = document.getElementById('btnRefreshLogs');
 
